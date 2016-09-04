@@ -4,13 +4,12 @@
 
 ## Changelog
 
-### [Milestone M4](https://github.com/graphcool/### [Milestone M4](https://github.com/graphcool/dashboard/milestone/4)
+### [Milestone M4](https://github.com/graphcool/dashboard/milestone/4)
 * You seem to spend most of your time in the data browser, so in order to improve it, we've taken the time to completely reimplement it. It was worth it! Introducing many new features and improvements such as:
 	* Smooth infinite scrolling ⚡️
 	* Improved UX when editing and creating nodes (supports tab key)
 	* *Fixed:* Reloading doesn't reset the data browser any more
 * Setting up relations should be a lot easier now. You will be guided through the process and see directly which mutations will be added to the GraphQL schema.
-
 See **[here](CHANGELOG.md)** for a full list of all changes (features/bug fixes).
 
 ## Development
