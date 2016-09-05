@@ -66,7 +66,8 @@ class Cell extends React.Component<Props, State> {
           overflow: 'visible',
         }}
         className={rootClassnames}
-        onClick={() => this.startEditing()}
+        onClick={() => this.props.addnew ? this.startEditing() : null}
+        onDoubleClick={() => this.props.addnew ? null : this.startEditing()}
       >
         {this.renderContent()}
       </div>
