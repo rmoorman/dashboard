@@ -10,6 +10,7 @@
 	* Improved UX when editing and creating nodes (supports tab key)
 	* *Fixed:* Reloading doesn't reset the data browser any more
 * Setting up relations should be a lot easier now. You will be guided through the process and see directly which mutations will be added to the GraphQL schema.
+
 See **[here](CHANGELOG.md)** for a full list of all changes (features/bug fixes).
 
 ## Development
