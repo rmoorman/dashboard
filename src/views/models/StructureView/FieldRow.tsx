@@ -161,7 +161,7 @@ class FieldRow extends React.Component<Props, State> {
   render () {
     const { field } = this.props
 
-    let type = field.typeIdentifier
+    let type: string = field.typeIdentifier
     if (field.isList) {
       type = `[${type}]`
     }

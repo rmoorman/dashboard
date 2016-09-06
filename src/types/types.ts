@@ -29,6 +29,8 @@ export interface Project {
   actionSchema: string
 }
 
+export type FieldType = 'Relation' | 'Int' | 'String' | 'Boolean' | 'Enum' | 'Float' | 'DateTime' | 'Password'
+
 export interface Field {
   id: string
   name: string
@@ -37,7 +39,7 @@ export interface Field {
   isList: boolean
   isUnique: boolean
   isSystem: boolean
-  typeIdentifier: string
+  typeIdentifier: FieldType
   defaultValue?: string
   enumValues: string[]
   reverseRelationField?: Field

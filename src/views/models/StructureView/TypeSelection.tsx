@@ -35,56 +35,15 @@ export default class TypeSelection extends React.Component<Props, State> {
   }
 
   componentWillUnmount () {
-    window.removeEventListener('keydown', this._listenForKeys, true)
+    window.removeEventListener('keydown', this.listenForKeys, true)
   }
 
   componentWillUpdate (nextProps, nextState) {
     if (!this.state.open && nextState.open) {
-      window.addEventListener('keydown', this._listenForKeys, true)
+      window.addEventListener('keydown', this.listenForKeys, true)
     } else if (this.state.open && !nextState.open) {
-      window.removeEventListener('keydown', this._listenForKeys, true)
+      window.removeEventListener('keydown', this.listenForKeys, true)
     }
-  }
-
-  _select (type) {
-    this.props.select(type)
-    this.setState({ open: false })
-  }
-
-  _open () {
-    this.setState({ open: true })
-  }
-
-  _close () {
-    this.setState({ open: false })
-  }
-
-  _listenForKeys = (e: KeyboardEvent) => {
-    const allTypes = [...types]
-    let selectedIndex = allTypes.indexOf(this.props.selected)
-
-    switch (e.keyCode) {
-      case 9: // tab
-      case 13: // enter
-      case 27: // esc
-        e.stopPropagation()
-        return this._close()
-      case 40:
-        selectedIndex++
-        break
-      case 38:
-        selectedIndex--
-        break
-    }
-
-    selectedIndex = (selectedIndex + allTypes.length) % allTypes.length
-
-    this.props.select(allTypes[selectedIndex])
-
-    const relativePosition = selectedIndex / allTypes.length
-    const outerContainerElement = findDOMNode(this.refs.scroll.refs.outerContainer)
-    const innerContainerElement = findDOMNode(this.refs.scroll.refs.innerContainer)
-    outerContainerElement.scrollTop = innerContainerElement.clientHeight * relativePosition
   }
 
   render () {
@@ -93,8 +52,8 @@ export default class TypeSelection extends React.Component<Props, State> {
         <div
           className={classes.root}
           tabIndex={0}
-          onClick={() => this._open()}
-          onFocus={() => this._open()}
+          onClick={() => this.open()}
+          onFocus={() => this.open()}
         >
           <div className={classes.preview}>
             <span>
@@ -112,7 +71,7 @@ export default class TypeSelection extends React.Component<Props, State> {
 
     return (
       <div className={classes.root}>
-        <ClickOutside onClickOutside={() => this._close()}>
+        <ClickOutside onClickOutside={() => this.close()}>
           <div className={classes.overlay} ref='overlay'>
             <ScrollBox
               ref='scroll'
@@ -123,7 +82,7 @@ export default class TypeSelection extends React.Component<Props, State> {
                 {types.map((type) => (
                   <div
                     key={type}
-                    onClick={() => this._select(type)}
+                    onClick={() => this.select(type)}
                     className={type === this.props.selected ? classes.selected : ''}
                   >
                     {type}
@@ -135,5 +94,46 @@ export default class TypeSelection extends React.Component<Props, State> {
         </ClickOutside>
       </div>
     )
+  }
+
+  private select (type) {
+    this.props.select(type)
+    this.setState({ open: false })
+  }
+
+  private open () {
+    this.setState({ open: true })
+  }
+
+  private close () {
+    this.setState({ open: false })
+  }
+
+  private listenForKeys = (e: KeyboardEvent) => {
+    const allTypes = [...types]
+    let selectedIndex = allTypes.indexOf(this.props.selected)
+
+    switch (e.keyCode) {
+      case 9: // tab
+      case 13: // enter
+      case 27: // esc
+        e.stopPropagation()
+        return this.close()
+      case 40:
+        selectedIndex++
+        break
+      case 38:
+        selectedIndex--
+        break
+    }
+
+    selectedIndex = (selectedIndex + allTypes.length) % allTypes.length
+
+    this.props.select(allTypes[selectedIndex])
+
+    const relativePosition = selectedIndex / allTypes.length
+    const outerContainerElement = findDOMNode(this.refs.scroll.refs.outerContainer)
+    const innerContainerElement = findDOMNode(this.refs.scroll.refs.innerContainer)
+    outerContainerElement.scrollTop = innerContainerElement.clientHeight * relativePosition
   }
 }
