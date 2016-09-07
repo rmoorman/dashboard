@@ -44,15 +44,11 @@ class Script extends React.Component<ScriptProps, {}> {
 
 const examples = {
   RELAY: {
-    path: 'react-relay-todo-example',
+    path: 'react-relay-instagram-example',
     description: 'React + Relay',
   },
-  LOKKA: {
-    path: 'react-lokka-todo-example',
-    description: 'React + Lokka',
-  },
   APOLLO: {
-    path: 'react-apollo-todo-example',
+    path: 'react-apollo-instagram-example',
     description: 'React + Apollo',
   },
 }
@@ -171,7 +167,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
               </p>
               <p>
                 It will take about 3 minutes and show you the basic features<br />
-                by creating a GraphQL backend for an example Todo app.
+                by creating a GraphQL backend for an Instagram clone.
               </p>
             </div>
             <div className={classes.buttons}>
@@ -223,9 +219,9 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
         {progress <= 1 &&
           <div className={`${classes.step} ${overlayActive ? classes.blurred : ''}`}>
             <div className={classes.text}>
-              <h2>1. Create <strong>Todo</strong> model</h2>
+              <h2>1. Create <strong>Post</strong> model</h2>
               <p>
-                In this first step you will learn to create a new <i>model</i> called <strong>Todo</strong>.
+                In this first step you will learn to create a new <i>model</i> called <strong>Post</strong>.
               </p>
               <p>
                 A model is a collection of several fields defining the structure of your data.
@@ -241,7 +237,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             <div className={classes.text}>
               <h2>2. Add some data</h2>
               <p>
-                In this step you will add some data to the <strong>Todo</strong> model you just created.
+                In this step you will add some data to the <strong>Post</strong> model you just created.
                 It doesn’t matter what you add, it’s just about populating the database.
               </p>
               <p>
@@ -276,15 +272,6 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
                 onClick={() => this._selectExample(examples.RELAY)}
               >
                 {examples.RELAY.description}
-              </div>
-              <div
-                className={`
-                  ${classes.selectExample}
-                  ${this.state.selectedExample === examples.LOKKA ? classes.selected : ''}`
-                }
-                onClick={() => this._selectExample(examples.LOKKA)}
-              >
-                {examples.LOKKA.description}
               </div>
               <div
                 className={`

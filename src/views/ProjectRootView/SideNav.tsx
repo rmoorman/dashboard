@@ -95,7 +95,7 @@ export class SideNav extends React.Component<Props, State> {
             {this.renderRelations()}
             {this.renderActions()}
             {this.renderPlayground()}
-            </ScrollBox>
+          </ScrollBox>
         </div>
         <Link className={classes.foot} to={`/${this.props.project.name}/settings`}>
           <Icon
@@ -214,7 +214,7 @@ export class SideNav extends React.Component<Props, State> {
         >
           <Tether
             steps={{
-              STEP2_CREATE_TODO_MODEL: 'First you need to create a new model called "Todo"',
+              STEP2_CREATE_TODO_MODEL: 'First you need to create a new model called "Post"',
             }}
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={260}
@@ -264,7 +264,7 @@ export class SideNav extends React.Component<Props, State> {
           <Link
             to={`/${this.props.params.projectName}/getting-started`}
             className={classes.gettingStartedTitle}
-          onClick={thirdStepOnClick}
+            onClick={thirdStepOnClick}
           >
             <Icon width={19} height={19} src={require('assets/icons/cake.svg')}/>
             <span>Getting Started</span>
@@ -275,12 +275,12 @@ export class SideNav extends React.Component<Props, State> {
                 to={`/${this.props.params.projectName}/getting-started`}
                 onClick={firstStepOnClick}
               >
-                1. Create Todo model
+                1. Create Post model
               </Link>
             </div>
             <div className={gettingStartedStepClass(2)}>
               <Link
-                to={`/${this.props.params.projectName}/models/Todo/browser`}
+                to={`/${this.props.params.projectName}/models/Post/browser`}
                 onClick={secondStepOnClick}
               >
                 2. Add some data
@@ -330,15 +330,20 @@ export class SideNav extends React.Component<Props, State> {
   }
 
   private toggleAddModelInput = () => {
+    if (this.state.addingNewModel && this.state.newModelIsValid) {
+      this.addModel()
+    }
+
     this.setState(
-    {
-      addingNewModel: !this.state.addingNewModel,
-    } as State,
-    () => {
-      if (this.state.addingNewModel) {
-        ReactDOM.findDOMNode<HTMLInputElement>(this.refs.newModelInput).focus()
+      {
+        addingNewModel: !this.state.addingNewModel,
+      } as State,
+      () => {
+        if (this.state.addingNewModel) {
+          ReactDOM.findDOMNode<HTMLInputElement>(this.refs.newModelInput).focus()
+        }
       }
-    })
+    )
   }
 
   private addModel = () => {
@@ -364,8 +369,8 @@ export class SideNav extends React.Component<Props, State> {
               model: this.state.newModelName,
             })
             // getting-started onboarding step
-            if (this.state.newModelName === 'Todo' &&
-                this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_TODO_MODEL')) {
+            if (this.state.newModelName === 'Post' &&
+              this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_TODO_MODEL')) {
               this.props.nextStep().then(redirect)
             } else {
               redirect()
@@ -414,29 +419,29 @@ const MappedSideNav = mapProps({
 })(ReduxContainer)
 
 export default Relay.createContainer(MappedSideNav, {
-    fragments: {
-        viewer: () => Relay.QL`
-            fragment on Viewer {
-                user {
-                    id
-                }
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on Viewer {
+        user {
+          id
+        }
+      }
+    `,
+    project: () => Relay.QL`
+      fragment on Project {
+        id
+        name
+        webhookUrl
+        models(first: 100) {
+          edges {
+            node {
+              id
+              name
+              itemCount
             }
-        `,
-        project: () => Relay.QL`
-            fragment on Project {
-                id
-                name
-                webhookUrl
-                models(first: 100) {
-                    edges {
-                        node {
-                            id
-                            name
-                            itemCount
-                        }
-                    }
-                }
-            }
-        `,
-    },
+          }
+        }
+      }
+    `,
+  },
 })
