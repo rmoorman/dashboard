@@ -16,10 +16,8 @@ deployment:
   production:
     branch: master
     commands:
-      - BACKEND_ADDR=$BACKEND_MASTER_ADDR npm run build
-      - docker run -v $(pwd)/dist:/s3 schickling/s3cmd --access_key=$S3_KEY --secret_key=$S3_SECRET --force --no-preserve --cf-invalidate --acl-public --no-mime-magic --guess-mime-type --default-mime-type="image/svg+xml" sync . s3://$S3_BUCKET
+      - BACKEND_ADDR=$BACKEND_MASTER_ADDR SURGE_DOMAIN=graphcool-dashboard.surge.sh npm run deploy
   dev:
     branch: dev
     commands:
-      - BACKEND_ADDR=$BACKEND_DEV_ADDR npm run build
-      - docker run -v $(pwd)/dist:/s3 schickling/s3cmd --access_key=$S3_KEY --secret_key=$S3_SECRET --force --no-preserve --acl-public --no-mime-magic --guess-mime-type --default-mime-type="image/svg+xml" sync . s3://$S3_DEV_BUCKET
+      - BACKEND_ADDR=$BACKEND_DEV_ADDR SURGE_DOMAIN=graphcool-dashboard-dev.surge.sh npm run deploy
