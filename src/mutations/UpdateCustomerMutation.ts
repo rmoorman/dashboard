@@ -7,15 +7,15 @@ interface Props {
   email?: string
 }
 
-export default class UpdateUserMutation extends Relay.Mutation<Props, {}> {
+export default class UpdateCustomerMutation extends Relay.Mutation<Props, {}> {
 
   getMutation () {
-    return Relay.QL`mutation{updateUser}`
+    return Relay.QL`mutation{updateCustomer}`
   }
 
   getFatQuery () {
     return Relay.QL`
-      fragment on UpdateUserPayload {
+      fragment on UpdateCustomerPayload {
         user
       }
     `

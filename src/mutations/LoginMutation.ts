@@ -15,12 +15,12 @@ interface Response {
 export default class LoginMutation extends Relay.Mutation<Props, Response> {
 
   getMutation () {
-    return Relay.QL`mutation{signinUser}`
+    return Relay.QL`mutation{signinCustomer}`
   }
 
   getFatQuery () {
     return Relay.QL`
-      fragment on SigninUserPayload {
+      fragment on SigninCustomerPayload {
         viewer {
           user
         }
@@ -37,7 +37,7 @@ export default class LoginMutation extends Relay.Mutation<Props, Response> {
     }, {
       type: 'REQUIRED_CHILDREN',
       children: [Relay.QL`
-        fragment on SigninUserPayload {
+        fragment on SigninCustomerPayload {
           token
           viewer {
             user {

@@ -47,8 +47,8 @@ class LoginView extends React.Component<Props, State> {
 
     const payload = { email, password, viewer: this.props.viewer }
     const onSuccess = (response) => {
-      cookiestore.set('graphcool_auth_token', response.signinUser.token)
-      cookiestore.set('graphcool_client_id', response.signinUser.viewer.user.id)
+      cookiestore.set('graphcool_auth_token', response.signinCustomer.token)
+      cookiestore.set('graphcool_client_id', response.signinCustomer.viewer.user.id)
       updateNetworkLayer()
 
       analytics.track('login: logged in', () => {
