@@ -198,7 +198,7 @@ class BrowserView extends React.Component<Props, State> {
     return (
       <Tether
         steps={{
-          STEP6_ADD_DATA_ITEM_1: `Add your first Todo node to the database.`,
+          STEP6_ADD_DATA_ITEM_1: `Add your first Post node to the database.`,
           STEP7_ADD_DATA_ITEM_2: `Well done. Let's add another one.`,
         }}
         offsetX={5}
@@ -458,7 +458,7 @@ class BrowserView extends React.Component<Props, State> {
         })
 
         // getting-started onboarding step
-        if (this.props.params.modelName === 'Todo' && (
+        if (this.props.params.modelName === 'Post' && (
             this.props.gettingStartedState.isCurrentStep('STEP6_ADD_DATA_ITEM_1') ||
             this.props.gettingStartedState.isCurrentStep('STEP7_ADD_DATA_ITEM_2')
           )) {

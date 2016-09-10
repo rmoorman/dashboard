@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
 import { Viewer } from '../../../types/types'
-import UpdateUserMutation from '../../../mutations/UpdateUserMutation'
+import UpdateCustomerMutation from '../../../mutations/UpdateCustomerMutation'
 import UpdatePasswordMutation from '../../../mutations/UpdatePasswordMutation'
 import { onFailureShowNotification } from '../../../utils/relay'
 import { ShowNotificationCallback } from '../../../types/utils'
@@ -112,7 +112,7 @@ class SettingsTab extends React.Component<Props, State> {
     }
 
     if (nameWasChanged || emailWasChanged) {
-      this.handleUserChange()
+      this.handleCustomerChange()
     }
 
     if (passwordWasChanged) {
@@ -120,9 +120,9 @@ class SettingsTab extends React.Component<Props, State> {
     }
   }
 
-  private handleUserChange () {
+  private handleCustomerChange () {
     Relay.Store.commitUpdate(
-      new UpdateUserMutation({
+      new UpdateCustomerMutation({
         userId: this.props.viewer.user.id,
         email: this.state.email,
         name: this.state.name,

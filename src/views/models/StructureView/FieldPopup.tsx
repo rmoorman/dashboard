@@ -347,13 +347,13 @@ class FieldPopup extends React.Component<Props, State> {
           this.close()
 
           // getting-started onboarding steps
-          const isStep3 = this.props.gettingStartedState.isActive('STEP3CREATETEXTFIELD')
-          if (isStep3 && name === 'text' && typeIdentifier === 'String') {
+          const isStep3 = this.props.gettingStartedState.isActive('STEP3_CREATE_TEXT_FIELD')
+          if (isStep3 && name === 'imageUrl' && typeIdentifier === 'String') {
             this.props.nextStep()
           }
 
-          const isStep4 = this.props.gettingStartedState.isActive('STEP4CREATECOMPLETEDFIELD')
-          if (isStep4 && name === 'complete' && typeIdentifier === 'Boolean') {
+          const isStep4 = this.props.gettingStartedState.isActive('STEP4_CREATE_COMPLETED_FIELD')
+          if (isStep4 && name === 'description' && typeIdentifier === 'String') {
             this.props.nextStep()
           }
         },
