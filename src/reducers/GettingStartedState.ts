@@ -1,4 +1,4 @@
-import UpdateUserMutation from '../mutations/UpdateUserMutation'
+import UpdateCustomerMutation from '../mutations/UpdateCustomerMutation'
 import * as Relay from 'react-relay'
 import { ReduxAction } from '../types/reducers'
 
@@ -113,7 +113,7 @@ export function update (step: string, userId: string): ReduxAction {
 function _updateReduxAndRelay (dispatch: (action: ReduxAction) => any, step: string, userId: string): Promise<{}> {
   return new Promise((resolve, reject) => {
     Relay.Store.commitUpdate(
-      new UpdateUserMutation(
+      new UpdateCustomerMutation(
         {
           userId: userId,
           gettingStartedStatus: step,
