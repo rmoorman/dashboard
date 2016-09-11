@@ -43,13 +43,17 @@ class Script extends React.Component<ScriptProps, {}> {
 }
 
 const examples = {
-  RELAY: {
+  REACT_RELAY: {
     path: 'react-relay-instagram-example',
     description: 'React + Relay',
   },
-  APOLLO: {
+  REACT_APOLLO: {
     path: 'react-apollo-instagram-example',
     description: 'React + Apollo',
+  },
+  ANGULAR_APOLLO: {
+    path: 'angular-apollo-instagram-example',
+    description: 'Angular + Apollo',
   },
 }
 
@@ -92,7 +96,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
   constructor (props: ViewProps) {
     super(props)
     this.state = {
-      selectedExample: examples.RELAY,
+      selectedExample: examples.REACT_RELAY,
     }
   }
 
@@ -205,9 +209,18 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
               <Script url='https://slack.graph.cool/slackin.js' />
             </div>
             <div className={classes.buttons}>
+              <a
+                href='https://docs.graph.cool/guides/setting-up-a-graphql-backend-in-5-minutes#2-defining-relations-between-your-models'
+                target='_blank'
+                onClick={() => analytics.track('getting-started: continue with next steps')}
+                className={`${classes.button} ${classes.green}`}
+                style={{width: 310}}
+              >
+                Continue with next steps
+              </a>
               <Link
                 to={`/${this.props.params.projectName}/models`}
-                onClick={this._onClose}
+                onClick={() => analytics.track('getting-started: closed')}
                 className={`${classes.button} ${classes.grey}`}
                 style={{width: 170}}
               >
@@ -264,24 +277,18 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
               <img src={require('assets/graphics/getting-started-3.svg') as string} />
             </div>
             <div className={classes.selection}>
-              <div
-                className={`
-                  ${classes.selectExample}
-                  ${this.state.selectedExample === examples.RELAY ? classes.selected : ''}`
-                }
-                onClick={() => this._selectExample(examples.RELAY)}
-              >
-                {examples.RELAY.description}
-              </div>
-              <div
-                className={`
-                  ${classes.selectExample}
-                  ${this.state.selectedExample === examples.APOLLO ? classes.selected : ''}`
-                }
-                onClick={() => this._selectExample(examples.APOLLO)}
-              >
-                {examples.APOLLO.description}
-              </div>
+              {Object.keys(examples).map((key) => (
+                <div
+                  key={key}
+                  className={`
+                    ${classes.selectExample}
+                    ${this.state.selectedExample === examples[key] ? classes.selected : ''}`
+                  }
+                  onClick={() => this._selectExample(examples[key])}
+                >
+                  {examples[key].description}
+                </div>
+              ))}
             </div>
             <div className={classes.instructions}>
               <div className={classes.step1}>
