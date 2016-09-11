@@ -27,7 +27,7 @@ if (sessionToken) {
     endpoint: 'https://6apsb2qt0b.execute-api.eu-west-1.amazonaws.com/Prod',
     payload: {
       resource: 'api',
-      session: sessionToken,
+      token: sessionToken,
     },
     frequency: 60 * 1000,
   })
