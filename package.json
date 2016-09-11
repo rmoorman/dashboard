@@ -37,6 +37,7 @@
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "calculate-size": "^0.2.0",
     "classnames": "^2.2.5",
+    "drumstick": "^1.0.5",
     "graphiql": "^0.7.3",
     "immutable": "^3.8.1",
     "js-cookie": "^2.1.2",
