@@ -23,26 +23,26 @@ export class GettingStartedState {
     'STEP11_SKIPPED',
   ]
 
-  _userId: string
-
   step: string
 
   progress: number
 
+  private userId: string
+
   constructor (props: Props) {
-    this._userId = props.userId
-    this._update(props.step)
+    this.userId = props.userId
+    this.update(props.step)
   }
 
-  isActive (): boolean {
+  isActive = (): boolean => {
     return this.step !== 'STEP10_DONE' && this.step !== 'STEP11_SKIPPED'
   }
 
-  isCurrentStep (step: string): boolean {
+  isCurrentStep = (step: string): boolean => {
     return step === this.step
   }
 
-  _update (step: string): void {
+  update = (step: string): void => {
     const currentStepIndex = GettingStartedState.steps.indexOf(this.step)
     const stepIndex = GettingStartedState.steps.indexOf(step)
     if (currentStepIndex > stepIndex) {
@@ -110,7 +110,7 @@ export function update (step: string, userId: string): ReduxAction {
   return {type: UPDATE, payload}
 }
 
-function _updateReduxAndRelay (dispatch: (action: ReduxAction) => any, step: string, userId: string): Promise<{}> {
+function updateReduxAndRelay (dispatch: (action: ReduxAction) => any, step: string, userId: string): Promise<{}> {
   return new Promise((resolve, reject) => {
     Relay.Store.commitUpdate(
       new UpdateCustomerMutation(
@@ -133,18 +133,18 @@ export function nextStep (): (dispatch: (action: ReduxAction) => any, getState: 
     const currentStep = getState().gettingStartedState.step
     const currentStepIndex = GettingStartedState.steps.indexOf(currentStep)
     const nextStep = GettingStartedState.steps[currentStepIndex + 1]
-    const userId = getState().gettingStartedState._userId
+    const userId = getState().gettingStartedState.userId
 
-    return _updateReduxAndRelay(dispatch, nextStep, userId)
+    return updateReduxAndRelay(dispatch, nextStep, userId)
   }
 }
 
 export function skip (): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> {
   return function (dispatch: (action: ReduxAction) => any, getState): Promise<{}> {
     const nextStep = 'STEP11_SKIPPED'
-    const userId = getState().gettingStartedState._userId
+    const userId = getState().gettingStartedState.userId
 
-    return _updateReduxAndRelay(dispatch, nextStep, userId)
+    return updateReduxAndRelay(dispatch, nextStep, userId)
   }
 }
 

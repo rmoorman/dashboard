@@ -5,6 +5,7 @@ import FloatCell from './FloatCell'
 import BooleanCell from './BooleanCell'
 import EnumCell from './EnumCell'
 import StringCell from './StringCell'
+import JsonCell from './JsonCell'
 import DateTimeCell from './DateTimeCell'
 import DefaultCell from './DefaultCell'
 import NodeSelector from '../../../../components/NodeSelector/NodeSelector'
@@ -129,6 +130,16 @@ export function getScalarEditCell(reqs: CellRequirements): JSX.Element {
     case 'String':
       return (
         <StringCell
+          value={reqs.value}
+          onKeyDown={reqs.methods.onKeyDown}
+          save={reqs.methods.save}
+          field={reqs.field}
+          cancel={reqs.methods.cancel}
+        />
+      )
+    case 'Json':
+      return (
+        <JsonCell
           value={reqs.value}
           onKeyDown={reqs.methods.onKeyDown}
           save={reqs.methods.save}

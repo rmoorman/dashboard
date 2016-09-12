@@ -47,117 +47,6 @@ class FieldRow extends React.Component<Props, State> {
     detailsState: null,
   }
 
-  _delete () {
-    if (window.confirm(`Do you really want to delete "${this.props.field.name}"?`)) {
-      Relay.Store.commitUpdate(
-        new DeleteFieldMutation({
-          fieldId: this.props.field.id,
-          modelId: this.props.model.id,
-        }),
-        {
-          onSuccess: () => {
-            analytics.track('models/structure: deleted field', {
-              project: this.props.params.projectName,
-              model: this.props.params.modelName,
-              field: this.props.field.name,
-            })
-          },
-          onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
-          },
-        }
-      )
-    }
-  }
-
-  _saveDescription (e) {
-    const description = e.target.value
-    if (this.props.field.description === description) {
-      this.setState({ editDescription: false } as State)
-      return
-    }
-
-    this.setState({ editDescriptionPending: true } as State)
-
-    Relay.Store.commitUpdate(
-      new UpdateFieldDescriptionMutation({
-        fieldId: this.props.field.id,
-        description,
-      }),
-      {
-        onSuccess: () => {
-          analytics.track('models/structure: edited description')
-
-          this.setState({
-            editDescription: false,
-            editDescriptionPending: false,
-          } as State)
-        },
-        onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
-          this.setState({
-            editDescription: false,
-            editDescriptionPending: false,
-          } as State)
-        },
-      }
-    )
-  }
-
-  _togglePermissions () {
-    const detailsState = this.state.detailsState === 'PERMISSIONS' ? null : 'PERMISSIONS' as DetailsState
-    this.setState({ detailsState } as State)
-  }
-
-  _toggleConstraints () {
-    const detailsState = this.state.detailsState === 'CONSTRAINTS' ? null : 'CONSTRAINTS' as DetailsState
-    this.setState({ detailsState } as State)
-  }
-
-  _renderDescription () {
-    if (this.props.field.relation) {
-      return
-    }
-    if (this.state.editDescriptionPending) {
-      return (
-        <Loading color='#B9B9C8' />
-      )
-    }
-
-    if (this.state.editDescription) {
-      return (
-        <input
-          autoFocus
-          type='text'
-          placeholder='Description'
-          defaultValue={this.props.field.description}
-          onBlur={(e) => this._saveDescription(e)}
-          onKeyDown={(e) => e.keyCode === 13 ? (e.target as HTMLInputElement).blur() : null}
-        />
-      )
-    }
-
-    if (!this.props.field.description) {
-      return (
-        <span
-          className={classes.addDescription}
-          onClick={() => this.setState({ editDescription: true } as State)}
-        >
-          Add description
-        </span>
-      )
-    }
-
-    return (
-      <span
-        className={classes.descriptionText}
-        onClick={() => this.setState({ editDescription: true } as State)}
-      >
-        {this.props.field.description}
-      </span>
-    )
-  }
-
   render () {
     const { field } = this.props
 
@@ -191,11 +80,11 @@ class FieldRow extends React.Component<Props, State> {
             <span>{type}</span>
           </Link>
           <div className={classes.description}>
-            {this._renderDescription()}
+            {this.renderDescription()}
           </div>
           <div
             className={`${classes.constraints} ${this.state.detailsState === 'CONSTRAINTS' ? classes.active : '' }`}
-            onClick={() => this._toggleConstraints()}
+            onClick={() => this.toggleConstraints()}
           >
             {field.isUnique &&
               <span className={classes.label}>Unique</span>
@@ -208,7 +97,7 @@ class FieldRow extends React.Component<Props, State> {
           </div>
           <div
             className={`${classes.permissions} ${this.state.detailsState === 'PERMISSIONS' ? classes.active : '' }`}
-            onClick={() => this._togglePermissions()}
+            onClick={() => this.togglePermissions()}
           >
             {field.permissions.edges.length === 0 &&
               <span className={`${classes.label} ${classes.add}`}>
@@ -218,15 +107,17 @@ class FieldRow extends React.Component<Props, State> {
             {this.renderPermissionList()}
           </div>
           <div className={classes.controls}>
-            <Link to={editLink}>
-              <Icon
-                width={20}
-                height={20}
-                src={require('assets/icons/edit.svg')}
-              />
-            </Link>
+            {(!field.isSystem || (field.isSystem && field.name === 'roles')) &&
+              <Link to={editLink}>
+                <Icon
+                  width={20}
+                  height={20}
+                  src={require('assets/icons/edit.svg')}
+                />
+              </Link>
+            }
             {!field.isSystem && isScalar(field.typeIdentifier) &&
-              <span onClick={() => this._delete()}>
+              <span onClick={() => this.deleteField()}>
                 <Icon
                   width={20}
                   height={20}
@@ -251,6 +142,117 @@ class FieldRow extends React.Component<Props, State> {
           />
         }
       </div>
+    )
+  }
+
+  private deleteField () {
+    if (window.confirm(`Do you really want to delete "${this.props.field.name}"?`)) {
+      Relay.Store.commitUpdate(
+        new DeleteFieldMutation({
+          fieldId: this.props.field.id,
+          modelId: this.props.model.id,
+        }),
+        {
+          onSuccess: () => {
+            analytics.track('models/structure: deleted field', {
+              project: this.props.params.projectName,
+              model: this.props.params.modelName,
+              field: this.props.field.name,
+            })
+          },
+          onFailure: (transaction) => {
+            onFailureShowNotification(transaction, this.context.showNotification)
+          },
+        }
+      )
+    }
+  }
+
+  private saveDescription (e) {
+    const description = e.target.value
+    if (this.props.field.description === description) {
+      this.setState({ editDescription: false } as State)
+      return
+    }
+
+    this.setState({ editDescriptionPending: true } as State)
+
+    Relay.Store.commitUpdate(
+      new UpdateFieldDescriptionMutation({
+        fieldId: this.props.field.id,
+        description,
+      }),
+      {
+        onSuccess: () => {
+          analytics.track('models/structure: edited description')
+
+          this.setState({
+            editDescription: false,
+            editDescriptionPending: false,
+          } as State)
+        },
+        onFailure: (transaction) => {
+          onFailureShowNotification(transaction, this.context.showNotification)
+          this.setState({
+            editDescription: false,
+            editDescriptionPending: false,
+          } as State)
+        },
+      }
+    )
+  }
+
+  private togglePermissions () {
+    const detailsState = this.state.detailsState === 'PERMISSIONS' ? null : 'PERMISSIONS' as DetailsState
+    this.setState({ detailsState } as State)
+  }
+
+  private toggleConstraints () {
+    const detailsState = this.state.detailsState === 'CONSTRAINTS' ? null : 'CONSTRAINTS' as DetailsState
+    this.setState({ detailsState } as State)
+  }
+
+  private renderDescription () {
+    if (this.props.field.relation) {
+      return
+    }
+    if (this.state.editDescriptionPending) {
+      return (
+        <Loading color='#B9B9C8' />
+      )
+    }
+
+    if (this.state.editDescription) {
+      return (
+        <input
+          autoFocus
+          type='text'
+          placeholder='Description'
+          defaultValue={this.props.field.description}
+          onBlur={(e) => this.saveDescription(e)}
+          onKeyDown={(e) => e.keyCode === 13 ? (e.target as HTMLInputElement).blur() : null}
+        />
+      )
+    }
+
+    if (!this.props.field.description) {
+      return (
+        <span
+          className={classes.addDescription}
+          onClick={() => this.setState({ editDescription: true } as State)}
+        >
+          Add description
+        </span>
+      )
+    }
+
+    return (
+      <span
+        className={classes.descriptionText}
+        onClick={() => this.setState({ editDescription: true } as State)}
+      >
+        {this.props.field.description}
+      </span>
     )
   }
 

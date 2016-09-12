@@ -76,14 +76,6 @@ interface ViewState {
 }
 
 class GettingStartedView extends React.Component<ViewProps, ViewState> {
-  static propTypes = {
-    params: PropTypes.object.isRequired,
-    projectId: PropTypes.string.isRequired,
-    user: PropTypes.object.isRequired,
-    gettingStartedState: PropTypes.object.isRequired,
-    nextStep: PropTypes.func.isRequired,
-    skip: PropTypes.func.isRequired,
-  }
 
   static contextTypes = {
     router: PropTypes.object.isRequired,
@@ -121,38 +113,6 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
     }
   }
 
-  _getStarted (): void {
-    if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
-      this.props.nextStep()
-    }
-  }
-
-  _selectExample (example: Example): void {
-    this.setState({selectedExample: example})
-  }
-
-  _skipGettingStarted (): void {
-    if (window.confirm('Do you really want skip the getting started tour?')) {
-      // TODO: fix this hack
-      Promise.resolve(this.props.skip())
-        .then(() => {
-          this.context.router.replace(`/${this.props.params.projectName}/models`)
-        })
-    }
-  }
-
-  _onClose (): void {
-    analytics.track('getting-started: closed')
-  }
-
-  _selectCommands (): void {
-    const commands = findDOMNode((this.refs as any).commands)
-    const range = document.createRange()
-    range.setStartBefore(commands)
-    range.setEndAfter(commands)
-    window.getSelection().addRange(range)
-  }
-
   render () {
     const { progress } = this.props.gettingStartedState
     const overlayActive = progress === 0 || progress === 4
@@ -179,14 +139,14 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
               <div
                 className={`${classes.button} ${classes.green}`}
                 style={{width: 260}}
-                onClick={this._getStarted.bind(this)}
+                onClick={this.getStarted}
               >
                 Let’s go
               </div>
               <div
                 className={`${classes.button} ${classes.grey}`}
                 style={{width: 170}}
-                onClick={this._skipGettingStarted.bind(this)}
+                onClick={this.skipGettingStarted}
               >
                 Skip tour
               </div>
@@ -285,7 +245,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
                     ${classes.selectExample}
                     ${this.state.selectedExample === examples[key] ? classes.selected : ''}`
                   }
-                  onClick={() => this._selectExample(examples[key])}
+                  onClick={() => this.selectExample(examples[key])}
                 >
                   {examples[key].description}
                 </div>
@@ -306,7 +266,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
                   2. Run these commands
                 </h3>
                 <div
-                  onClick={this._selectCommands.bind(this)}
+                  onClick={this.selectCommands}
                   className={classes.field}
                   ref='commands'
                 >
@@ -334,6 +294,34 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
         </div>
       </div>
     )
+  }
+
+  private getStarted = (): void => {
+    if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
+      this.props.nextStep()
+    }
+  }
+
+  private selectExample = (example: Example): void => {
+    this.setState({selectedExample: example})
+  }
+
+  private skipGettingStarted = (): void => {
+    if (window.confirm('Do you really want skip the getting started tour?')) {
+      // TODO: fix this hack
+      Promise.resolve(this.props.skip())
+        .then(() => {
+          this.context.router.replace(`/${this.props.params.projectName}/models`)
+        })
+    }
+  }
+
+  private selectCommands = (): void => {
+    const commands = findDOMNode((this.refs as any).commands)
+    const range = document.createRange()
+    range.setStartBefore(commands)
+    range.setEndAfter(commands)
+    window.getSelection().addRange(range)
   }
 }
 
