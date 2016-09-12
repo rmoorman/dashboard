@@ -69,6 +69,8 @@ export function atomicValueToString(value: AtomicValue, field: Field, returnNull
       return new Date(value).toISOString()
     case 'Password':
       return '***************'
+    case 'Json':
+      return JSON.stringify(value)
     default:
       return value.toString()
   }
