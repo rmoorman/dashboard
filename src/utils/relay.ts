@@ -106,12 +106,13 @@ export function deleteNode(lokka: any, modelName: string, nodeId: string): Promi
 
 export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[], skip: number = 0, first: number = 50,
                            filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
-                           orderBy?: OrderBy): Promise<any> {
+                           orderBy?: OrderBy, subNodeLimit: number = 3): Promise<any> {
 
   const fieldNames = fields
     .map((field) => isScalar(field.typeIdentifier)
       ? field.name : field.isList
-      ? `${field.name} { edges { node { id } } }` :  `${field.name} { id }`)
+      ? `${field.name} (first: ${subNodeLimit}) { edges { node { id } } }`
+      : `${field.name} { id }`)
     .join(' ')
 
   const filterQuery = filters
