@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { updateNetworkLayer } from '../../utils/relay'
 import { getQueryVariable } from '../../utils/location'
-import * as cookiestore from '../../utils/cookiestore'
+import * as cookiestore from 'cookiestore'
 
 export default class TokenRedirectView extends React.Component<{}, {}> {
 

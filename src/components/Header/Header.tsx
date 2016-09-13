@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import Icon from '../../components/Icon/Icon'
 import ApiLayover from '../../components/ApiLayover/ApiLayover'
 import ClickOutside from 'react-click-outside'
-import * as cookiestore from '../../utils/cookiestore'
+import * as cookiestore from 'cookiestore'
 import { Project } from '../../types/types'
 const classes: any = require('./Header.scss')
 
@@ -39,7 +39,7 @@ class Header extends React.Component<Props, State> {
     analytics.track('header: logout', () => {
       analytics.reset()
       cookiestore.remove('graphcool_auth_token')
-      cookiestore.remove('graphcool_client_id')
+      cookiestore.remove('graphcool_customer_id')
       window.localStorage.clear()
       window.location.pathname = '/'
     })

@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Relay from 'react-relay'
 import Loading from '../../components/Loading/Loading'
 import { updateNetworkLayer, onFailureShowNotification } from '../../utils/relay'
-import * as cookiestore from '../../utils/cookiestore'
+import * as cookiestore from 'cookiestore'
 import LoginMutation from '../../mutations/LoginMutation'
 import Icon from '../../components/Icon/Icon'
 import { Viewer } from '../../types/types'
@@ -48,7 +48,7 @@ class LoginView extends React.Component<Props, State> {
     const payload = { email, password, viewer: this.props.viewer }
     const onSuccess = (response) => {
       cookiestore.set('graphcool_auth_token', response.signinCustomer.token)
-      cookiestore.set('graphcool_client_id', response.signinCustomer.viewer.user.id)
+      cookiestore.set('graphcool_customer_id', response.signinCustomer.viewer.user.id)
       updateNetworkLayer()
 
       analytics.track('login: logged in', () => {

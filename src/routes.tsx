@@ -43,7 +43,7 @@ const render = ({ error, props, routerProps, element }) => {
 
     if (err.code === 2001) {
       cookiestore.remove('graphcool_auth_token')
-      cookiestore.remove('graphcool_client_id')
+      cookiestore.remove('graphcool_customer_id')
       window.localStorage.clear()
 
       return (
