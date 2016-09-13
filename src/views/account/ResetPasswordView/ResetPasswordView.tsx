@@ -4,7 +4,7 @@ import ResetPasswordMutation from '../../../mutations/ResetPasswordMutation'
 import Icon from '../../../components/Icon/Icon'
 import Loading from '../../../components/Loading/Loading'
 import { getQueryVariable } from '../../../utils/location'
-import * as cookiestore from '../../../utils/cookiestore'
+import * as cookiestore from 'cookiestore'
 import { updateNetworkLayer } from '../../../utils/relay'
 const classes: any = require('./ResetPasswordView.scss')
 
@@ -34,7 +34,7 @@ export default class ResetPasswordView extends React.Component<{}, State> {
       {
         onSuccess: (response) => {
           cookiestore.set('graphcool_auth_token', response.resetPassword.token)
-          cookiestore.set('graphcool_client_id', response.resetPassword.user.id)
+          cookiestore.set('graphcool_customer_id', response.resetPassword.user.id)
           updateNetworkLayer()
 
           analytics.track('reset-password', () => {
