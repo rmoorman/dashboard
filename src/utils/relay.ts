@@ -1,6 +1,6 @@
 import {injectNetworkLayer, DefaultNetworkLayer, Transaction} from 'react-relay'
 import {ShowNotificationCallback} from '../types/utils'
-import * as cookiestore from './cookiestore'
+import * as cookiestore from 'cookiestore'
 import {Lokka} from 'lokka'
 import {Transport} from 'lokka-transport-http'
 import {toGQL} from '../views/models/utils'
@@ -10,11 +10,13 @@ import {Field, OrderBy} from '../types/types'
 import {TypedValue} from '../types/utils'
 
 export function updateNetworkLayer (): void {
-  const token = cookiestore.get('graphcool_auth_token')
-  const headers = token ? {
-    'Authorization': `Bearer ${token}`,
-    'X-GraphCool-Source': 'dashboard:relay',
-  } : null
+  const isLoggedin = cookiestore.has('graphcool_auth_token') && cookiestore.has('graphcool_customer_id')
+  const headers = isLoggedin
+    ? {
+      'Authorization': `Bearer ${cookiestore.get('graphcool_auth_token')}`,
+      'X-GraphCool-Source': 'dashboard:relay',
+    }
+    : null
   const api = `${__BACKEND_ADDR__}/system`
   const layer = new DefaultNetworkLayer(api, { headers, retryDelays: [] })
 
@@ -106,12 +108,13 @@ export function deleteNode(lokka: any, modelName: string, nodeId: string): Promi
 
 export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[], skip: number = 0, first: number = 50,
                            filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
-                           orderBy?: OrderBy): Promise<any> {
+                           orderBy?: OrderBy, subNodeLimit: number = 3): Promise<any> {
 
   const fieldNames = fields
     .map((field) => isScalar(field.typeIdentifier)
       ? field.name : field.isList
-      ? `${field.name} { edges { node { id } } }` :  `${field.name} { id }`)
+      ? `${field.name} (first: ${subNodeLimit}) { edges { node { id } } }`
+      : `${field.name} { id }`)
     .join(' ')
 
   const filterQuery = filters

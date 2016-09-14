@@ -69,6 +69,8 @@ export function atomicValueToString(value: AtomicValue, field: Field, returnNull
       return new Date(value).toISOString()
     case 'Password':
       return '***************'
+    case 'Json':
+      return JSON.stringify(value)
     default:
       return value.toString()
   }
@@ -122,6 +124,7 @@ export function stringToValue(rawValue: string, field: Field): TypedValue {
       Password: () => rawValue,
       Enum: () => isValidEnum(rawValue) ? rawValue : null,
       DateTime: () => isValidDateTime(rawValue) ? rawValue : null,
+      Json: () => isJSON(rawValue) ? rawValue : null,
     }[typeIdentifier]()
   }
 }
@@ -132,4 +135,13 @@ export function getFieldTypeName(field: Field) {
   } else {
     return field.relatedModel.name
   }
+}
+
+export function isJSON(jsonString: string): boolean {
+  try {
+    JSON.parse(jsonString)
+  } catch (e) {
+    return false
+  }
+  return true
 }

@@ -18,7 +18,7 @@ import SettingsTab from './views/account/AccountView/SettingsTab'
 import ResetPasswordView from './views/account/ResetPasswordView/ResetPasswordView'
 import LoginView from './views/LoginView/LoginView'
 import ActionsView from './views/ActionsView/ActionsView'
-import * as cookiestore from './utils/cookiestore'
+import * as cookiestore from 'cookiestore'
 import RelationsView from './views/RelationsView/RelationsView'
 import RelationPopup from './views/RelationsView/RelationPopup'
 import ProjectSettingsView from './views/ProjectSettingsView/ProjectSettingsView'
@@ -43,7 +43,7 @@ const render = ({ error, props, routerProps, element }) => {
 
     if (err.code === 2001) {
       cookiestore.remove('graphcool_auth_token')
-      cookiestore.remove('graphcool_client_id')
+      cookiestore.remove('graphcool_customer_id')
       window.localStorage.clear()
 
       return (

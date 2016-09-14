@@ -12,6 +12,7 @@ const types = [
   'String',
   'DateTime',
   'Enum',
+  'Json',
 ]
 
 interface Props {

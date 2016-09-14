@@ -9,7 +9,7 @@ import {updateNetworkLayer} from './utils/relay'
 import {createStore, applyMiddleware} from 'redux'
 import {Provider} from 'react-redux'
 import * as thunk from 'redux-thunk'
-import {get as getCookie} from './utils/cookiestore'
+import * as cookiestore from 'cookiestore'
 import drumstick from 'drumstick'
 
 import {
@@ -21,13 +21,12 @@ import loadAnalytics from './utils/analytics'
 
 import './utils/polyfils'
 
-const sessionToken = getCookie('graphcool_auth_token')
-if (sessionToken) {
+if (cookiestore.has('graphcool_auth_token')) {
   drumstick.start({
     endpoint: 'https://6apsb2qt0b.execute-api.eu-west-1.amazonaws.com/Prod',
     payload: {
       resource: 'dashboard',
-      token: sessionToken,
+      token: cookiestore.get('graphcool_auth_token'),
     },
     frequency: 60 * 1000,
   })

@@ -28,7 +28,6 @@
     ]
   },
   "dependencies": {
-    "@types/js-cookie": "^2.0.27",
     "@types/node": "^6.0.31",
     "@types/react": "^0.14.27",
     "@types/react-addons-pure-render-mixin": "^0.14.13",
@@ -38,10 +37,10 @@
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "calculate-size": "^0.2.0",
     "classnames": "^2.2.5",
+    "cookiestore": "^1.0.3",
     "drumstick": "^1.0.5",
     "graphiql": "^0.7.3",
     "immutable": "^3.8.1",
-    "js-cookie": "^2.1.2",
     "lokka": "^1.7.0",
     "lokka-transport-http": "^1.4.0",
     "map-props": "^1.0.0",

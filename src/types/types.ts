@@ -29,7 +29,7 @@ export interface Project {
   actionSchema: string
 }
 
-export type FieldType = 'Relation' | 'Int' | 'String' | 'Boolean' | 'Enum' | 'Float' | 'DateTime' | 'Password'
+export type FieldType = 'Relation' | 'Int' | 'String' | 'Boolean' | 'Enum' | 'Float' | 'DateTime' | 'Password' | 'Json'
 
 export interface Field {
   id: string

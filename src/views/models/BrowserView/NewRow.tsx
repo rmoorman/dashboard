@@ -93,23 +93,23 @@ class NewRow extends React.Component<Props, State> {
 }
 
 export default Relay.createContainer(NewRow, {
-    fragments: {
-        model: () => Relay.QL`
-            fragment on Model {
-                fields(first: 1000) {
-                    edges {
-                        node {
-                            id
-                            name
-                            defaultValue
-                            enumValues
-                            typeIdentifier
-                            isList
-                            ${Cell.getFragment('field')}
-                        }
-                    }
-                }
+  fragments: {
+    model: () => Relay.QL`
+      fragment on Model {
+        fields(first: 1000) {
+          edges {
+            node {
+              id
+              name
+              defaultValue
+              enumValues
+              typeIdentifier
+              isList
+              ${Cell.getFragment('field')}
             }
-        `,
-    },
+          }
+        }
+      }
+    `,
+  },
 })

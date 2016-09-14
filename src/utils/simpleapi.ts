@@ -1,7 +1,7 @@
 import {Field, OrderBy} from '../types/types'
 import * as Immutable from 'immutable'
 import {isScalar} from './graphql'
-import * as cookiestore from './cookiestore'
+import * as cookiestore from 'cookiestore'
 import { Lokka } from 'lokka'
 import { Transport } from 'lokka-transport-http'
 
