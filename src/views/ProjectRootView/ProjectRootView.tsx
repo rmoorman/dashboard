@@ -74,7 +74,6 @@ class ProjectRootView extends React.Component<Props, {}> {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('update')
     const newStatus = this.props.user.gettingStartedStatus
     const prevStatus = prevProps.user.gettingStartedStatus
 
@@ -132,14 +131,12 @@ class ProjectRootView extends React.Component<Props, {}> {
   }
 
   private updateForceFetching() {
-    console.log('force fetching')
     if (this.props.checkStatus) {
       if (!this.refreshInterval) {
         this.refreshInterval = setInterval(
           () => {
             // ideally we would handle this with a Redux thunk, but somehow Relay does not support raw force fetches...
             this.props.relay.forceFetch({}, () => {
-              console.log('force fetching #awesome')
               this.props.update(this.props.user.gettingStartedStatus, this.props.user.id)
             })
           },

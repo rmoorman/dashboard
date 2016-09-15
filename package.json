@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@types/node": "^6.0.31",
-    "@types/react": "^0.14.27",
+    "@types/react": "^0.14.34",
     "@types/react-addons-pure-render-mixin": "^0.14.13",
     "@types/react-dom": "^0.14.14",
     "@types/redux": "^3.3.26",
