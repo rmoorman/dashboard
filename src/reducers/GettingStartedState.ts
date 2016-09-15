@@ -30,7 +30,6 @@ export class GettingStartedState {
   private userId: string
 
   constructor (props: Props) {
-    console.log('construcing gettingStartedState')
     this.userId = props.userId
     this.update(props.step)
   }
@@ -107,14 +106,11 @@ export function reduceGettingStartedState (state: State = initialState, action: 
 
 // Action Creators
 export function update (step: string, userId: string): ReduxAction {
-  console.log('udpating')
   const payload = {gettingStartedState: new GettingStartedState({step, userId})}
-  console.log(payload)
   return {type: UPDATE, payload}
 }
 
 function updateReduxAndRelay (dispatch: (action: ReduxAction) => any, step: string, userId: string): Promise<{}> {
-  console.log('calling updateReduxAndRelay')
   return new Promise((resolve, reject) => {
     Relay.Store.commitUpdate(
       new UpdateCustomerMutation(
@@ -124,7 +120,6 @@ function updateReduxAndRelay (dispatch: (action: ReduxAction) => any, step: stri
         }),
       {
         onSuccess: () => {
-          console.log('finished calling updateReduxAndRelay')
           dispatch(update(step, userId))
           resolve()
         },
@@ -154,7 +149,6 @@ export function skip (): (dispatch: (action: ReduxAction) => any, getState: any)
 }
 
 export function fetchGettingStartedState (): (dispatch: (action: ReduxAction) => any) => Promise<{}> {
-  console.log('starting to fetchGettingStartedState')
   return function (dispatch: (action: ReduxAction) => any): Promise<{}> {
     let query = Relay.createQuery(
       Relay.QL`
@@ -170,7 +164,6 @@ export function fetchGettingStartedState (): (dispatch: (action: ReduxAction) =>
 
     return new Promise(function (resolve: () => any, reject: (error: Error) => any) {
       Relay.Store.primeCache({query}, ({done, error}) => {
-         console.log('finished fetching')
         if (done) {
           const data = Relay.Store.readQuery(query)[0]
           dispatch(update(data.user.gettingStartedStatus, data.user.id))

@@ -162,9 +162,7 @@ export default class PermissionType extends React.Component<Props, {}> {
 
   _renderRelated () {
     const maxDepth = this.props.possibleRelatedPermissionPaths.reduce((acc, arr) => Math.max(acc, arr.length), 0)
-    console.log(maxDepth)
     const currentDepth = this.props.userPath.length
-    console.log(currentDepth)
     const arrow = (
       <Icon
         width={11}
