@@ -10,6 +10,7 @@ export default class TokenRedirectView extends React.Component<{}, {}> {
     if (token) {
       window.localStorage.clear()
       cookiestore.set('graphcool_auth_token', token)
+      cookiestore.set('graphcool_customer_id', 'tmp')
       updateNetworkLayer()
       window.location.href = window.location.origin
     }
