@@ -48,26 +48,41 @@ function camelCase(value: string) {
   return value.charAt(0).toLowerCase() + value.slice(1)
 }
 
-export function addNode(lokka: any, modelName: string, fieldValues: { [key: string]: any }): Promise<any> {
-  const inputString = fieldValues
+function getInputString(fieldValues: {[key: string]: any}): string {
+  return fieldValues
     .mapToArray((fieldName, obj) => obj)
     .filter(({value}) => value !== null)
     .filter(({field}) => (!isNonScalarList(field)))
     .map(({field, value}) => toGQL(value, field))
     .join(' ')
+}
+
+function getAddMutation(modelName: string, fieldValues: {[key: string]: any}) {
+  const inputString = getInputString(fieldValues)
 
   const inputArgumentsString = `(input: {${inputString} clientMutationId: "a"})`
-
-  const mutation = `
-    {
-      create${modelName}${inputArgumentsString} {
-        ${camelCase(modelName)} {
-          id
-        }
+  return `
+    create${modelName}${inputArgumentsString} {
+      ${camelCase(modelName)} {
+        id
       }
     }
   `
+}
+
+export function addNode(lokka: any, modelName: string, fieldValues: { [key: string]: any }): Promise<any> {
+
+  const mutation = `
+    {
+      ${getAddMutation(modelName, fieldValues)}
+    }
+  `
   return lokka.mutate(mutation)
+}
+
+export function addNodes(lokka: any, modelName: string, fieldValueArray: {[key: string]: any}[]): Promise<any> {
+  const mutations = fieldValueArray.map((value, index) => `add${index}: ${getAddMutation(modelName, value)}`)
+  return lokka.mutate(`{${mutations.join('\n')}}`)
 }
 
 export function updateNode(lokka: any, modelName: string, value: TypedValue,

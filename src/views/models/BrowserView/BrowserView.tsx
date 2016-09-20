@@ -27,7 +27,7 @@ import InfiniteTable from '../../../components/InfiniteTable/InfiniteTable'
 import {AutoSizer} from 'react-virtualized'
 import Cell from './Cell'
 import LoadingCell from './LoadingCell'
-import {getLokka, addNode, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
+import {getLokka, addNode, addNodes, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
 const classes: any = require('./BrowserView.scss')
 
 interface Props {
@@ -235,13 +235,21 @@ class BrowserView extends React.Component<Props, State> {
 
   private parseImport = (e: any) => {
     const data = JSON.parse(e.target.result)
+    console.log(data.length)
+    const values = []
     data.forEach(item => {
-      console.log(this.props.model.fields.edges)
       const fieldValues = getDefaultFieldValues(this.props.model.fields.edges.map((edge) => edge.node))
       Object.keys(item).forEach((key) => fieldValues[key].value = item[key])
-      console.log(fieldValues)
-      this.addNewNode(fieldValues)
+      values.push(fieldValues)
     })
+    const promises = []
+    const chunk = 10
+    for (let i = 0; i <= values.length / chunk; i++) {
+      promises.push(addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk)))
+    }
+    console.log(promises.length)
+    console.log(values.length)
+    Promise.all(promises).then(() => this.reloadData(0))
   }
 
   private handleAddNodeClick = () => {
@@ -469,8 +477,8 @@ class BrowserView extends React.Component<Props, State> {
       })
   }
 
-  private addNewNode = (fieldValues: { [key: string]: any }) => {
-    addNode(this.lokka, this.props.params.modelName, fieldValues)
+  private addNewNode = (fieldValues: { [key: string]: any }): Promise<any> => {
+    return addNode(this.lokka, this.props.params.modelName, fieldValues)
       .then(() => this.reloadData(0))
       .then(() => {
         this.setState({
