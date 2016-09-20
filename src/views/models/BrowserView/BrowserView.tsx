@@ -14,7 +14,7 @@ import NewRow from './NewRow'
 import HeaderCell from './HeaderCell'
 import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
-import {compareFields, emptyDefault, getFirstInputFieldIndex} from '../utils'
+import {compareFields, emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import {valueToString} from '../../../utils/valueparser'
 import {isNonScalarList} from '../../../utils/graphql'
 import {sideNavSyncer} from '../../../utils/sideNavSyncer'
@@ -28,7 +28,6 @@ import {AutoSizer} from 'react-virtualized'
 import Cell from './Cell'
 import LoadingCell from './LoadingCell'
 import {getLokka, addNode, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
-import FileInput from 'react-file-input'
 const classes: any = require('./BrowserView.scss')
 
 interface Props {
@@ -120,7 +119,12 @@ class BrowserView extends React.Component<Props, State> {
           viewer={this.props.viewer}
           project={this.props.project}
         >
-        <FileInput accept='.json' placeholder='import' onChange={this.handleImport} />
+          <div className={classes.button}>
+            <input type='file' onChange={this.handleImport} id='fileselector' style={{display: 'none'}}/>
+            <label htmlFor='fileselector'>
+              Import
+            </label>
+          </div>
           {this.renderTether()}
           {this.state.selectedNodeIds.size > 0 &&
           <div className={`${classes.button} ${classes.red}`} onClick={this.deleteSelectedNodes}>
@@ -231,7 +235,13 @@ class BrowserView extends React.Component<Props, State> {
 
   private parseImport = (e: any) => {
     const data = JSON.parse(e.target.result)
-    data.forEach(data => this.addNewNode(data))
+    data.forEach(item => {
+      console.log(this.props.model.fields.edges)
+      const fieldValues = getDefaultFieldValues(this.props.model.fields.edges.map((edge) => edge.node))
+      Object.keys(item).forEach((key) => fieldValues[key].value = item[key])
+      console.log(fieldValues)
+      this.addNewNode(fieldValues)
+    })
   }
 
   private handleAddNodeClick = () => {
@@ -612,6 +622,7 @@ export default Relay.createContainer(MappedBrowserView, {
                 name
                 typeIdentifier
                 isList
+                defaultValue
                 relatedModel {
                   name
                 }
