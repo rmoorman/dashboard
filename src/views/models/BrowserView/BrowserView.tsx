@@ -28,6 +28,7 @@ import {AutoSizer} from 'react-virtualized'
 import Cell from './Cell'
 import LoadingCell from './LoadingCell'
 import {getLokka, addNode, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
+import FileInput from 'react-file-input'
 const classes: any = require('./BrowserView.scss')
 
 interface Props {
@@ -119,6 +120,7 @@ class BrowserView extends React.Component<Props, State> {
           viewer={this.props.viewer}
           project={this.props.project}
         >
+        <FileInput accept='.json' placeholder='import' onChange={this.handleImport} />
           {this.renderTether()}
           {this.state.selectedNodeIds.size > 0 &&
           <div className={`${classes.button} ${classes.red}`} onClick={this.deleteSelectedNodes}>
@@ -218,6 +220,18 @@ class BrowserView extends React.Component<Props, State> {
         </div>
       </Tether>
     )
+  }
+
+  private handleImport = (e: any) => {
+    const file = e.target.files[0]
+    const reader = new FileReader()
+    reader.onloadend = this.parseImport
+    const val = reader.readAsText(file)
+  }
+
+  private parseImport = (e: any) => {
+    const data = JSON.parse(e.target.result)
+    data.forEach(data => this.addNewNode(data))
   }
 
   private handleAddNodeClick = () => {
