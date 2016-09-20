@@ -226,7 +226,6 @@ class BrowserView extends React.Component<Props, State> {
     const file = e.target.files[0]
     const reader = new FileReader()
     reader.onloadend = this.parseImport
-    const val = reader.readAsText(file)
   }
 
   private parseImport = (e: any) => {
