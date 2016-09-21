@@ -6,7 +6,7 @@ import { default as useRelay } from 'react-router-relay'
 import {Router, browserHistory, applyRouterMiddleware} from 'react-router'
 import routes from './routes'
 import {updateNetworkLayer} from './utils/relay'
-import {createStore, applyMiddleware, combineReducers} from 'redux'
+import {createStore, applyMiddleware, combineReducers, compose} from 'redux'
 import {Provider} from 'react-redux'
 import * as thunk from 'redux-thunk'
 import * as cookiestore from 'cookiestore'
@@ -45,7 +45,10 @@ const reducers = combineReducers({
   progressIndicator: reduceProgress,
 })
 
-const store = createStore(reducers, applyMiddleware(thunk.default))
+const store = createStore(reducers, compose(
+  applyMiddleware(thunk.default),
+  (window as any).devToolsExtension ? (window as any).devToolsExtension() : f => f
+))
 store.dispatch(fetchGettingStartedState())
 
 ReactDOM.render(
