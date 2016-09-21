@@ -89,7 +89,7 @@ interface State {
 
 const initialState: State = {checkStatus: false}
 
-export function reduceGettingStartedState (state: State = initialState, action: ReduxAction = {}): State {
+export function reduceGettingStartedState (state: State = initialState, action: ReduxAction): State {
   switch (action.type) {
     case UPDATE:
       let gettingStartedState = action.payload.gettingStartedState

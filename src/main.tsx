@@ -6,19 +6,17 @@ import { default as useRelay } from 'react-router-relay'
 import {Router, browserHistory, applyRouterMiddleware} from 'react-router'
 import routes from './routes'
 import {updateNetworkLayer} from './utils/relay'
-import {createStore, applyMiddleware} from 'redux'
+import {createStore, applyMiddleware, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
 import * as thunk from 'redux-thunk'
 import * as cookiestore from 'cookiestore'
 import drumstick from 'drumstick'
-
-import {
-  reduceGettingStartedState,
-  fetchGettingStartedState,
-} from './reducers/GettingStartedState'
+import { reduceGettingStartedState, fetchGettingStartedState } from './reducers/GettingStartedState'
+import { reducePopup } from './reducers/popup'
 
 import loadAnalytics from './utils/analytics'
 
+import 'tachyons'
 import './utils/polyfils'
 
 if (cookiestore.has('graphcool_auth_token')) {
@@ -40,7 +38,12 @@ browserHistory.listen(() => {
   analytics.page()
 })
 
-const store = createStore(reduceGettingStartedState, applyMiddleware(thunk.default))
+const reducers = combineReducers({
+  gettingStarted: reduceGettingStartedState,
+  popup: reducePopup,
+})
+
+const store = createStore(reducers, applyMiddleware(thunk.default))
 store.dispatch(fetchGettingStartedState())
 
 ReactDOM.render(

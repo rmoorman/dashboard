@@ -71,7 +71,8 @@
     "react-virtualized": "^7.22.1",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
-    "smooch": "^3.4.0"
+    "smooch": "^3.4.0",
+    "tachyons": "^4.5.2"
   },
   "devDependencies": {
     "@types/jest": "^0.9.27",

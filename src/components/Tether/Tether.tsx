@@ -48,7 +48,7 @@ class Tether extends React.Component<Props, {}> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 

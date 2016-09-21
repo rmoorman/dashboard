@@ -27,6 +27,7 @@ interface Props {
   params: any
   relay: any
   gettingStartedState: any
+  popup: any
   checkStatus: boolean
   update: (step: string, userId: string) => void
 }
@@ -102,7 +103,6 @@ class ProjectRootView extends React.Component<Props, {}> {
         <LoginView viewer={this.props.viewer}/>
       )
     }
-
     return (
       <div className={classes.root}>
         <div className={classes.sidebar}>
@@ -126,6 +126,11 @@ class ProjectRootView extends React.Component<Props, {}> {
         <div className={classes.content}>
           {this.props.children}
         </div>
+        {this.props.popup.showing &&
+        <div className='fixed left-0 right-0 top-0 z-999 bottom-0 top-0 bg-black-50'>
+          {this.props.popup.content}
+        </div>
+        }
       </div>
     )
   }
@@ -175,8 +180,9 @@ class ProjectRootView extends React.Component<Props, {}> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
-    checkStatus: state.checkStatus,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
+    checkStatus: state.gettingStarted.checkStatus,
+    popup: state.popup,
   }
 }
 
