@@ -3,7 +3,7 @@ import Constants from '../constants/popup'
 
 interface State {
     showing: boolean
-    content?: string
+    content?: Element
 }
 
 const initialState: State = {
@@ -17,6 +17,8 @@ export function reducePopup (state: State = initialState, action: ReduxAction): 
         showing: true,
         content: action.payload,
       })
+    case Constants.CLOSE_POPUP:
+      return Object.assign({}, initialState)
     default:
       return state
   }

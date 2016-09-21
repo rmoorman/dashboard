@@ -13,6 +13,7 @@ import * as cookiestore from 'cookiestore'
 import drumstick from 'drumstick'
 import { reduceGettingStartedState, fetchGettingStartedState } from './reducers/GettingStartedState'
 import { reducePopup } from './reducers/popup'
+import { reduceProgress } from './reducers/progressIndicator'
 
 import loadAnalytics from './utils/analytics'
 
@@ -41,6 +42,7 @@ browserHistory.listen(() => {
 const reducers = combineReducers({
   gettingStarted: reduceGettingStartedState,
   popup: reducePopup,
+  progressIndicator: reduceProgress,
 })
 
 const store = createStore(reducers, applyMiddleware(thunk.default))
