@@ -127,12 +127,10 @@ class BrowserView extends React.Component<Props, State> {
           viewer={this.props.viewer}
           project={this.props.project}
         >
-          <div className={classes.button}>
-            <input type='file' onChange={this.handleImport} id='fileselector' style={{display: 'none'}}/>
-            <label htmlFor='fileselector'>
-              Import
-            </label>
-          </div>
+          <input type='file' onChange={this.handleImport} id='fileselector' className='dn' />
+          <label htmlFor='fileselector' className={classes.button}>
+            Import
+          </label>
           {this.renderTether()}
           {this.state.selectedNodeIds.size > 0 &&
           <div className={`${classes.button} ${classes.red}`} onClick={this.deleteSelectedNodes}>
