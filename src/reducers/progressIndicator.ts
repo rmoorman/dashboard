@@ -11,9 +11,11 @@ const initialState: State = {
 
 export function reduceProgress (state: State = initialState, action: ReduxAction): State {
   switch (action.type) {
-    case Constants.UPDATE_PROGRESS:
-      return Object.assign({}, state, {
-        progress: action.payload,
+    case Constants.START_PROGRESS:
+      return Object.assign({}, initialState)
+    case Constants.INCREMENT_PROGRESS:
+      return Object.assign({}, {
+        progress: state.progress + 1,
       })
     default:
       return state

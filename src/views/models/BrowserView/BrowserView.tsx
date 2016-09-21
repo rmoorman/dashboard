@@ -30,7 +30,7 @@ import Cell from './Cell'
 import LoadingCell from './LoadingCell'
 import {getLokka, addNode, addNodes, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
 import ProgressIndicator from '../../../components/ProgressIndicator/ProgressIndicator'
-import {updateProgress} from '../../../actions/progressIndicator'
+import {startProgress, incrementProgress} from '../../../actions/progressIndicator'
 const classes: any = require('./BrowserView.scss')
 
 interface Props {
@@ -43,7 +43,8 @@ interface Props {
   model: Model
   gettingStartedState: GettingStartedState
   nextStep: () => void
-  updateProgress: (value: number) => any
+  startProgress: () => any
+  incrementProgress: () => any
   showPopup: (content: JSX.Element) => any
   closePopup: () => any
 }
@@ -65,12 +66,10 @@ class BrowserView extends React.Component<Props, State> {
 
   static contextTypes = {
     showNotification: React.PropTypes.func.isRequired,
-    store: React.PropTypes.object,
   }
 
   context: {
     showNotification: ShowNotificationCallback
-    store: any
   }
 
   shouldComponentUpdate: any
@@ -249,11 +248,12 @@ class BrowserView extends React.Component<Props, State> {
     })
     const promises = []
     const chunk = 10
+    this.props.startProgress()
     this.props.showPopup(<ProgressIndicator title='Importing' total={values.length / chunk} />)
     for (let i = 0; i < values.length / chunk; i++) {
       promises.push(
         addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
-          .then(() => this.props.updateProgress(this.context.store.getState().progressIndicator.progress + 1))
+          .then(() => this.props.incrementProgress())
       )
     }
     Promise.all(promises).then(() => this.reloadData(0)).then(() => this.props.closePopup())
@@ -603,7 +603,8 @@ function mapDispatchToProps(dispatch) {
       nextStep,
       showPopup,
       closePopup,
-      updateProgress,
+      startProgress,
+      incrementProgress,
     },
     dispatch)
 }

@@ -1,9 +1,14 @@
 import { ReduxAction } from '../types/reducers'
 import Constants from '../constants/progressIndicator'
 
-export function updateProgress(progress: number): ReduxAction {
+export function startProgress(): ReduxAction {
   return {
-    type: Constants.UPDATE_PROGRESS,
-    payload: progress,
+    type: Constants.START_PROGRESS,
+  }
+}
+
+export function incrementProgress(): ReduxAction {
+  return {
+    type: Constants.INCREMENT_PROGRESS,
   }
 }
