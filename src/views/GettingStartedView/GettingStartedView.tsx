@@ -12,6 +12,7 @@ import { showPopup } from '../../actions/popup'
 import OnboardingView from './OnboardingView'
 import { GettingStartedState } from '../../types/gettingStarted'
 import { Client } from '../../types/types'
+import cuid from 'cuid'
 
 const classes: any = require('./GettingStartedView.scss')
 
@@ -105,7 +106,8 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
       step: this.props.gettingStartedState.step,
     })
     if (this.props.gettingStartedState.progress === 0) {
-      this.props.showPopup(<OnboardingView firstName={this.props.user.name.split(' ')[0]}/>)
+      const id = cuid()
+      this.props.showPopup(<OnboardingView id={id} firstName={this.props.user.name.split(' ')[0]}/>, id)
     }
   }
 

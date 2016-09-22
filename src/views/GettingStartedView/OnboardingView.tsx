@@ -14,6 +14,7 @@ interface Props {
   gettingStartedState: GettingStartedState
   closePopup: any
   firstName: string
+  id: string
 }
 
 class OnboardingView extends React.Component<Props, {}> {
@@ -62,7 +63,7 @@ class OnboardingView extends React.Component<Props, {}> {
       // TODO: fix this hack
       Promise.resolve(this.props.skip())
         .then(() => {
-          this.props.closePopup()
+          this.props.closePopup(this.props.id)
           this.props.router.replace(`/${this.props.params.projectName}/models`)
         })
     }
@@ -70,7 +71,7 @@ class OnboardingView extends React.Component<Props, {}> {
 
   private getStarted = (): void => {
     if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
-      this.props.closePopup()
+      this.props.closePopup(this.props.id)
       this.props.nextStep()
     }
   }

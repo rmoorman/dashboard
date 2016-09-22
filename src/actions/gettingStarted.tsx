@@ -19,7 +19,6 @@ export function update (step: string, userId: string): ReduxAction {
 
 function updateReduxAndRelay (dispatch: (action: ReduxAction) => any, step: string, userId: string): Promise<{}> {
   return new Promise((resolve, reject) => {
-    console.log(userId)
     Relay.Store.commitUpdate(
       new UpdateCustomerMutation(
         {
