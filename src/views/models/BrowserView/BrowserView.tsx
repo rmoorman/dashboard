@@ -622,7 +622,7 @@ const MappedBrowserView = mapProps({
   fields: (props) => (
     props.viewer.model.fields.edges
       .map((edge) => edge.node)
-      .sort(compareFields)
+      // .sort(compareFields) // TODO remove this once field ordering is implemented
   ),
   model: (props) => props.viewer.model,
   project: (props) => props.viewer.project,

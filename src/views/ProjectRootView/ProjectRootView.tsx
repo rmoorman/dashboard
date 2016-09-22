@@ -2,6 +2,7 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import * as Relay from 'react-relay'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
+import * as cookiestore from 'cookiestore'
 import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
 import {connect} from 'react-redux'
@@ -40,12 +41,14 @@ class ProjectRootView extends React.Component<Props, {}> {
 
   private refreshInterval: any
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props)
 
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
 
     this.updateForceFetching()
+
+    cookiestore.set('graphcool_last_used_project_id', props.project.id)
   }
 
   componentWillMount() {
