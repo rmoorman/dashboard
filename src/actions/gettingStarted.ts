@@ -50,7 +50,7 @@ export function skip (): (dispatch: (action: ReduxAction) => any, getState: any)
 
 export function fetchGettingStartedState (): (dispatch: (action: ReduxAction) => any) => Promise<{}> {
   return function (dispatch: (action: ReduxAction) => any): Promise<{}> {
-    let query = Relay.createQuery(
+    const query = Relay.createQuery(
       Relay.QL`
       query {
         viewer {

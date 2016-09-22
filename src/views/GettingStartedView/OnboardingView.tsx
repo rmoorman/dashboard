@@ -83,7 +83,8 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps (dispatch) {
+const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ nextStep, skip, closePopup }, dispatch)
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(OnboardingView))
