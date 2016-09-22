@@ -6,16 +6,15 @@ import { default as useRelay } from 'react-router-relay'
 import {Router, browserHistory, applyRouterMiddleware} from 'react-router'
 import routes from './routes'
 import {updateNetworkLayer} from './utils/relay'
-import {createStore, applyMiddleware} from 'redux'
+import {createStore, applyMiddleware, combineReducers, compose} from 'redux'
 import {Provider} from 'react-redux'
 import * as thunk from 'redux-thunk'
 import * as cookiestore from 'cookiestore'
 import drumstick from 'drumstick'
-
-import {
-  reduceGettingStartedState,
-  fetchGettingStartedState,
-} from './reducers/GettingStartedState'
+import { reduceGettingStartedState } from './reducers/gettingStarted'
+import { fetchGettingStartedState } from './actions/gettingStarted'
+import { reducePopup } from './reducers/popup'
+import { reduceProgress } from './reducers/progressIndicator'
 
 import loadAnalytics from './utils/analytics'
 
@@ -40,7 +39,16 @@ browserHistory.listen(() => {
   analytics.page()
 })
 
-const store = createStore(reduceGettingStartedState, applyMiddleware(thunk.default))
+const reducers = combineReducers({
+  gettingStarted: reduceGettingStartedState,
+  popup: reducePopup,
+  progressIndicator: reduceProgress,
+})
+
+const store = createStore(reducers, compose(
+  applyMiddleware(thunk.default),
+  (window as any).devToolsExtension ? (window as any).devToolsExtension() : f => f
+))
 store.dispatch(fetchGettingStartedState())
 
 ReactDOM.render(

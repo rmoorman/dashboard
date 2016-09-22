@@ -14,7 +14,7 @@ import {onFailureShowNotification} from '../../../utils/relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {isScalar} from '../../../utils/graphql'
-import {nextStep} from '../../../reducers/GettingStartedState'
+import {nextStep} from '../../../actions/gettingStarted'
 import {validateModelName} from '../../../utils/nameValidator'
 import UpdateModelNameMutation from '../../../mutations/UpdateModelNameMutation'
 const classes: any = require('./StructureView.scss')
@@ -255,7 +255,7 @@ const customCompare = (fieldNameA, fieldNameB) => {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 

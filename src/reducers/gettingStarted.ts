@@ -1,0 +1,24 @@
+import { ReduxAction } from '../types/reducers'
+import Constants from '../constants/gettingStarted'
+
+interface State {
+  checkStatus: boolean,
+  gettingStartedState?: any
+}
+
+const initialState: State = {checkStatus: false}
+
+export function reduceGettingStartedState (state: State = initialState, action: ReduxAction): State {
+  switch (action.type) {
+    case Constants.UPDATE:
+      let gettingStartedState = action.payload.gettingStartedState
+
+      // TODO: use reselect for derived data
+      return Object.assign({}, state, {
+        gettingStartedState,
+        checkStatus: gettingStartedState.isCurrentStep('STEP9_WAITING_FOR_REQUESTS'),
+      })
+    default:
+      return state
+  }
+}

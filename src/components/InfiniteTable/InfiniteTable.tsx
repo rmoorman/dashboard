@@ -58,7 +58,13 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                 ref={registerChild}
                 width={this.props.width}
                 height={this.props.addRowHeight}
-                style={{overflow: 'visible', position: 'absolute', width: 'auto', top: this.props.headerHeight}}
+                style={{
+                  overflow: 'visible',
+                  position: 'absolute',
+                  left: 0,
+                  width: 'auto',
+                  top: this.props.headerHeight,
+                }}
                 cellStyle={{position: 'absolute'}}
                 rowHeight={this.props.addRowHeight}
                 columnCount={1}
@@ -75,6 +81,7 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                   overflow: 'scroll',
                   position: 'absolute',
                   width: 'auto',
+                  left: 0,
                   top: this.props.headerHeight + (this.props.addNew ? this.props.addRowHeight : 0),
                 }}
                 scrollTop={this.props.scrollTop ? this.props.scrollTop : null}

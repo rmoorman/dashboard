@@ -13,6 +13,10 @@ $tableHeadExpanded: 100px;
   @include button;
   margin-left: 10px;
 
+  label {
+    cursor: pointer;
+  }
+
   &.green {
     border-color: $accent;
     color: $accent;

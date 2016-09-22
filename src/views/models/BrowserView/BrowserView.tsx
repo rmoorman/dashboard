@@ -14,7 +14,7 @@ import NewRow from './NewRow'
 import HeaderCell from './HeaderCell'
 import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
-import {compareFields, emptyDefault, getFirstInputFieldIndex} from '../utils'
+import {compareFields, emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import {valueToString} from '../../../utils/valueparser'
 import {isNonScalarList} from '../../../utils/graphql'
 import {sideNavSyncer} from '../../../utils/sideNavSyncer'
@@ -22,12 +22,16 @@ import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ModelHeader from '../ModelHeader'
-import {GettingStartedState, nextStep} from '../../../reducers/GettingStartedState'
+import {nextStep} from '../../../actions/gettingStarted'
+import {GettingStartedState} from '../../../types/gettingStarted'
+import {showPopup, closePopup} from '../../../actions/popup'
 import InfiniteTable from '../../../components/InfiniteTable/InfiniteTable'
 import {AutoSizer} from 'react-virtualized'
 import Cell from './Cell'
 import LoadingCell from './LoadingCell'
-import {getLokka, addNode, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
+import {getLokka, addNode, addNodes, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
+import ProgressIndicator from '../../../components/ProgressIndicator/ProgressIndicator'
+import {startProgress, incrementProgress} from '../../../actions/progressIndicator'
 const classes: any = require('./BrowserView.scss')
 
 interface Props {
@@ -40,6 +44,10 @@ interface Props {
   model: Model
   gettingStartedState: GettingStartedState
   nextStep: () => void
+  startProgress: () => any
+  incrementProgress: () => any
+  showPopup: (content: JSX.Element) => any
+  closePopup: () => any
 }
 
 interface State {
@@ -119,6 +127,10 @@ class BrowserView extends React.Component<Props, State> {
           viewer={this.props.viewer}
           project={this.props.project}
         >
+          <input type='file' onChange={this.handleImport} id='fileselector' className='dn' />
+          <label htmlFor='fileselector' className={classes.button}>
+            Import
+          </label>
           {this.renderTether()}
           {this.state.selectedNodeIds.size > 0 &&
           <div className={`${classes.button} ${classes.red}`} onClick={this.deleteSelectedNodes}>
@@ -218,6 +230,34 @@ class BrowserView extends React.Component<Props, State> {
         </div>
       </Tether>
     )
+  }
+
+  private handleImport = (e: any) => {
+    const file = e.target.files[0]
+    const reader = new FileReader()
+    reader.onloadend = this.parseImport
+    reader.readAsText(file)
+  }
+
+  private parseImport = (e: any) => {
+    const data = JSON.parse(e.target.result)
+    const values = []
+    data.forEach(item => {
+      const fieldValues = getDefaultFieldValues(this.props.model.fields.edges.map((edge) => edge.node))
+      Object.keys(item).forEach((key) => fieldValues[key].value = item[key])
+      values.push(fieldValues)
+    })
+    const promises = []
+    const chunk = 10
+    this.props.startProgress()
+    this.props.showPopup(<ProgressIndicator title='Importing' total={values.length / chunk} />)
+    for (let i = 0; i < values.length / chunk; i++) {
+      promises.push(
+        addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
+          .then(() => this.props.incrementProgress())
+      )
+    }
+    Promise.all(promises).then(() => this.reloadData(0)).then(() => this.props.closePopup())
   }
 
   private handleAddNodeClick = () => {
@@ -445,8 +485,8 @@ class BrowserView extends React.Component<Props, State> {
       })
   }
 
-  private addNewNode = (fieldValues: { [key: string]: any }) => {
-    addNode(this.lokka, this.props.params.modelName, fieldValues)
+  private addNewNode = (fieldValues: { [key: string]: any }): Promise<any> => {
+    return addNode(this.lokka, this.props.params.modelName, fieldValues)
       .then(() => this.reloadData(0))
       .then(() => {
         this.setState({
@@ -554,12 +594,20 @@ class BrowserView extends React.Component<Props, State> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep: nextStep}, dispatch)
+  return bindActionCreators(
+    {
+      nextStep,
+      showPopup,
+      closePopup,
+      startProgress,
+      incrementProgress,
+    },
+    dispatch)
 }
 
 const ReduxContainer = connect(
@@ -598,6 +646,7 @@ export default Relay.createContainer(MappedBrowserView, {
                 name
                 typeIdentifier
                 isList
+                defaultValue
                 relatedModel {
                   name
                 }

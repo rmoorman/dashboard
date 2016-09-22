@@ -4,7 +4,7 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import Icon from '../Icon/Icon'
 const classes: any = require('./ApiLayover.scss')
 
-type Endpoint = 'simple/v1' | 'relay/v1'
+type Endpoint = 'simple/v1' | 'relay/v1' | 'file/v1'
 
 interface Props {
   projectId: string
@@ -36,6 +36,7 @@ export default class ApiLayover extends React.Component<Props, State> {
             >
               <option>simple/v1</option>
               <option>relay/v1</option>
+              <option>file/v1</option>
             </select>
             <Icon
               src={require('../../assets/icons/arrow.svg')}

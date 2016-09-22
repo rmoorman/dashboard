@@ -13,7 +13,7 @@ import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
 import {onFailureShowNotification} from '../../utils/relay'
-import {nextStep, skip} from '../../reducers/GettingStartedState'
+import {nextStep, skip} from '../../actions/gettingStarted'
 import {Project, Viewer, Model} from '../../types/types'
 import {ShowNotificationCallback} from '../../types/utils'
 import {classnames} from '../../utils/classnames'
@@ -86,8 +86,7 @@ export class SideNav extends React.Component<Props, State> {
     return (
       <div
         className={classes.root}
-        onMouseLeave={() => this.setState({forceShowModels: false} as State)}
-      >
+        onMouseLeave={() => this.setState({forceShowModels: false} as State)}>
         <div className={classes.container}>
           <ScrollBox>
             {gettingStartedIsActive && this.renderGettingStarted()}
@@ -396,7 +395,7 @@ export class SideNav extends React.Component<Props, State> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 
