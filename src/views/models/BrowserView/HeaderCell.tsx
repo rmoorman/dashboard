@@ -41,7 +41,7 @@ class HeaderCell extends React.Component<Props, {}> {
   }
 
   render() {
-    const {field, sortOrder} = this.props
+    const {field, sortOrder, params} = this.props
 
     let type = getFieldTypeName(field)
     if (field.isList) {
@@ -51,7 +51,7 @@ class HeaderCell extends React.Component<Props, {}> {
       type = `${type}!`
     }
 
-    const editUrl = `/${this.props.params.projectName}/models/${this.props.params.modelName}/structure/edit/${this.props.field.name}` // tslint:disable-line
+    const editUrl = `/${params.projectName}/models/${params.modelName}/structure/edit/${field.name}`
 
     return (
       <div
@@ -72,7 +72,7 @@ class HeaderCell extends React.Component<Props, {}> {
             </Link>
             }
           </div>
-          {isScalar(this.props.field.typeIdentifier) && !this.props.field.isList &&
+          {isScalar(field.typeIdentifier) && !field.isList &&
           <div
             onClick={this.toggleSortOrder}
             className={`${classes.sort} ${sortOrder ? classes.active : ''}`}
