@@ -6,6 +6,9 @@ import { Transport } from 'lokka-transport-http'
 import GraphiQL from 'graphiql'
 import { Viewer, User, Project } from '../../../types/types'
 import { saveQuery } from '../../../utils/QueryHistoryStorage'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {showPopup} from '../../../actions/popup'
 import QueryHistory from '../../../components/QueryHistory/QueryHistory'
 import Header from '../../../components/Header/Header'
 import Icon from '../../../components/Icon/Icon'
@@ -13,6 +16,8 @@ import * as cookiestore from 'cookiestore'
 import endpoints from '../../../utils/endpoints'
 import { sideNavSyncer } from '../../../utils/sideNavSyncer'
 import LoginClientUserMutation from '../../../mutations/LoginClientUserMutation'
+import {GettingStartedState} from '../../../types/gettingStarted'
+import cuid from 'cuid'
 const classes: any = require('./PlaygroundView.scss')
 
 require('graphiql/graphiql.css')
@@ -35,6 +40,8 @@ type Endpoint = 'SIMPLE' | 'RELAY'
 interface Props {
   viewer: Viewer & { project: Project }
   params: any
+  showPopup: any
+  gettingStartedState: GettingStartedState
 }
 
 interface State {
@@ -101,6 +108,12 @@ class PlaygroundView extends React.Component<Props, State> {
     analytics.track('playground: viewed', {
       project: this.props.params.projectName,
     })
+
+    // TODO: Change here
+    if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
+      const id = cuid()
+      this.props.showPopup(<div></div>, id)
+    }
   }
 
   render () {
@@ -262,7 +275,19 @@ class PlaygroundView extends React.Component<Props, State> {
   }
 }
 
-export default Relay.createContainer(PlaygroundView, {
+const mapStateToProps = (state) => {
+  return {
+    gettingStartedState: state.gettingStarted.gettingStartedState,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({ showPopup }, dispatch)
+}
+
+const MappedPlaygroudView = connect(mapStateToProps, mapDispatchToProps)(PlaygroundView)
+
+export default Relay.createContainer(MappedPlaygroudView, {
   initialVariables: {
     projectName: null, // injected from router
   },

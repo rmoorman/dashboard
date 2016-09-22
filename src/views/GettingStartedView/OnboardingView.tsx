@@ -21,7 +21,7 @@ class OnboardingView extends React.Component<Props, {}> {
 
   render() {
     return (
-      <div className='flex justify-center items-center h-100 w-100 bg-black-50'>
+      <div className='flex justify-center items-center h-100 w-100 bg-black-50' style={{pointerEvents: 'all'}}>
         <div className='pa4 bg-white br3 flex'>
           <div className='w-80'>
           <div>🙌</div>
