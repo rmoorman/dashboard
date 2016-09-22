@@ -12,7 +12,7 @@ const initialState: State = {checkStatus: false}
 export function reduceGettingStartedState (state: State = initialState, action: ReduxAction): State {
   switch (action.type) {
     case Constants.UPDATE:
-      let gettingStartedState = action.payload.gettingStartedState
+      const gettingStartedState = action.payload.gettingStartedState
 
       // TODO: use reselect for derived data
       return Object.assign({}, state, {
