@@ -22,6 +22,7 @@ class ModelRedirectView extends React.Component<Props, {}> {
   }
 
   componentWillMount () {
+    console.log(this.props.params)
     if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
       // redirect to getting started
       this.context.router.replace(`/${this.props.params.projectName}/getting-started`)
