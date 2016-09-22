@@ -1,7 +1,7 @@
 import {ReduxAction} from '../types/reducers'
 import Constants from '../constants/popup'
 
-export function showPopup(element: Element, id: string): ReduxAction {
+export function showPopup(element: JSX.Element, id: string): ReduxAction {
     return {
         type: Constants.SHOW_POPUP,
         payload: {

@@ -3,6 +3,14 @@ import { ReduxAction } from '../types/reducers'
 import { GettingStartedState } from './../types/gettingStarted'
 import UpdateCustomerMutation from '../mutations/UpdateCustomerMutation'
 import Constants from '../constants/gettingStarted'
+import IconNotification from '../components/IconNotification/IconNotification'
+import cuid from 'cuid'
+import { showPopup } from '../actions/popup'
+
+export function showNotification() {
+  const id = cuid()
+  return showPopup(<IconNotification id={id}/>, id)
+}
 
 export function update (step: string, userId: string): ReduxAction {
   const payload = {gettingStartedState: new GettingStartedState({step, userId})}

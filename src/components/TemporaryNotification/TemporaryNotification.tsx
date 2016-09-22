@@ -24,7 +24,9 @@ class TemporaryNotification extends React.Component<Props, {}> {
   render() {
     return (
       <div className='flex w-100 h-100 justify-center items-center'>
-        <div className={classnames('flex flex-column pa5 br5 bg-white-80', classes.fadeOut)}>
+        <div className={classnames('flex flex-column h-100', classes.fadeOut)}>
+          <div className='h-50 w-100'>
+          </div>
           {this.props.children}
         </div>
       </div>
