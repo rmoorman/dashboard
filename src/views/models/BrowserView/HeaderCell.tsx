@@ -62,6 +62,7 @@ class HeaderCell extends React.Component<Props, {}> {
           <div className={classes.fieldName}>
             {field.name}
             <span className={classes.type}>{type}</span>
+            {isScalar(field.typeIdentifier) &&
             <Link to={editUrl} className={classes.edit}>
               <Icon
                 width={16}
@@ -69,6 +70,7 @@ class HeaderCell extends React.Component<Props, {}> {
                 src={require('assets/icons/edit.svg')}
               />
             </Link>
+            }
           </div>
           {isScalar(this.props.field.typeIdentifier) && !this.props.field.isList &&
           <div
