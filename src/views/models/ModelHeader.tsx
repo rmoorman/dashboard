@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Relay from 'react-relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {nextStep} from '../../reducers/GettingStartedState'
+import {nextStep} from '../../actions/gettingStarted'
 import {Link} from 'react-router'
 import ModelDescription from './ModelDescription'
 import Tether from '../../components/Tether/Tether'
@@ -97,7 +97,7 @@ class ModelHeader extends React.Component<Props, {}> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 

@@ -10,7 +10,7 @@ import ProjectSelection from '../../components/ProjectSelection/ProjectSelection
 import SideNav from '../../views/ProjectRootView/SideNav'
 import LoginView from '../../views/LoginView/LoginView'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
-import {update} from '../../reducers/GettingStartedState'
+import {update} from '../../actions/gettingStarted'
 import {Viewer, Client, Project} from '../../types/types'
 const classes: any = require('./ProjectRootView.scss')
 

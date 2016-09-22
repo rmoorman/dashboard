@@ -8,7 +8,8 @@ import Loading from '../../components/Loading/Loading'
 import { Follow } from 'react-twitter-widgets'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { GettingStartedState, nextStep, skip } from '../../reducers/GettingStartedState'
+import { nextStep, skip } from '../../actions/gettingStarted'
+import { GettingStartedState } from '../../types/gettingStarted'
 import { Client } from '../../types/types'
 
 const classes: any = require('./GettingStartedView.scss')
@@ -327,7 +328,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 

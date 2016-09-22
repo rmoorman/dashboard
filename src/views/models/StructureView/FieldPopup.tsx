@@ -18,8 +18,8 @@ import UpdateFieldMutation from '../../../mutations/UpdateFieldMutation'
 import {Field, Model} from '../../../types/types'
 import {emptyDefault} from '../utils'
 import {connect} from 'react-redux'
+import {nextStep} from '../../../actions/gettingStarted'
 import {bindActionCreators} from 'redux'
-import * as  GettingStartedState from '../../../reducers/GettingStartedState'
 const classes: any = require('./FieldPopup.scss')
 
 require('react-tagsinput/react-tagsinput.css')
@@ -588,12 +588,11 @@ class FieldPopup extends React.Component<Props, State> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  const nextStep = GettingStartedState.nextStep
   return bindActionCreators({nextStep}, dispatch)
 }
 

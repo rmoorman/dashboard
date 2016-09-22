@@ -22,7 +22,8 @@ import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ModelHeader from '../ModelHeader'
-import {GettingStartedState, nextStep} from '../../../reducers/GettingStartedState'
+import {nextStep} from '../../../actions/gettingStarted'
+import {GettingStartedState} from '../../../types/gettingStarted'
 import {showPopup, closePopup} from '../../../actions/popup'
 import InfiniteTable from '../../../components/InfiniteTable/InfiniteTable'
 import {AutoSizer} from 'react-virtualized'
@@ -593,7 +594,7 @@ class BrowserView extends React.Component<Props, State> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStartedState,
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 
