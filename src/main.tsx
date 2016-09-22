@@ -18,7 +18,6 @@ import { reduceProgress } from './reducers/progressIndicator'
 
 import loadAnalytics from './utils/analytics'
 
-import 'tachyons'
 import './utils/polyfils'
 
 if (cookiestore.has('graphcool_auth_token')) {
