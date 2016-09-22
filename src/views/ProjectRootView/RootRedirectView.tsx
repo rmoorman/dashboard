@@ -46,7 +46,21 @@ class RootRedirectView extends React.Component<Props, {}> {
     return true
   }
 
-  _addProject (): void {
+  render () {
+    if (!this.props.projectName) {
+      return (
+        <div className={classes.addProject} onClick={this.addProject}>
+          Add new project
+        </div>
+      )
+    }
+
+    return (
+      <div>Redirecting...</div>
+    )
+  }
+
+  private addProject = (): void => {
     const projectName = window.prompt('Project name')
     if (projectName) {
       Relay.Store.commitUpdate(
@@ -64,20 +78,6 @@ class RootRedirectView extends React.Component<Props, {}> {
           },
         })
     }
-  }
-
-  render () {
-    if (!this.props.projectName) {
-      return (
-        <div className={classes.addProject} onClick={this._addProject.bind(this)}>
-          Add new project
-        </div>
-      )
-    }
-
-    return (
-      <div>Redirecting...</div>
-    )
   }
 }
 
