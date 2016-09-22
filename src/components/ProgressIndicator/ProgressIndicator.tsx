@@ -11,7 +11,7 @@ class ProgressIndicator extends React.Component<Props, {}> {
   render() {
     const percentage = (this.props.progress / this.props.total) * 100
     return (
-      <div className='flex w-100 h-100 justify-center items-center'>
+      <div className='flex bg-black-50 w-100 h-100 justify-center items-center'>
         <div className='pa2 bg-white'>
           <div className='f3'>
             {this.props.title}

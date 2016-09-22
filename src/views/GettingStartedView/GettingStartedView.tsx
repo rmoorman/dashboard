@@ -8,7 +8,8 @@ import Loading from '../../components/Loading/Loading'
 import { Follow } from 'react-twitter-widgets'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { nextStep, skip } from '../../actions/gettingStarted'
+import { showPopup } from '../../actions/popup'
+import OnboardingView from './OnboardingView'
 import { GettingStartedState } from '../../types/gettingStarted'
 import { Client } from '../../types/types'
 
@@ -68,8 +69,7 @@ interface ViewProps {
   projectId: string,
   user: Client,
   gettingStartedState: GettingStartedState,
-  nextStep: any,
-  skip: any,
+  showPopup: any,
 }
 
 interface ViewState {
@@ -104,6 +104,9 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
       project: this.props.params.projectName,
       step: this.props.gettingStartedState.step,
     })
+    if (this.props.gettingStartedState.progress === 0) {
+      this.props.showPopup(<OnboardingView firstName={this.props.user.name.split(' ')[0]}/>)
+    }
   }
 
   componentDidUpdate (): void {
@@ -117,43 +120,11 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
   render () {
     const { progress } = this.props.gettingStartedState
     const overlayActive = progress === 0 || progress === 4
-    const firstName = this.props.user.name.split(' ')[0]
     const downloadUrl = (example) => `${__BACKEND_ADDR__}/resources/getting-started-example?repository=${example.path}&project_id=${this.props.projectId}` // tslint:disable-line
     const guideUrl = 'https://docs.graph.cool/guides/setting-up-a-graphql-backend-in-5-minutes#2-defining-relations-between-your-models' // tslint:disable-line
 
     return (
       <div className={classes.root}>
-        {progress === 0 &&
-          <div className={classes.overlay}>
-            <div className={classes.emoji}>🙌</div>
-            <div>
-              <h2><strong>Hi {firstName}</strong>, welcome to our Dashboard.</h2>
-              <p>
-                To make your start a bit easier, we have prepared a little tour for you.
-              </p>
-              <p>
-                It will take about 3 minutes and show you the basic features<br />
-                by creating a GraphQL backend for an Instagram clone.
-              </p>
-            </div>
-            <div className={classes.buttons}>
-              <div
-                className={`${classes.button} ${classes.green}`}
-                style={{width: 260}}
-                onClick={this.getStarted}
-              >
-                Let’s go
-              </div>
-              <div
-                className={`${classes.button} ${classes.grey}`}
-                style={{width: 170}}
-                onClick={this.skipGettingStarted}
-              >
-                Skip tour
-              </div>
-            </div>
-          </div>
-        }
         {progress === 4 &&
           <div className={classes.overlay}>
             <div className={classes.emoji}>🎉</div>
@@ -297,24 +268,8 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
     )
   }
 
-  private getStarted = (): void => {
-    if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
-      this.props.nextStep()
-    }
-  }
-
   private selectExample = (example: Example): void => {
     this.setState({selectedExample: example})
-  }
-
-  private skipGettingStarted = (): void => {
-    if (window.confirm('Do you really want skip the getting started tour?')) {
-      // TODO: fix this hack
-      Promise.resolve(this.props.skip())
-        .then(() => {
-          this.context.router.replace(`/${this.props.params.projectName}/models`)
-        })
-    }
   }
 
   private selectCommands = (): void => {
@@ -333,7 +288,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ nextStep, skip }, dispatch)
+  return bindActionCreators({ showPopup }, dispatch)
 }
 
 const ReduxContainer = connect(

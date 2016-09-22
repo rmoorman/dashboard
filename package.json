@@ -38,6 +38,7 @@
     "calculate-size": "^0.2.0",
     "classnames": "^2.2.5",
     "cookiestore": "^1.0.3",
+    "cuid": "^1.3.8",
     "drumstick": "^1.0.5",
     "graphiql": "^0.7.3",
     "immutable": "^3.8.1",
