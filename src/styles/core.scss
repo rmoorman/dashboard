@@ -1,8 +1,8 @@
 @import '~styles/variables';
-@import 'tachyons/css/tachyons.min.css';
 
 :global {
   @import '~normalize.css';
+  @import '~tachyons';
   @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
 
   html,
