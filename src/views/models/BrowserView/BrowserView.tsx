@@ -14,7 +14,7 @@ import NewRow from './NewRow'
 import HeaderCell from './HeaderCell'
 import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
-import {compareFields, emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
+import {emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import {valueToString} from '../../../utils/valueparser'
 import {isNonScalarList} from '../../../utils/graphql'
 import {sideNavSyncer} from '../../../utils/sideNavSyncer'
@@ -622,7 +622,7 @@ const MappedBrowserView = mapProps({
   fields: (props) => (
     props.viewer.model.fields.edges
       .map((edge) => edge.node)
-      .sort(compareFields)
+      // .sort(compareFields) // TODO remove this once field ordering is implemented
   ),
   model: (props) => props.viewer.model,
   project: (props) => props.viewer.project,

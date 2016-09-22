@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { PropTypes } from 'react'
+import {PropTypes} from 'react'
 import * as Relay from 'react-relay'
-import { default as mapProps } from 'map-props'
+import * as cookiestore from 'cookiestore'
+import {default as mapProps} from 'map-props'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
 import LoginView from '../../views/LoginView/LoginView'
-import { Viewer } from '../../types/types'
+import {Viewer} from '../../types/types'
 const classes: any = require('./RootRedirectView.scss')
 
 interface Props {
@@ -31,13 +32,13 @@ class RootRedirectView extends React.Component<Props, {}> {
     super(props)
   }
 
-  componentWillMount (): void {
+  componentWillMount(): void {
     if (this.props.projectName) {
       this.context.router.replace(`/${this.props.projectName}`)
     }
   }
 
-  shouldComponentUpdate (nextProps: Props): boolean {
+  shouldComponentUpdate(nextProps: Props): boolean {
     if (nextProps.projectName) {
       this.context.router.replace(`/${nextProps.projectName}`)
       return false
@@ -83,11 +84,24 @@ class RootRedirectView extends React.Component<Props, {}> {
 
 const MappedRootRedirectView = mapProps({
   viewer: (props) => props.viewer,
-  projectName: (props) => (
-   (props.viewer.user && props.viewer.user.projects.edges.length > 0)
-     ? props.viewer.user.projects.edges[0].node.name
-     : null
-  ),
+  projectName: (props) => {
+    if (!props.viewer.user || props.viewer.user.projects.edges.length === 0) {
+      return null
+    }
+
+    const projects = props.viewer.user.projects.edges.map((edge) => edge.node)
+    let project
+
+    if (cookiestore.has('graphcool_last_used_project_id')) {
+      project = projects.find((p) => p.id === cookiestore.get('graphcool_last_used_project_id'))
+    }
+
+    if (!project) {
+      project = projects[0]
+    }
+
+    return project.name
+  },
 })(RootRedirectView)
 
 export default Relay.createContainer(MappedRootRedirectView, {
@@ -99,7 +113,7 @@ export default Relay.createContainer(MappedRootRedirectView, {
         ${LoginView.getFragment('viewer')}
         user {
           id
-          projects(first: 1) {
+          projects(first: 100) {
             edges {
               node {
                 id
