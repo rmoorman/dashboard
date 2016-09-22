@@ -1,15 +1,19 @@
 import {ReduxAction} from '../types/reducers'
 import Constants from '../constants/popup'
 
-export function showPopup(payload: any): ReduxAction {
+export function showPopup(element: Element, id: string): ReduxAction {
     return {
         type: Constants.SHOW_POPUP,
-        payload: payload,
+        payload: {
+            element,
+            id,
+        },
     }
 }
 
-export function closePopup(payload: any): ReduxAction {
+export function closePopup(id?: string): ReduxAction {
     return {
         type: Constants.CLOSE_POPUP,
+        payload: id,
     }
 }

@@ -2,12 +2,14 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import * as Relay from 'react-relay'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
+import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
 import {connect} from 'react-redux'
 import Smooch from 'smooch'
 import {validateProjectName} from '../../utils/nameValidator'
 import ProjectSelection from '../../components/ProjectSelection/ProjectSelection'
 import SideNav from '../../views/ProjectRootView/SideNav'
+import OnboardSideNav from '../../views/GettingStartedView/OnboardSideNav'
 import LoginView from '../../views/LoginView/LoginView'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
 import {update} from '../../actions/gettingStarted'
@@ -123,14 +125,25 @@ class ProjectRootView extends React.Component<Props, {}> {
             />
           </div>
         </div>
-        <div className={classes.content}>
-          {this.props.children}
+        <div className={classnames(classes.content, 'flex')}>
+          <div
+            className='overflow-hidden'
+            style={{
+              width: `calc(100%${this.props.gettingStartedState.isActive() ? '- 200px' : ''})`,
+            }}>
+            {this.props.children}
+          </div>
+          {this.props.gettingStartedState.isActive() &&
+          <div className='fr' style={{width: 200}}>
+            <OnboardSideNav />
+          </div>
+          }
         </div>
-        {this.props.popup.showing &&
-        <div className='fixed left-0 right-0 top-0 z-999 bottom-0 top-0 bg-black-50'>
-          {this.props.popup.content}
-        </div>
-        }
+        {this.props.popup.popups.map(popup =>
+          <div className='fixed left-0 right-0 top-0 bottom-0 z-999'>
+            {popup.element}
+          </div>
+        )}
       </div>
     )
   }

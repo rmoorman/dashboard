@@ -32,6 +32,7 @@ import LoadingCell from './LoadingCell'
 import {getLokka, addNode, addNodes, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
 import ProgressIndicator from '../../../components/ProgressIndicator/ProgressIndicator'
 import {startProgress, incrementProgress} from '../../../actions/progressIndicator'
+import cuid from 'cuid'
 const classes: any = require('./BrowserView.scss')
 
 interface Props {
@@ -46,8 +47,8 @@ interface Props {
   nextStep: () => void
   startProgress: () => any
   incrementProgress: () => any
-  showPopup: (content: JSX.Element) => any
-  closePopup: () => any
+  showPopup: (content: JSX.Element, id: string) => any
+  closePopup: (id: string) => any
 }
 
 interface State {
@@ -249,15 +250,16 @@ class BrowserView extends React.Component<Props, State> {
     })
     const promises = []
     const chunk = 10
+    const id = cuid()
     this.props.startProgress()
-    this.props.showPopup(<ProgressIndicator title='Importing' total={values.length / chunk} />)
-    for (let i = 0; i < values.length / chunk; i++) {
+    this.props.showPopup(<ProgressIndicator title='Importing' total={Math.floor(values.length / chunk)} />, id)
+    for (let i = 0; i < Math.floor(values.length / chunk); i++) {
       promises.push(
         addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
           .then(() => this.props.incrementProgress())
       )
     }
-    Promise.all(promises).then(() => this.reloadData(0)).then(() => this.props.closePopup())
+    Promise.all(promises).then(() => this.reloadData(0)).then(() => this.props.closePopup(id))
   }
 
   private handleAddNodeClick = () => {

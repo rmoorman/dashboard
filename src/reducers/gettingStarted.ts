@@ -1,9 +1,10 @@
 import { ReduxAction } from '../types/reducers'
 import Constants from '../constants/gettingStarted'
+import { GettingStartedState } from './../types/gettingStarted'
 
 interface State {
   checkStatus: boolean,
-  gettingStartedState?: any
+  gettingStartedState?: GettingStartedState
 }
 
 const initialState: State = {checkStatus: false}
