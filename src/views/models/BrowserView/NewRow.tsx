@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Relay from 'react-relay'
 import Cell from './Cell'
 import {Model} from '../../../types/types'
-import {compareFields, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
+import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 const classes: any = require('./NewRow.scss')
 
 interface Props {
@@ -31,7 +31,7 @@ class NewRow extends React.Component<Props, State> {
   render() {
     const fields = this.props.model.fields.edges
       .map((edge) => edge.node)
-      .sort(compareFields)
+      // .sort(compareFields)
     const inputIndex = getFirstInputFieldIndex(fields)
 
     return (
