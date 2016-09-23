@@ -9,7 +9,7 @@ import { Follow } from 'react-twitter-widgets'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { showPopup } from '../../actions/popup'
-import OnboardingView from './OnboardingView'
+import OnboardingPopup from './OnboardingPopup'
 import { GettingStartedState } from '../../types/gettingStarted'
 import { Client } from '../../types/types'
 import cuid from 'cuid'
@@ -107,7 +107,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
     })
     if (this.props.gettingStartedState.progress === 0) {
       const id = cuid()
-      this.props.showPopup(<OnboardingView id={id} firstName={this.props.user.name.split(' ')[0]}/>, id)
+      this.props.showPopup(<OnboardingPopup id={id} firstName={this.props.user.name.split(' ')[0]}/>, id)
     }
   }
 

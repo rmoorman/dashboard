@@ -29,17 +29,17 @@ class OnboardingView extends React.Component<Props, {}> {
             <h2><strong>Hi {this.props.firstName}</strong>, welcome to our Dashboard.</h2>
             <p>
               To make your start a bit easier, we have prepared a little tour for you.
-              </p>
+            </p>
             <p>
               It will take about 3 minutes and show you the basic features<br />
               by creating a GraphQL backend for an Instagram clone.
-              </p>
+            </p>
           </div>
           <div className='w-100 flex justify-center flex-column items-center'>
             <div
               className='br2 ba b--green f3 green tc pa2 pointer ttu dim'
               onClick={this.getStarted}
-              >
+            >
               Get Started
             </div>
             <div
@@ -47,7 +47,7 @@ class OnboardingView extends React.Component<Props, {}> {
               onClick={this.skipGettingStarted}
             >
               Skip tour
-              </div>
+            </div>
           </div>
           </div>
           <div className='w-20 bg-black-10 w-100'>
