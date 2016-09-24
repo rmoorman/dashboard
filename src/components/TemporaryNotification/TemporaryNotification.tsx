@@ -2,7 +2,6 @@ import * as React from 'react'
 import {closePopup} from '../../actions/popup'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {classnames} from '../../utils/classnames'
 const classes = require('./TemporaryNotification.scss')
 
 interface Props {

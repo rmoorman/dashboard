@@ -11,7 +11,6 @@ import OnboardingPopup from '../../components/onboarding/OnboardingPopup/Onboard
 import PlaygroundAPopup from '../../components/onboarding/PlaygroundAPopup/PlaygroundAPopup'
 import {showPopup} from '../../actions/popup'
 import {connect} from 'react-redux'
-import Smooch from 'smooch'
 import {validateProjectName} from '../../utils/nameValidator'
 import ProjectSelection from '../../components/ProjectSelection/ProjectSelection'
 import SideNav from '../../views/ProjectRootView/SideNav'

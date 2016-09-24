@@ -15,4 +15,3 @@ export default class PlaygroundAPopup extends React.Component<Props, {}> {
     )
   }
 }
-

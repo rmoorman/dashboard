@@ -33,7 +33,6 @@ const vendor = [
   'react-twitter-widgets',
   'redux',
   'redux-thunk',
-  'smooch',
 ]
 
 module.exports = {
@@ -80,9 +79,6 @@ module.exports = {
     }, {
       test: /graphics\/.*\.svg$/,
       loader: 'file',
-    }, { // TODO remove this loader and also `imports-loader` dependency
-      test: /load-image/,
-      loader: 'imports?define=>false',
     }],
   },
   plugins: [
@@ -96,7 +92,6 @@ module.exports = {
       favicon: 'static/favicon.png',
       template: 'src/index.html',
     }),
-    new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new webpack.optimize.CommonsChunkPlugin('vendor'),
     new webpack.LoaderOptionsPlugin({
       options: {
