@@ -163,7 +163,7 @@ class ProjectRootView extends React.Component<Props, {}> {
           </div>
         </div>
         {this.props.popup.popups.map((popup) =>
-          <div className='fixed left-0 right-0 top-0 bottom-0 z-999' style={{pointerEvents: 'none'}} key={popup.id}>
+          <div className='fixed left-0 right-0 top-0 bottom-0 z-999' style={{pointerEvents: 'auto', overflow: 'scroll' }} key={popup.id}> 
             {popup.element}
           </div>
         )}
