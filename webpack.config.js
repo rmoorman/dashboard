@@ -60,7 +60,8 @@ module.exports = {
       loader: 'style!css',
     }, {
       test: /\.scss/,
-      loader: 'style!css?modules&sourceMap&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap',
+      // loader: 'style!css?modules&sourceMap&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap',
+      loader: 'style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass',
       exclude: /node_modules/,
     }, {
       test: /\.ts(x?)$/,
@@ -123,8 +124,5 @@ module.exports = {
   resolve: {
     modules: [path.resolve('./src'), 'node_modules'],
     extensions: ['.js', '.ts', '.tsx'],
-    alias: { // TODO remove when resolved: https://github.com/smooch/smooch-js/issues/357
-      faye: 'faye/browser/faye-browser',
-    },
   },
 }

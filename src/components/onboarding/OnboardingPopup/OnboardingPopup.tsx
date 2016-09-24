@@ -2,9 +2,9 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {GettingStartedState} from '../../types/gettingStarted'
-import {nextStep, skip} from '../../actions/gettingStarted'
-import {closePopup} from '../../actions/popup'
+import {GettingStartedState} from '../../../types/gettingStarted'
+import {nextStep, skip} from '../../../actions/gettingStarted'
+import {closePopup} from '../../../actions/popup'
 
 interface Props {
   params: any
@@ -51,7 +51,7 @@ class OnboardingPopup extends React.Component<Props, {}> {
             </div>
           </div>
           <div className='w-30 bg-black-05 pv-38 flex justify-center'>
-            <img src={require('../../assets/graphics/instagram.svg')}/>
+            <img src={require('../../../assets/graphics/instagram.svg')}/>
           </div>
         </div>
       </div>

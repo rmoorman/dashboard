@@ -28,7 +28,7 @@ declare module 'react-toggle-button'
 declare module 'react-virtualized'
 declare module 'cuid'
 
-declare var fetch: any
+// declare var fetch: any
 declare var analytics: any
 declare var __BACKEND_ADDR__: any
 declare var __SMOOCH_TOKEN__: any

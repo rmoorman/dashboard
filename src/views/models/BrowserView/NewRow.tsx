@@ -31,7 +31,11 @@ class NewRow extends React.Component<Props, State> {
   render() {
     const fields = this.props.model.fields.edges
       .map((edge) => edge.node)
+<<<<<<< HEAD
       // .sort(compareFields) // TODO remove this once field ordering is implemented
+=======
+      // .sort(compareFields)
+>>>>>>> 1480ce64bece5c4f5c2795917b967e0b6632c473
     const inputIndex = getFirstInputFieldIndex(fields)
 
     return (
