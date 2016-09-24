@@ -44,6 +44,7 @@
 
   // tachyons extension
   :root {
+    --color-blue: #4A90E2;
     --color-accent: #00B861;
     --color-gray-1: #F1F1F1;
     --color-gray-2: #C8C8C8;
@@ -476,6 +477,14 @@
   –––––
    */
 
+  .bg-accent {
+     background-color: var(--color-accent);
+  }
+
+  .blue {
+    color: var(--color-blue);
+  }
+
   .gray-04 {
     color: var(--gray-04);
   }
@@ -593,6 +602,25 @@
 
   .br-2 {
     border-radius: 2px;
+  }
+
+  /* Border color
+  –––––
+  */
+  .bc-grey-1 {
+    border-color: var(--color-gray-1);
+  }
+
+  .bc-grey-2 {
+    border-color: var(--color-gray-2);
+  }
+
+  .bc-grey-3 {
+    border-color: var(--color-gray-3);
+  }
+
+  .bc-grey-4 {
+    border-color: var(--color-gray-4);
   }
 
   /* Line height
