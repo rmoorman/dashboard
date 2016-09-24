@@ -18,8 +18,9 @@ import OnboardSideNav from './OnboardSideNav'
 import LoginView from '../../views/LoginView/LoginView'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
 import {update} from '../../actions/gettingStarted'
-import {Viewer, Client, Project} from '../../types/types'
+import {Viewer, Customer, Project} from '../../types/types'
 import {Popup, PopupState} from '../../types/popup'
+import {GettingStartedState} from '../../types/gettingStarted'
 const classes: any = require('./ProjectRootView.scss')
 
 require('../../styles/core.scss')
@@ -29,16 +30,16 @@ interface Props {
   children: Element
   isLoggedin: boolean
   viewer: Viewer
-  user: Client & {gettingStartedState: string}
+  user: Customer & {gettingStartedState: string}
   project: Project
   allProjects: Project[]
   params: any
   relay: any
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   popup: PopupState
-  checkStatus: boolean
-  update: (step: string, userId: string) => void
-  showPopup: (popup: Popup) => void,
+  pollGettingStartedOnboarding: boolean
+  update: (step: string, skipped: boolean, customerId: string) => void
+  showPopup: (popup: Popup) => void
 }
 
 class ProjectRootView extends React.Component<Props, {}> {
@@ -60,24 +61,24 @@ class ProjectRootView extends React.Component<Props, {}> {
   componentWillMount() {
     if (this.props.isLoggedin) {
       analytics.identify(this.props.user.id, {
-        name: this.props.user.name,
-        email: this.props.user.email,
-        'Getting Started Status': this.props.user.gettingStartedStatus,
+        name: this.props.user.crm.information.name,
+        email: this.props.user.crm.information.email,
+        'Getting Started Status': this.props.user.crm.onboardingStatus.gettingStarted,
         'Product': 'Dashboard',
       })
 
       Smooch.init({
         appToken: __SMOOCH_TOKEN__,
-        givenName: this.props.user.name,
-        email: this.props.user.email,
+        givenName: this.props.user.crm.information.name,
+        email: this.props.user.crm.information.email,
         customText: {
           headerText: 'Can I help you? 🙌',
         },
       })
 
-      if (this.props.gettingStartedState.progress === 0) {
+      if (this.props.gettingStartedState.step === 'STEP0_OVERVIEW') {
         const id = cuid()
-        const element = <OnboardingPopup id={id} firstName={this.props.user.name.split(' ')[0]}/>
+        const element = <OnboardingPopup id={id} firstName={this.props.user.crm.information.name.split(' ')[0]}/>
         this.props.showPopup({element, id, blurBackground: true})
       }
     } else {
@@ -96,24 +97,21 @@ class ProjectRootView extends React.Component<Props, {}> {
   }
 
   componentDidUpdate(prevProps) {
-    const newStatus = this.props.user.gettingStartedStatus
-    const prevStatus = prevProps.user.gettingStartedStatus
+    const {gettingStarted, gettingStartedSkipped} = this.props.user.crm.onboardingStatus
+    const prevGettingStarted = prevProps.user.crm.onboardingStatus.gettingStarted
 
-    const newCheckStatus = this.props.checkStatus
-    const prevCheckStatus = prevProps.checkStatus
-
-    if (newStatus !== prevStatus) {
+    if (gettingStarted !== prevGettingStarted) {
       this.updateForceFetching()
 
-      if (newStatus === 'STEP11_SKIPPED') {
-        analytics.track(`getting-started: skipped at ${prevStatus}`)
+      if (gettingStartedSkipped) {
+        analytics.track(`getting-started: skipped at ${prevGettingStarted}`)
       } else {
-        analytics.track(`getting-started: finished ${prevStatus}`)
+        analytics.track(`getting-started: finished ${prevGettingStarted}`)
       }
       analytics.identify(this.props.user.id, {
-        'Getting Started Status': this.props.user.gettingStartedStatus,
+        'Getting Started Status': gettingStarted,
       })
-    } else if (newCheckStatus !== prevCheckStatus) {
+    } else if (this.props.pollGettingStartedOnboarding !== prevProps.pollGettingStartedOnboarding) {
       this.updateForceFetching()
     }
   }
@@ -163,7 +161,8 @@ class ProjectRootView extends React.Component<Props, {}> {
           </div>
         </div>
         {this.props.popup.popups.map((popup) =>
-          <div className='fixed left-0 right-0 top-0 bottom-0 z-999' style={{pointerEvents: 'auto', overflow: 'scroll' }} key={popup.id}> 
+          <div className='fixed left-0 right-0 top-0 bottom-0 z-999'
+               style={{pointerEvents: 'auto', overflow: 'scroll' }} key={popup.id}>
             {popup.element}
           </div>
         )}
@@ -172,13 +171,17 @@ class ProjectRootView extends React.Component<Props, {}> {
   }
 
   private updateForceFetching() {
-    if (this.props.checkStatus) {
+    if (this.props.pollGettingStartedOnboarding) {
       if (!this.refreshInterval) {
         this.refreshInterval = setInterval(
           () => {
             // ideally we would handle this with a Redux thunk, but somehow Relay does not support raw force fetches...
             this.props.relay.forceFetch({}, () => {
-              this.props.update(this.props.user.gettingStartedStatus, this.props.user.id)
+              this.props.update(
+                this.props.user.crm.onboardingStatus.gettingStarted,
+                this.props.user.crm.onboardingStatus.gettingStartedSkipped,
+                this.props.user.id
+              )
             })
           },
           1500
@@ -199,7 +202,7 @@ class ProjectRootView extends React.Component<Props, {}> {
       Relay.Store.commitUpdate(
         new AddProjectMutation({
           projectName,
-          userId: this.props.viewer.user.id,
+          customerId: this.props.viewer.user.id,
         }),
         {
           onSuccess: () => {
@@ -217,7 +220,7 @@ class ProjectRootView extends React.Component<Props, {}> {
 const mapStateToProps = (state) => {
   return {
     gettingStartedState: state.gettingStarted.gettingStartedState,
-    checkStatus: state.gettingStarted.checkStatus,
+    pollGettingStartedOnboarding: state.gettingStarted.poll,
     popup: state.popup,
   }
 }
@@ -260,9 +263,16 @@ export default Relay.createContainer(MappedProjectRootView, {
         }
         user {
           id
-          email
-          name
-          gettingStartedStatus
+          crm {
+            onboardingStatus {
+              gettingStarted
+              gettingStartedSkipped
+            }
+            information {
+              name
+              email
+            }
+          }
           projects(first: 100) {
             edges {
               node {

@@ -34,8 +34,8 @@ class SettingsTab extends React.Component<Props, State> {
     super(props)
 
     this.state = {
-      email: this.props.viewer.user.email,
-      name: this.props.viewer.user.name,
+      email: this.props.viewer.user.crm.information.email,
+      name: this.props.viewer.user.crm.information.name,
       oldPassword: '',
       newPasswordOne: '',
       newPasswordTwo: '',
@@ -103,8 +103,8 @@ class SettingsTab extends React.Component<Props, State> {
   }
 
   private saveChanges = () => {
-    const nameWasChanged = this.props.viewer.user.name !== this.state.name
-    const emailWasChanged = this.props.viewer.user.email !== this.state.email
+    const nameWasChanged = this.props.viewer.user.crm.information.name !== this.state.name
+    const emailWasChanged = this.props.viewer.user.crm.information.email !== this.state.email
     const passwordWasChanged = this.state.newPasswordOne !== '' && this.state.newPasswordTwo !== ''
 
     if (!nameWasChanged && !emailWasChanged && !passwordWasChanged) {
@@ -123,7 +123,7 @@ class SettingsTab extends React.Component<Props, State> {
   private handleCustomerChange () {
     Relay.Store.commitUpdate(
       new UpdateCustomerMutation({
-        userId: this.props.viewer.user.id,
+        customerId: this.props.viewer.user.id,
         email: this.state.email,
         name: this.state.name,
       }),
@@ -142,7 +142,7 @@ class SettingsTab extends React.Component<Props, State> {
     if (this.state.newPasswordOne !== '' && this.state.newPasswordOne === this.state.newPasswordTwo) {
       Relay.Store.commitUpdate(
         new UpdatePasswordMutation({
-          userId: this.props.viewer.user.id,
+          customerId: this.props.viewer.user.id,
           oldPassword: this.state.oldPassword,
           newPassword: this.state.newPasswordOne,
         }),
@@ -172,8 +172,12 @@ export default Relay.createContainer(SettingsTab, {
       fragment on Viewer {
         user {
           id
-          name
-          email
+          crm {
+            information {
+              name
+              email
+            }
+          }
         }
       }
     `,

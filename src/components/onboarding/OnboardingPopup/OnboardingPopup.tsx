@@ -70,7 +70,7 @@ class OnboardingPopup extends React.Component<Props, {}> {
   }
 
   private getStarted = (): void => {
-    if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
+    if (this.props.gettingStartedState.isCurrentStep('STEP0_OVERVIEW')) {
       this.props.closePopup(this.props.id)
       this.props.nextStep()
     }

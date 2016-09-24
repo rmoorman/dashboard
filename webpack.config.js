@@ -92,6 +92,7 @@ module.exports = {
       favicon: 'static/favicon.png',
       template: 'src/index.html',
     }),
+    new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new webpack.optimize.CommonsChunkPlugin('vendor'),
     new webpack.LoaderOptionsPlugin({
       options: {

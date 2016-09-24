@@ -4,12 +4,13 @@ import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {nextStep, skip} from '../../actions/gettingStarted'
+import {GettingStartedState} from '../../types/gettingStarted'
 import Icon from '../../components/Icon/Icon'
 
 interface Props {
   params: any
   router: any
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   nextStep: () => Promise<any>
   skip: () => Promise<any>
 }
@@ -17,10 +18,6 @@ interface Props {
 interface StepData {
   index: number
   text: string
-  isActive: boolean
-  isComplete: boolean
-  totalSubsteps: number
-  completedSubsteps: number
 }
 
 class OnboardSideNav extends React.Component<Props, {}> {
@@ -57,42 +54,22 @@ class OnboardSideNav extends React.Component<Props, {}> {
             {this.renderStep({
               index: 1,
               text: 'Create a „Post“-Model',
-              isActive: false,
-              isComplete: true,
-              completedSubsteps: 2,
-              totalSubsteps: 2,
             })}
             {this.renderStep({
               index: 2,
               text: 'Define the Model',
-              isActive: true,
-              isComplete: false,
-              completedSubsteps: 2,
-              totalSubsteps: 2,
             })}
             {this.renderStep({
               index: 3,
               text: 'Create 3 Posts',
-              isActive: false,
-              isComplete: false,
-              completedSubsteps: 2,
-              totalSubsteps: 2,
             })}
             {this.renderStep({
               index: 4,
               text: 'Test in Playground',
-              isActive: false,
-              isComplete: false,
-              completedSubsteps: 2,
-              totalSubsteps: 2,
             })}
             {this.renderStep({
               index: 5,
               text: 'Run example app',
-              isActive: false,
-              isComplete: false,
-              completedSubsteps: 2,
-              totalSubsteps: 2,
             })}
           </div>
           <div>
@@ -111,13 +88,16 @@ class OnboardSideNav extends React.Component<Props, {}> {
   }
 
   private renderStep = (data: StepData) => {
+    const { progress } = this.props.gettingStartedState
+    const isActive = progress.index === data.index
+    const isComplete = progress.index > data.index
     return (
       <div
         className={classnames(
           'flex black-30 mb-16 items-center w-100',
           {
-            'white': data.isActive,
-            'strike': data.isComplete,
+            'white': isActive,
+            'strike': isComplete,
           }
         )}
       >
@@ -126,26 +106,26 @@ class OnboardSideNav extends React.Component<Props, {}> {
           className={classnames(
             'flex items-center justify-center ',
             {
-              'accent': data.isActive || data.isComplete,
-              'o-40': !data.isActive,
-              'bg-white': data.isActive,
-              'bg-black-50': data.isComplete,
-              'black ba b--black': !data.isComplete && !data.isActive,
+              'accent': isActive || isComplete,
+              'o-40': !isActive,
+              'bg-white': isActive,
+              'bg-black-50': isComplete,
+              'black ba b--black': !isComplete && !isActive,
             }
           )}
         >
           {data.index}
         </div>
         <div className='mh-16'>{data.text}</div>
-        {data.isActive && data.totalSubsteps > 0 &&
+        {isActive && progress.total > 0 &&
         <div
           className='bg-black-10 white-60 fwb'
           style={{ fontSize: 12, padding: 4, marginLeft: 'auto' }}
         >
-          {data.completedSubsteps}/{data.totalSubsteps}
+          {progress.done}/{progress.total}
         </div>
         }
-        {data.isComplete &&
+        {isComplete &&
         <Icon
           style={{ marginLeft: 'auto' }}
           width={13}

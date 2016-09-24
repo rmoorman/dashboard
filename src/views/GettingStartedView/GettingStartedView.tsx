@@ -8,7 +8,7 @@ import Loading from '../../components/Loading/Loading'
 import { Follow } from 'react-twitter-widgets'
 import { connect } from 'react-redux'
 import { GettingStartedState } from '../../types/gettingStarted'
-import { Client } from '../../types/types'
+import { Customer } from '../../types/types'
 
 const classes: any = require('./GettingStartedView.scss')
 
@@ -64,7 +64,7 @@ interface Example {
 interface ViewProps {
   params: any,
   projectId: string,
-  user: Client,
+  user: Customer,
   gettingStartedState: GettingStartedState,
 }
 

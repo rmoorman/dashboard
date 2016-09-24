@@ -62,9 +62,10 @@ class ModelHeader extends React.Component<Props, {}> {
         <div className={classes.bottom}>
           <div className={classes.tabs}>
             <Tether
-              steps={{
-                  STEP5_GOTO_DATA_TAB: 'Nice, you\'re done setting up the structure. Let\'s add some data.',
-                }}
+              steps={[{
+                step: 'STEP5_GOTO_DATA_TAB',
+                title: 'Nice, you\'re done setting up the structure. Let\'s add some data.',
+              }]}
               width={200}
               offsetX={-5}
               offsetY={5}

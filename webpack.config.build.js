@@ -33,7 +33,6 @@ const vendor = [
   'react-twitter-widgets',
   'redux',
   'redux-thunk',
-  'smooch',
 ]
 
 module.exports = {
@@ -47,12 +46,12 @@ module.exports = {
     publicPath: '/',
   },
   module: {
-    preLoaders: [{
+    rules: [{
+      enforce: 'pre',
       test: /\.ts(x?)$/,
       loader: 'tslint',
       exclude: /node_modules/,
-    }],
-    loaders: [{
+    }, {
       test: /\.json/, // TODO check if still needed
       loader: 'json',
     }, {
@@ -63,7 +62,7 @@ module.exports = {
       loader: 'style!css?modules&importLoaders=1!postcss!sass?sourceMap',
     }, {
       test: /\.ts(x?)$/,
-      loader: 'babel!ts',
+      loader: 'babel!awesome-typescript',
       exclude: /node_modules/,
     }, {
       test: /\.js$/,
@@ -78,9 +77,6 @@ module.exports = {
     }, {
       test: /graphics\/.*\.svg$/,
       loader: 'file',
-    }, { // TODO remove this loader and also `imports-loader` dependency
-      test: /load-image/,
-      loader: 'imports?define=>false'
     }],
   },
   plugins: [
@@ -108,25 +104,31 @@ module.exports = {
     }),
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new webpack.optimize.CommonsChunkPlugin('vendor'),
-  ],
-  postcss: [
-    cssnano({
-      autoprefixer: {
-        add: true,
-        remove: true,
-        browsers: ['last 2 versions'],
-      },
-      discardComments: {
-        removeAll: true,
-      },
-      safe: true,
-    })
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        postcss: [
+          cssnano({
+            autoprefixer: {
+              add: true,
+              remove: true,
+              browsers: ['last 2 versions'],
+            },
+            discardComments: {
+              removeAll: true,
+            },
+            safe: true,
+          })
+        ],
+        svgo: {
+          plugins: [
+            {removeStyleElement: true},
+          ],
+        },
+      }
+    }),
   ],
   resolve: {
     modules: [path.resolve('./src'), 'node_modules'],
-    extensions: ['', '.js', '.ts', '.tsx'],
-    alias: { // TODO remove when resolved: https://github.com/smooch/smooch-js/issues/357
-      faye: 'faye/browser/faye-browser',
-    },
+    extensions: ['.js', '.ts', '.tsx'],
   }
 }

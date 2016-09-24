@@ -1,11 +1,13 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as Relay from 'react-relay'
+import cuid from 'cuid'
 import {Link} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import mapProps from '../../components/MapProps/MapProps'
+import PlaygroundAPopup from '../../components/onboarding/PlaygroundAPopup/PlaygroundAPopup'
 import {validateModelName} from '../../utils/nameValidator'
 import ScrollBox from '../../components/ScrollBox/ScrollBox'
 import Icon from '../../components/Icon/Icon'
@@ -14,8 +16,11 @@ import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
 import {onFailureShowNotification} from '../../utils/relay'
 import {nextStep, showNotification} from '../../actions/gettingStarted'
+import {showPopup} from '../../actions/popup'
 import {Project, Viewer, Model} from '../../types/types'
 import {ShowNotificationCallback} from '../../types/utils'
+import {Popup} from '../../types/popup'
+import {GettingStartedState} from '../../types/gettingStarted'
 import {classnames} from '../../utils/classnames'
 
 const classes: any = require('./SideNav.scss')
@@ -27,9 +32,10 @@ interface Props {
   viewer: Viewer
   relay: any
   models: Model[]
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   nextStep: () => Promise<any>
   showNotification: () => void
+  showPopup: (popup: Popup) => void
 }
 
 interface State {
@@ -106,15 +112,35 @@ export class SideNav extends React.Component<Props, State> {
 
   private renderPlayground = () => {
     const playgroundPageActive = this.context.router.isActive(`/${this.props.params.projectName}/playground`)
+    const showGettingStartedOnboardingPopup = () => {
+      if (this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_PLAYGROUND')) {
+        this.props.nextStep().then(() => {
+          const id = cuid()
+          const element = <PlaygroundAPopup id={id} params={this.props.params} />
+          this.props.showPopup({element, id, blurBackground: true})
+        })
+      }
+    }
+
     return (
       <div className={`${classes.listBlock} ${playgroundPageActive ? classes.active : ''}`}>
-        <Link
-          to={`/${this.props.params.projectName}/playground`}
-          className={`${classes.head} ${playgroundPageActive ? classes.active : ''}`}
+        <Tether
+          steps={[{
+            step: 'STEP4_CLICK_PLAYGROUND',
+            title: 'Open up the Playground to run GraphQL queries.',
+          }]}
+          offsetY={this.state.addingNewModel ? -75 : -5}
+          width={260}
         >
-          <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
-          <span>Playground</span>
-        </Link>
+          <Link
+            to={`/${this.props.params.projectName}/playground`}
+            className={`${classes.head} ${playgroundPageActive ? classes.active : ''}`}
+            onClick={showGettingStartedOnboardingPopup}
+          >
+            <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
+            <span>Playground</span>
+          </Link>
+        </Tether>
       </div>
     )
   }
@@ -209,9 +235,10 @@ export class SideNav extends React.Component<Props, State> {
           onClick={this.toggleAddModelInput}
         >
           <Tether
-            steps={{
-              STEP2_CREATE_TODO_MODEL: 'First you need to create a new model called "Post"',
-            }}
+            steps={[{
+              step: 'STEP1_CREATE_POST_MODEL',
+              title: 'First you need to create a new model called "Post"',
+            }]}
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={260}
           >
@@ -282,7 +309,7 @@ export class SideNav extends React.Component<Props, State> {
             // getting-started onboarding step
             if (
               this.state.newModelName === 'Post' &&
-              this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_TODO_MODEL')
+              this.props.gettingStartedState.isCurrentStep('STEP1_CREATE_POST_MODEL')
             ) {
               this.props.showNotification()
               this.props.nextStep().then(redirect)
@@ -306,7 +333,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, showNotification}, dispatch)
+  return bindActionCreators({nextStep, showNotification, showPopup}, dispatch)
 }
 
 const ReduxContainer = connect(

@@ -1,48 +1,69 @@
-export type Step = 'STEP1_OVERVIEW' |
-  'STEP2_CREATE_TODO_MODEL' |
-  'STEP3_CREATE_TEXT_FIELD' |
-  'STEP4_CREATE_COMPLETED_FIELD' |
-  'STEP5_GOTO_DATA_TAB' |
-  'STEP6_ADD_DATA_ITEM_1' |
-  'STEP7_ADD_DATA_ITEM_2' |
-  'STEP8_GOTO_GETTING_STARTED' |
-  'STEP9_WAITING_FOR_REQUESTS' |
-  'STEP10_DONE' |
-  'STEP11_SKIPPED'
+export type Step = 'STEP0_OVERVIEW' |
+  'STEP1_CREATE_POST_MODEL' |
+  'STEP2_CLICK_CREATE_FIELD_IMAGEURL' |
+  'STEP2_ENTER_FIELD_NAME_IMAGEURL' |
+  'STEP2_SELECT_TYPE_IMAGEURL' |
+  'STEP2_CLICK_CONFIRM_IMAGEURL' |
+  'STEP2_CREATE_FIELD_DESCRIPTION' |
+  'STEP3_CLICK_DATA_BROWSER' |
+  'STEP3_CLICK_ADD_NODE1' |
+  'STEP3_CLICK_ADD_NODE2' |
+  'STEP4_CLICK_PLAYGROUND' |
+  'STEP4_CLICK_BEGIN_PART1' |
+  'STEP4_CLICK_TEASER_PART2' |
+  'STEP4_CLICK_BEGIN_PART2' |
+  'STEP4_CLICK_TEASER_STEP5' |
+  'STEP5_WAITING' |
+  'STEP5_DONE'
+
+interface StepProgress {
+  index: number
+  total: number
+  done: number
+}
 
 interface Props {
   step: Step
-  userId: string
+  skipped: boolean
+  customerId: string
 }
 
 export class GettingStartedState {
 
   static steps: [Step] = [
-    'STEP1_OVERVIEW',
-    'STEP2_CREATE_TODO_MODEL',
-    'STEP3_CREATE_TEXT_FIELD',
-    'STEP4_CREATE_COMPLETED_FIELD',
-    'STEP5_GOTO_DATA_TAB',
-    'STEP6_ADD_DATA_ITEM_1',
-    'STEP7_ADD_DATA_ITEM_2',
-    'STEP8_GOTO_GETTING_STARTED',
-    'STEP9_WAITING_FOR_REQUESTS',
-    'STEP10_DONE',
-    'STEP11_SKIPPED',
+    'STEP0_OVERVIEW',
+    'STEP1_CREATE_POST_MODEL',
+    'STEP2_CLICK_CREATE_FIELD_IMAGEURL',
+    'STEP2_ENTER_FIELD_NAME_IMAGEURL',
+    'STEP2_SELECT_TYPE_IMAGEURL',
+    'STEP2_CLICK_CONFIRM_IMAGEURL',
+    'STEP2_CREATE_FIELD_DESCRIPTION',
+    'STEP3_CLICK_DATA_BROWSER',
+    'STEP3_CLICK_ADD_NODE1',
+    'STEP3_CLICK_ADD_NODE2',
+    'STEP4_CLICK_PLAYGROUND',
+    'STEP4_CLICK_BEGIN_PART1',
+    'STEP4_CLICK_TEASER_PART2',
+    'STEP4_CLICK_BEGIN_PART2',
+    'STEP4_CLICK_TEASER_STEP5',
+    'STEP5_WAITING',
+    'STEP5_DONE',
   ]
 
   step: Step
-  userId: string
+  skipped: boolean
+  customerId: string
 
-  progress: number
+  progress: StepProgress
 
   constructor(props: Props) {
-    this.userId = props.userId
+    this.customerId = props.customerId
+    this.skipped = props.skipped
     this.update(props.step)
   }
 
   isActive = (): boolean => {
-    return this.step !== 'STEP10_DONE' && this.step !== 'STEP11_SKIPPED'
+    return this.step !== 'STEP5_DONE' && !this.skipped
   }
 
   isCurrentStep = (step: Step): boolean => {
@@ -58,40 +79,24 @@ export class GettingStartedState {
 
     this.step = step
 
-    switch (step) {
-      case 'STEP1_OVERVIEW':
-        this.progress = 0
-        break
-      case 'STEP2_CREATE_TODO_MODEL':
-        this.progress = 1
-        break
-      case 'STEP3_CREATE_TEXT_FIELD':
-        this.progress = 1
-        break
-      case 'STEP4_CREATE_COMPLETED_FIELD':
-        this.progress = 1
-        break
-      case 'STEP5_GOTO_DATA_TAB':
-        this.progress = 2
-        break
-      case 'STEP6_ADD_DATA_ITEM_1':
-        this.progress = 2
-        break
-      case 'STEP7_ADD_DATA_ITEM_2':
-        this.progress = 2
-        break
-      case 'STEP8_GOTO_GETTING_STARTED':
-        this.progress = 3
-        break
-      case 'STEP9_WAITING_FOR_REQUESTS':
-        this.progress = 3
-        break
-      case 'STEP10_DONE':
-        this.progress = 4
-        break
-      case 'STEP11_SKIPPED':
-        this.progress = 0
-        break
-    }
+    this.progress = {
+      'STEP0_OVERVIEW': () => ({ index: 0, total: 0, done: 0 }),
+      'STEP1_CREATE_POST_MODEL': () => ({ index: 1, total: 1, done: 0 }),
+      'STEP2_CLICK_CREATE_FIELD_IMAGEURL': () => ({ index: 2, total: 2, done: 0 }),
+      'STEP2_ENTER_FIELD_NAME_IMAGEURL': () => ({ index: 2, total: 2, done: 0 }),
+      'STEP2_SELECT_TYPE_IMAGEURL': () => ({ index: 2, total: 2, done: 0 }),
+      'STEP2_CLICK_CONFIRM_IMAGEURL': () => ({ index: 2, total: 2, done: 0 }),
+      'STEP2_CREATE_FIELD_DESCRIPTION': () => ({ index: 2, total: 2, done: 1 }),
+      'STEP3_CLICK_DATA_BROWSER': () => ({ index: 3, total: 2, done: 0 }),
+      'STEP3_CLICK_ADD_NODE1': () => ({ index: 3, total: 2, done: 0 }),
+      'STEP3_CLICK_ADD_NODE2': () => ({ index: 3, total: 2, done: 1 }),
+      'STEP4_CLICK_PLAYGROUND': () => ({ index: 4, total: 2, done: 0 }),
+      'STEP4_CLICK_BEGIN_PART1': () => ({ index: 4, total: 2, done: 0 }),
+      'STEP4_CLICK_TEASER_PART2': () => ({ index: 4, total: 2, done: 1 }),
+      'STEP4_CLICK_BEGIN_PART2': () => ({ index: 4, total: 2, done: 1 }),
+      'STEP4_CLICK_TEASER_STEP5': () => ({ index: 4, total: 2, done: 2 }),
+      'STEP5_WAITING': () => ({ index: 5, total: 0, done: 0 }),
+      'STEP5_DONE': () => ({ index: 5, total: 0, done: 0 }),
+    }[step]()
   }
 }

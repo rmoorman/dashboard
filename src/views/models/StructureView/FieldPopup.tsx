@@ -16,6 +16,7 @@ import {ToggleSide} from '../../../components/ToggleButton/ToggleButton'
 import AddFieldMutation from '../../../mutations/AddFieldMutation'
 import UpdateFieldMutation from '../../../mutations/UpdateFieldMutation'
 import {Field, Model} from '../../../types/types'
+import {GettingStartedState} from '../../../types/gettingStarted'
 import {emptyDefault} from '../utils'
 import {connect} from 'react-redux'
 import {nextStep, showNotification} from '../../../actions/gettingStarted'
@@ -29,7 +30,7 @@ interface Props {
   model: Model
   params: any
   allModels: Model[]
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   nextStep: any
   showNotification: () => void
 }
@@ -348,13 +349,13 @@ class FieldPopup extends React.Component<Props, State> {
           this.close()
 
           // getting-started onboarding steps
-          const isStep3 = this.props.gettingStartedState.isActive('STEP3_CREATE_TEXT_FIELD')
+          const isStep3 = this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CONFIRM_IMAGEURL')
           if (isStep3 && name === 'imageUrl' && typeIdentifier === 'String') {
             this.props.showNotification()
             this.props.nextStep()
           }
 
-          const isStep4 = this.props.gettingStartedState.isActive('STEP4_CREATE_COMPLETED_FIELD')
+          const isStep4 = this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_FIELD_DESCRIPTION')
           if (isStep4 && name === 'description' && typeIdentifier === 'String') {
             this.props.showNotification()
             this.props.nextStep()

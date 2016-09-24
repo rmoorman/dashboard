@@ -210,10 +210,13 @@ class BrowserView extends React.Component<Props, State> {
   private renderTether = (): JSX.Element => {
     return (
       <Tether
-        steps={{
-          STEP6_ADD_DATA_ITEM_1: `Add your first Post node to the database.`,
-          STEP7_ADD_DATA_ITEM_2: `Well done. Let's add another one.`,
-        }}
+        steps={[{
+          step: 'STEP6_ADD_DATA_ITEM_1',
+          title: `Add your first Post node to the database.`,
+        }, {
+          step: 'STEP7_ADD_DATA_ITEM_2',
+          title: `Well done. Let's add another one.`,
+        }]}
         offsetX={5}
         offsetY={5}
         width={260}
@@ -501,8 +504,8 @@ class BrowserView extends React.Component<Props, State> {
 
         // getting-started onboarding step
         if (this.props.params.modelName === 'Post' && (
-            this.props.gettingStartedState.isCurrentStep('STEP6_ADD_DATA_ITEM_1') ||
-            this.props.gettingStartedState.isCurrentStep('STEP7_ADD_DATA_ITEM_2')
+            this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE1') ||
+            this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE2')
           )) {
           this.props.nextStep()
         }

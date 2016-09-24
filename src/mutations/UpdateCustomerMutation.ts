@@ -1,7 +1,7 @@
 import * as Relay from 'react-relay'
 
 interface Props {
-  userId: string
+  customerId: string
   gettingStartedStatus?: string
   name?: string
   email?: string
@@ -25,7 +25,7 @@ export default class UpdateCustomerMutation extends Relay.Mutation<Props, {}> {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
-        user: this.props.userId,
+        user: this.props.customerId,
       },
     }]
   }
@@ -41,7 +41,7 @@ export default class UpdateCustomerMutation extends Relay.Mutation<Props, {}> {
   getOptimisticResponse () {
     return {
       user: {
-        id: this.props.userId,
+        id: this.props.customerId,
         gettingStartedStatus: this.props.gettingStartedStatus,
         name: this.props.name,
         email: this.props.email,

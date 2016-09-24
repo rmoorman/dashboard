@@ -94,6 +94,7 @@
     "html-webpack-plugin": "^2.22.0",
     "jest-cli": "^14.0.0",
     "json-loader": "^0.5.4",
+    "node-noop": "^1.0.0",
     "node-sass": "^3.8.0",
     "postcss-loader": "^0.9.1",
     "raw-loader": "^0.5.1",
