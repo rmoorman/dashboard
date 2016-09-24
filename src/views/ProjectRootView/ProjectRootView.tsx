@@ -7,7 +7,8 @@ import {bindActionCreators} from 'redux'
 import cuid from 'cuid'
 import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
-import OnboardingPopup from '../../components/OnboardingPopup/OnboardingPopup'
+import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
+import PlaygroundAPopup from '../../components/onboarding/PlaygroundAPopup/PlaygroundAPopup'
 import {showPopup} from '../../actions/popup'
 import {connect} from 'react-redux'
 import Smooch from 'smooch'
@@ -85,6 +86,10 @@ class ProjectRootView extends React.Component<Props, {}> {
         'Product': 'Dashboard',
       })
     }
+    // TODO remove after testing
+    const id = cuid()
+    const element = <PlaygroundAPopup />
+    this.props.showPopup({element, id, blurBackground: true})
   }
 
   componentWillUnmount() {
