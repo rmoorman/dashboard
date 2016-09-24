@@ -7,12 +7,8 @@ import { findDOMNode } from 'react-dom'
 import Loading from '../../components/Loading/Loading'
 import { Follow } from 'react-twitter-widgets'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { showPopup } from '../../actions/popup'
-import OnboardingView from './OnboardingView'
 import { GettingStartedState } from '../../types/gettingStarted'
 import { Client } from '../../types/types'
-import cuid from 'cuid'
 
 const classes: any = require('./GettingStartedView.scss')
 
@@ -70,7 +66,6 @@ interface ViewProps {
   projectId: string,
   user: Client,
   gettingStartedState: GettingStartedState,
-  showPopup: any,
 }
 
 interface ViewState {
@@ -105,10 +100,6 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
       project: this.props.params.projectName,
       step: this.props.gettingStartedState.step,
     })
-    if (this.props.gettingStartedState.progress === 0) {
-      const id = cuid()
-      this.props.showPopup(<OnboardingView id={id} firstName={this.props.user.name.split(' ')[0]}/>, id)
-    }
   }
 
   componentDidUpdate (): void {
@@ -289,13 +280,8 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ showPopup }, dispatch)
-}
-
 const ReduxContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProps
 )(GettingStartedView)
 
 const MappedGettingStartedView = mapProps({

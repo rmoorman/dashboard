@@ -11,18 +11,14 @@ export default class IconNotification extends React.Component<Props, {}> {
   render() {
     return (
       <TemporaryNotification id={this.props.id}>
-        <div className='flex flex-column items-center justify-center pa4 br4 bg-white-80'>
-          <div
-            style={{
-              width: 75,
-              height: 75,
-            }}
-          >
-            <Icon width={75} height={75} src={require('../../assets/icons/check.svg')} />
-          </div>
-          <div className='f1 black'>
-            done
-          </div>
+        <div
+          className='flex br-2 items-center justify-center bg-white shadow-2'
+          style={{
+            width: 88,
+            height: 88,
+          }}
+        >
+          <Icon width={30} height={30} color='#00B861' src={require('../../assets/icons/check.svg')} />
         </div>
       </TemporaryNotification>
     )

@@ -12,7 +12,7 @@ import FieldPopup from './views/models/StructureView/FieldPopup'
 import BrowserView from './views/models/BrowserView/BrowserView'
 import ModelRedirectView from './views/models/ModelRedirectView'
 import PlaygroundView from './views/playground/PlaygroundView/PlaygroundView'
-import GettingStartedView from './views/GettingStartedView/GettingStartedView'
+// import GettingStartedView from './views/GettingStartedView/GettingStartedView'
 import AccountView from './views/account/AccountView/AccountView'
 import SettingsTab from './views/account/AccountView/SettingsTab'
 import ResetPasswordView from './views/account/ResetPasswordView/ResetPasswordView'
@@ -102,7 +102,6 @@ export default (
       </Route>
       <Route path='actions' component={ActionsView} queries={ViewerQuery} render={render} />
       <Route path='playground' component={PlaygroundView} queries={ViewerQuery} render={render} />
-      <Route path='getting-started' component={GettingStartedView} queries={ViewerQuery} render={render} />
       <Route path='settings' component={ProjectSettingsView} queries={ViewerQuery} render={render} />
       <IndexRedirect to='models' />
     </Route>

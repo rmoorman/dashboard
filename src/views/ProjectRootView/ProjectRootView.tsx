@@ -3,18 +3,23 @@ import {withRouter} from 'react-router'
 import * as Relay from 'react-relay'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import * as cookiestore from 'cookiestore'
+import {bindActionCreators} from 'redux'
+import cuid from 'cuid'
 import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
+import OnboardingPopup from '../../components/OnboardingPopup/OnboardingPopup'
+import {showPopup} from '../../actions/popup'
 import {connect} from 'react-redux'
 import Smooch from 'smooch'
 import {validateProjectName} from '../../utils/nameValidator'
 import ProjectSelection from '../../components/ProjectSelection/ProjectSelection'
 import SideNav from '../../views/ProjectRootView/SideNav'
-import OnboardSideNav from '../../views/GettingStartedView/OnboardSideNav'
+import OnboardSideNav from './OnboardSideNav'
 import LoginView from '../../views/LoginView/LoginView'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
 import {update} from '../../actions/gettingStarted'
 import {Viewer, Client, Project} from '../../types/types'
+import {Popup, PopupState} from '../../types/popup'
 const classes: any = require('./ProjectRootView.scss')
 
 require('../../styles/core.scss')
@@ -30,9 +35,10 @@ interface Props {
   params: any
   relay: any
   gettingStartedState: any
-  popup: any
+  popup: PopupState
   checkStatus: boolean
   update: (step: string, userId: string) => void
+  showPopup: (popup: Popup) => void,
 }
 
 class ProjectRootView extends React.Component<Props, {}> {
@@ -68,6 +74,12 @@ class ProjectRootView extends React.Component<Props, {}> {
           headerText: 'Can I help you? 🙌',
         },
       })
+
+      if (this.props.gettingStartedState.progress === 0) {
+        const id = cuid()
+        const element = <OnboardingPopup id={id} firstName={this.props.user.name.split(' ')[0]}/>
+        this.props.showPopup({element, id, blurBackground: true})
+      }
     } else {
       analytics.identify({
         'Product': 'Dashboard',
@@ -108,41 +120,45 @@ class ProjectRootView extends React.Component<Props, {}> {
         <LoginView viewer={this.props.viewer}/>
       )
     }
+
+    const blurBackground = this.props.popup.popups.reduce((acc, p) => p.blurBackground || acc, false)
     return (
       <div className={classes.root}>
-        <div className={classes.sidebar}>
-          <div className={classes.projectSelection}>
-            <ProjectSelection
-              params={this.props.params}
-              projects={this.props.allProjects}
-              selectedProject={this.props.project}
-              add={this.addProject}
-            />
+        <div className={`${blurBackground ? classes.blur : ''} flex w-100`}>
+          <div className={classes.sidebar}>
+            <div className={classes.projectSelection}>
+              <ProjectSelection
+                params={this.props.params}
+                projects={this.props.allProjects}
+                selectedProject={this.props.project}
+                add={this.addProject}
+              />
+            </div>
+            <div className={classes.sidenav}>
+              <SideNav
+                params={this.props.params}
+                project={this.props.project}
+                viewer={this.props.viewer}
+                projectCount={this.props.allProjects.length}
+              />
+            </div>
           </div>
-          <div className={classes.sidenav}>
-            <SideNav
-              params={this.props.params}
-              project={this.props.project}
-              viewer={this.props.viewer}
-              projectCount={this.props.allProjects.length}
-            />
+          <div className={classnames(classes.content, 'flex')}>
+            <div
+              className='overflow-hidden'
+              style={{
+                flex: `0 0 calc(100%${this.props.gettingStartedState.isActive() ? ' - 266px' : ''})`,
+              }}>
+              {this.props.children}
+            </div>
+            {this.props.gettingStartedState.isActive() &&
+            <div className='flex bg-accent' style={{flex: '0 0 266px'}}>
+              <OnboardSideNav params={this.props.params}/>
+            </div>
+            }
           </div>
         </div>
-        <div className={classnames(classes.content, 'flex')}>
-          <div
-            className='overflow-hidden'
-            style={{
-              width: `calc(100%${this.props.gettingStartedState.isActive() ? '- 200px' : ''})`,
-            }}>
-            {this.props.children}
-          </div>
-          {this.props.gettingStartedState.isActive() &&
-          <div className='fr' style={{width: 200}}>
-            <OnboardSideNav />
-          </div>
-          }
-        </div>
-        {this.props.popup.popups.map(popup =>
+        {this.props.popup.popups.map((popup) =>
           <div className='fixed left-0 right-0 top-0 bottom-0 z-999' style={{pointerEvents: 'none'}} key={popup.id}>
             {popup.element}
           </div>
@@ -203,11 +219,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    update: (step, userId) => {
-      dispatch(update(step, userId))
-    },
-  }
+  return bindActionCreators({showPopup, update}, dispatch)
 }
 
 const ReduxContainer = connect(
@@ -233,32 +245,32 @@ export default Relay.createContainer(MappedProjectRootView, {
   initialVariables: {
     projectName: null, // injected from router
   },
-    fragments: {
-        viewer: () => Relay.QL`
-            fragment on Viewer {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on Viewer {
+        id
+        project: projectByName(projectName: $projectName) {
+          id
+          name
+          ${SideNav.getFragment('project')}
+        }
+        user {
+          id
+          email
+          name
+          gettingStartedStatus
+          projects(first: 100) {
+            edges {
+              node {
                 id
-                project: projectByName(projectName: $projectName) {
-                    id
-                    name
-                    ${SideNav.getFragment('project')}
-                }
-                user {
-                    id
-                    email
-                    name
-                    gettingStartedStatus
-                    projects(first: 100) {
-                        edges {
-                            node {
-                                id
-                                name
-                            }
-                        }
-                    }
-                }
-                ${LoginView.getFragment('viewer')}
-                ${SideNav.getFragment('viewer')}
+                name
+              }
             }
-        `,
-    },
+          }
+        }
+        ${LoginView.getFragment('viewer')}
+        ${SideNav.getFragment('viewer')}
+      }
+    `,
+  },
 })

@@ -3,7 +3,6 @@ import {closePopup} from '../../actions/popup'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {classnames} from '../../utils/classnames'
-
 const classes = require('./TemporaryNotification.scss')
 
 interface Props {
@@ -23,11 +22,11 @@ class TemporaryNotification extends React.Component<Props, {}> {
 
   render() {
     return (
-      <div className='flex w-100 h-100 justify-center items-center'>
-        <div className={classnames('flex flex-column h-100', classes.fadeOut)}>
-          <div className='h-50 w-100'>
+      <div className='relative w-100 h-100'>
+        <div className={classes.center}>
+          <div className={classes.fadeOut}>
+            {this.props.children}
           </div>
-          {this.props.children}
         </div>
       </div>
     )

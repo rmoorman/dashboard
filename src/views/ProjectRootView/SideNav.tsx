@@ -13,7 +13,7 @@ import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
 import {onFailureShowNotification} from '../../utils/relay'
-import {nextStep, skip} from '../../actions/gettingStarted'
+import {nextStep, showNotification} from '../../actions/gettingStarted'
 import {Project, Viewer, Model} from '../../types/types'
 import {ShowNotificationCallback} from '../../types/utils'
 import {classnames} from '../../utils/classnames'
@@ -29,7 +29,7 @@ interface Props {
   models: Model[]
   gettingStartedState: any
   nextStep: () => Promise<any>
-  skip: () => Promise<any>
+  showNotification: () => void
 }
 
 interface State {
@@ -81,15 +81,12 @@ export class SideNav extends React.Component<Props, State> {
 
   render() {
 
-    const gettingStartedIsActive = this.props.gettingStartedState.isActive()
-
     return (
       <div
         className={classes.root}
         onMouseLeave={() => this.setState({forceShowModels: false} as State)}>
         <div className={classes.container}>
           <ScrollBox>
-            {gettingStartedIsActive && this.renderGettingStarted()}
             {this.renderModels()}
             {this.renderRelations()}
             {this.renderActions()}
@@ -225,91 +222,6 @@ export class SideNav extends React.Component<Props, State> {
     )
   }
 
-  private renderGettingStarted = () => {
-
-    const firstStepOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
-        this.props.nextStep()
-      }
-    }
-
-    const secondStepOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP5_GOTO_DATA_TAB')) {
-        this.props.nextStep()
-      }
-    }
-
-    const thirdStepOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP8_GOTO_GETTING_STARTED')) {
-        this.props.nextStep()
-      }
-    }
-
-    const gettingStartedStepClass = (index) => {
-      if (this.props.gettingStartedState.progress === index) {
-        return classes.gettingStartedStepActive
-      } else if (this.props.gettingStartedState.progress > index) {
-        return classes.gettingStartedStepDone
-      } else {
-        return classes.gettingStartedStepDisabled
-      }
-    }
-
-    const showsGettingStarted = this.context.router.isActive(`/${this.props.params.projectName}/getting-started`)
-
-    return (
-      <div className={`${showsGettingStarted ? classes.active : ''}`}>
-        <div className={classes.gettingStarted}>
-          <Link
-            to={`/${this.props.params.projectName}/getting-started`}
-            className={classes.gettingStartedTitle}
-            onClick={thirdStepOnClick}
-          >
-            <Icon width={19} height={19} src={require('assets/icons/cake.svg')}/>
-            <span>Getting Started</span>
-          </Link>
-          <div className={classes.gettingStartedList}>
-            <div className={gettingStartedStepClass(1)}>
-              <Link
-                to={`/${this.props.params.projectName}/getting-started`}
-                onClick={firstStepOnClick}
-              >
-                1. Create Post model
-              </Link>
-            </div>
-            <div className={gettingStartedStepClass(2)}>
-              <Link
-                to={`/${this.props.params.projectName}/models/Post/browser`}
-                onClick={secondStepOnClick}
-              >
-                2. Add some data
-              </Link>
-            </div>
-            <div className={gettingStartedStepClass(3)}>
-              <Tether
-                steps={{
-                      STEP8_GOTO_GETTING_STARTED: 'You\'re almost done. Let\'s run an example app now...',
-                    }}
-                offsetY={-5}
-                width={260}
-              >
-                <Link
-                  to={`/${this.props.params.projectName}/getting-started`}
-                  onClick={thirdStepOnClick}
-                >
-                  3. Run example app
-                </Link>
-              </Tether>
-            </div>
-            <div onClick={this.skipGettingStarted} className={classes.gettingStartedSkip}>
-              Skip getting started
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   private handleNewModelChange = (e) => {
     this.setState({
       newModelName: e.target.value,
@@ -368,8 +280,11 @@ export class SideNav extends React.Component<Props, State> {
               model: this.state.newModelName,
             })
             // getting-started onboarding step
-            if (this.state.newModelName === 'Post' &&
-              this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_TODO_MODEL')) {
+            if (
+              this.state.newModelName === 'Post' &&
+              this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_TODO_MODEL')
+            ) {
+              this.props.showNotification()
               this.props.nextStep().then(redirect)
             } else {
               redirect()
@@ -382,15 +297,6 @@ export class SideNav extends React.Component<Props, State> {
       )
     }
   }
-
-  private skipGettingStarted = () => {
-    if (window.confirm('Do you really want skip the getting started tour?')) {
-      this.props.skip()
-        .then(() => {
-          this.context.router.replace(`/${this.props.params.projectName}/models`)
-        })
-    }
-  }
 }
 
 const mapStateToProps = (state) => {
@@ -399,8 +305,8 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep, skip}, dispatch)
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({nextStep, showNotification}, dispatch)
 }
 
 const ReduxContainer = connect(

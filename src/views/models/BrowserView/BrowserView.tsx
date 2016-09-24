@@ -130,7 +130,7 @@ class BrowserView extends React.Component<Props, State> {
         >
           <input type='file' onChange={this.handleImport} id='fileselector' className='dn' />
           <label htmlFor='fileselector' className={classes.button}>
-            Import
+            Import JSON
           </label>
           {this.renderTether()}
           {this.state.selectedNodeIds.size > 0 &&
