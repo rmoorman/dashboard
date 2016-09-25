@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as Relay from 'react-relay'
-import {Link} from 'react-router'
+import {withRouter, Link} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -16,6 +16,7 @@ import {onFailureShowNotification} from '../../utils/relay'
 import {nextStep, skip} from '../../actions/gettingStarted'
 import {Project, Viewer, Model} from '../../types/types'
 import {ShowNotificationCallback} from '../../types/utils'
+import {showNotification} from '../../actions/notification'
 import {classnames} from '../../utils/classnames'
 
 const classes: any = require('./SideNav.scss')
@@ -30,6 +31,8 @@ interface Props {
   gettingStartedState: any
   nextStep: () => Promise<any>
   skip: () => Promise<any>
+  showNotification: ShowNotificationCallback
+  router: any
 }
 
 interface State {
@@ -40,16 +43,6 @@ interface State {
 }
 
 export class SideNav extends React.Component<Props, State> {
-
-  static contextTypes = {
-    router: React.PropTypes.object.isRequired,
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    router: any
-    showNotification: ShowNotificationCallback
-  }
 
   refs: {
     [key: string]: any;
@@ -108,7 +101,7 @@ export class SideNav extends React.Component<Props, State> {
   }
 
   private renderPlayground = () => {
-    const playgroundPageActive = this.context.router.isActive(`/${this.props.params.projectName}/playground`)
+    const playgroundPageActive = this.props.router.isActive(`/${this.props.params.projectName}/playground`)
     return (
       <div className={`${classes.listBlock} ${playgroundPageActive ? classes.active : ''}`}>
         <Link
@@ -123,7 +116,7 @@ export class SideNav extends React.Component<Props, State> {
   }
 
   private renderActions = () => {
-    const actionsPageActive = this.context.router.isActive(`/${this.props.params.projectName}/actions`)
+    const actionsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/actions`)
     return (
       <div className={`${classes.listBlock} ${actionsPageActive ? classes.active : ''}`}>
         <Link
@@ -138,7 +131,7 @@ export class SideNav extends React.Component<Props, State> {
   }
 
   private renderRelations = () => {
-    const relationsPageActive = this.context.router.isActive(`/${this.props.params.projectName}/relations`)
+    const relationsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/relations`)
     return (
       <div className={`${classes.listBlock} ${relationsPageActive ? classes.active : ''}`}>
         <Link
@@ -154,11 +147,11 @@ export class SideNav extends React.Component<Props, State> {
 
   private renderModels = () => {
     const modelActive = (model) => (
-      this.context.router.isActive(`/${this.props.params.projectName}/models/${model.name}/structure`) ||
-      this.context.router.isActive(`/${this.props.params.projectName}/models/${model.name}/browser`)
+      this.props.router.isActive(`/${this.props.params.projectName}/models/${model.name}/structure`) ||
+      this.props.router.isActive(`/${this.props.params.projectName}/models/${model.name}/browser`)
     )
 
-    const modelsPageActive = this.context.router.isActive(`/${this.props.params.projectName}/models`)
+    const modelsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/models`)
     const showsModels = modelsPageActive || this.state.forceShowModels
 
     return (
@@ -255,7 +248,7 @@ export class SideNav extends React.Component<Props, State> {
       }
     }
 
-    const showsGettingStarted = this.context.router.isActive(`/${this.props.params.projectName}/getting-started`)
+    const showsGettingStarted = this.props.router.isActive(`/${this.props.params.projectName}/getting-started`)
 
     return (
       <div className={`${showsGettingStarted ? classes.active : ''}`}>
@@ -347,7 +340,7 @@ export class SideNav extends React.Component<Props, State> {
 
   private addModel = () => {
     const redirect = () => {
-      this.context.router.push(`/${this.props.params.projectName}/models/${this.state.newModelName}`)
+      this.props.router.push(`/${this.props.params.projectName}/models/${this.state.newModelName}`)
       this.setState({
         addingNewModel: false,
         newModelIsValid: true,
@@ -376,7 +369,7 @@ export class SideNav extends React.Component<Props, State> {
             }
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -387,7 +380,7 @@ export class SideNav extends React.Component<Props, State> {
     if (window.confirm('Do you really want skip the getting started tour?')) {
       this.props.skip()
         .then(() => {
-          this.context.router.replace(`/${this.props.params.projectName}/models`)
+          this.props.router.replace(`/${this.props.params.projectName}/models`)
         })
     }
   }
@@ -400,13 +393,13 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep, skip}, dispatch)
+  return bindActionCreators({nextStep, skip, showNotification}, dispatch)
 }
 
 const ReduxContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(SideNav)
+)(withRouter(SideNav))
 
 const MappedSideNav = mapProps({
   params: (props) => props.params,

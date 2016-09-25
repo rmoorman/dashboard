@@ -1,8 +1,8 @@
 import * as React from 'react'
+import {withRouter} from 'react-router'
 import {Model} from '../../types/types'
 import Icon from '../../components/Icon/Icon'
 import {classnames} from '../../utils/classnames'
-import PropTypes = React.PropTypes
 const classes: any = require('./RelationModels.scss')
 
 interface Props {
@@ -11,16 +11,10 @@ interface Props {
   rightModel: Model
   rightModelIsList: boolean
   projectName: string
+  router: any
 }
 
-export default class RelationModels extends React.Component<Props,{}> {
-  static contextTypes = {
-    router: PropTypes.object.isRequired,
-  }
-
-  context: {
-    router?: any
-  }
+class RelationModels extends React.Component<Props,{}> {
 
   render() {
     return (
@@ -55,6 +49,8 @@ export default class RelationModels extends React.Component<Props,{}> {
   private handleClick = (e: any, modelName: string) => {
     e.preventDefault()
     e.stopPropagation()
-    this.context.router.push(`/${this.props.projectName}/models/${modelName}`)
+    this.props.router.push(`/${this.props.projectName}/models/${modelName}`)
   }
 }
+
+export default withRouter(RelationModels)

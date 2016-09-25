@@ -8,6 +8,9 @@ import DeleteRelationMutation from '../../mutations/DeleteRelationMutation'
 import {Transaction} from 'react-relay'
 import {onFailureShowNotification} from '../../utils/relay'
 import {ShowNotificationCallback} from '../../types/utils'
+import {connect} from 'react-redux'
+import {showNotification} from '../../actions/notification'
+import {bindActionCreators} from 'redux'
 const classes: any = require('./RelationRow.scss')
 
 interface Props {
@@ -15,17 +18,10 @@ interface Props {
   relation: Relation
   project: Project
   onRelationDeleted: () => void
+  showNotification: ShowNotificationCallback
 }
 
 class RelationRow extends React.Component<Props,{}> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback,
-  }
 
   render(): JSX.Element {
     const to = `/${this.props.project.name}/relations/edit/${this.props.relation.name}`
@@ -89,13 +85,19 @@ class RelationRow extends React.Component<Props,{}> {
         }),
         {
           onSuccess: this.props.onRelationDeleted,
-          onFailure: (trans: Transaction) => onFailureShowNotification(trans, this.context.showNotification),
+          onFailure: (trans: Transaction) => onFailureShowNotification(trans, this.props.showNotification),
         })
     }
   }
 }
 
-export default Relay.createContainer(withRouter(RelationRow), {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedRelationRow = connect(null, mapDispatchToProps)(withRouter(RelationRow))
+
+export default Relay.createContainer(MappedRelationRow, {
   fragments: {
     relation: () => Relay.QL`
       fragment on Relation {

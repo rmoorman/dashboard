@@ -7,6 +7,7 @@ import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import Icon from '../../../components/Icon/Icon'
 import mapProps from '../../../components/MapProps/MapProps'
 import Loading from '../../../components/Loading/Loading'
+import {showNotification} from '../../../actions/notification'
 import {ShowNotificationCallback, TypedValue} from '../../../types/utils'
 import {getFieldTypeName, stringToValue} from '../../../utils/valueparser'
 import Tether from '../../../components/Tether/Tether'
@@ -44,6 +45,7 @@ interface Props {
   project: Project
   model: Model
   gettingStartedState: GettingStartedState
+  showNotification: ShowNotificationCallback
   nextStep: () => void
   startProgress: () => any
   incrementProgress: () => any
@@ -65,14 +67,6 @@ interface State {
 }
 
 class BrowserView extends React.Component<Props, State> {
-
-  static contextTypes = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
 
   shouldComponentUpdate: any
 
@@ -483,7 +477,7 @@ class BrowserView extends React.Component<Props, State> {
       })
       .catch((err) => {
         callback(false)
-        err.rawError.forEach((error) => this.context.showNotification(error.message, 'error'))
+        err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
       })
   }
 
@@ -508,7 +502,7 @@ class BrowserView extends React.Component<Props, State> {
         }
       })
       .catch((err) => {
-        err.rawError.forEach(error => this.context.showNotification(error.message, 'error'))
+        err.rawError.forEach(error => this.props.showNotification({message: error.message, level: 'error'}))
         this.setState({loading: false} as State)
       })
   }
@@ -584,7 +578,7 @@ class BrowserView extends React.Component<Props, State> {
         }))
         .then(() => this.reloadData())
         .catch((err) => {
-          err.rawError.forEach((error) => this.context.showNotification(error.message, 'error'))
+          err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
         })
 
       this.setState({selectedNodeIds: Immutable.List()} as State)
@@ -606,6 +600,7 @@ function mapDispatchToProps(dispatch) {
       closePopup,
       startProgress,
       incrementProgress,
+      showNotification,
     },
     dispatch)
 }

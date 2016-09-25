@@ -1,38 +1,31 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
+import {withRouter} from 'react-router'
 import Helmet from 'react-helmet'
 import mapProps from '../../components/MapProps/MapProps'
-import { connect } from 'react-redux'
-import { Model } from '../../types/types'
+import {connect} from 'react-redux'
+import {Model} from '../../types/types'
 
 interface Props {
   params: any
   gettingStartedState: any
   model?: Model
+  router: any
 }
 
 class ModelRedirectView extends React.Component<Props, {}> {
 
-  static contextTypes = {
-    router: React.PropTypes.object.isRequired,
-  }
-
-  context: {
-    router: any
-  }
-
   componentWillMount () {
-    console.log(this.props.params)
     if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
       // redirect to getting started
-      this.context.router.replace(`/${this.props.params.projectName}/getting-started`)
+      this.props.router.replace(`/${this.props.params.projectName}/getting-started`)
     } else if (!this.props.model) {
       // redirect to project root, as this was probably a non-existing model
-      this.context.router.replace(`/${this.props.params.projectName}/models`)
+      this.props.router.replace(`/${this.props.params.projectName}/models`)
     } else {
       // redirect to browser if model already has nodes
       const subView = this.props.model.itemCount === 0 ? 'structure' : 'browser'
-      this.context.router.replace(`/${this.props.params.projectName}/models/${this.props.model.name}/${subView}`)
+      this.props.router.replace(`/${this.props.params.projectName}/models/${this.props.model.name}/${subView}`)
     }
   }
 
@@ -54,7 +47,7 @@ const mapStateToProps = (state) => {
 
 const ReduxContainer = connect(
   mapStateToProps,
-)(ModelRedirectView)
+)(withRouter(ModelRedirectView))
 
 const MappedModelRedirectView = mapProps({
   params: (props) => props.params,

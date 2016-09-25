@@ -1,35 +1,25 @@
 import * as React from 'react'
 import Helmet from 'react-helmet'
-import { NotificationLevel } from '../../types/utils'
+import {connect} from 'react-redux'
+import {Notification} from '../../types/utils'
 import NotificationSystem from 'react-notification-system'
 
 interface Props {
   children: Element
+  notification: Notification
 }
 
-export default class RootView extends React.Component<Props, {}> {
-
-  static childContextTypes = {
-    showNotification: React.PropTypes.func,
-  }
+class RootView extends React.Component<Props, {}> {
 
   refs: {
     [key: string]: any;
     notificationSystem: any
   }
 
-  _notificationSystem: any
-
-  getChildContext () {
-    return {
-      showNotification: (message: string, level: NotificationLevel): void => {
-        this._notificationSystem.addNotification({ message, level })
-      },
+  componentWillUpdate(nextProps: Props) {
+    if (nextProps.notification.level && nextProps.notification.message) {
+      this.refs.notificationSystem.addNotification(nextProps.notification)
     }
-  }
-
-  componentDidMount () {
-    this._notificationSystem = this.refs.notificationSystem
   }
 
   render () {
@@ -42,3 +32,11 @@ export default class RootView extends React.Component<Props, {}> {
     )
   }
 }
+
+const mapStateToProps = (state: any) => {
+  return {
+    notification: state.notification,
+  }
+}
+
+export default connect(mapStateToProps)(RootView)

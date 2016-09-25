@@ -1,16 +1,19 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
-import { Link } from 'react-router'
+import {Link} from 'react-router'
 import Loading from '../../../components/Loading/Loading'
 import UpdateFieldDescriptionMutation from '../../../mutations/UpdateFieldDescriptionMutation'
 import DeleteFieldMutation from '../../../mutations/DeleteFieldMutation'
-import { onFailureShowNotification } from '../../../utils/relay'
-import { ShowNotificationCallback } from '../../../types/utils'
-import { Field, Model } from '../../../types/types'
+import {onFailureShowNotification} from '../../../utils/relay'
+import {ShowNotificationCallback} from '../../../types/utils'
+import {Field, Model} from '../../../types/types'
 import Permissions from './Permissions'
 import Constraints from './Constraints'
 import Icon from '../../../components/Icon/Icon'
 import {isScalar} from '../../../utils/graphql'
+import {connect} from 'react-redux'
+import {showNotification} from '../../../actions/notification'
+import {bindActionCreators} from 'redux'
 const classes: any = require('./FieldRow.scss')
 
 type DetailsState = 'PERMISSIONS' | 'CONSTRAINTS'
@@ -23,6 +26,7 @@ interface Props {
   model: Model
   possibleRelatedPermissionPaths: Field[][]
   availableUserRoles: string[]
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -32,14 +36,6 @@ interface State {
 }
 
 class FieldRow extends React.Component<Props, State> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
 
   state = {
     editDescription: false,
@@ -161,7 +157,7 @@ class FieldRow extends React.Component<Props, State> {
             })
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -192,7 +188,7 @@ class FieldRow extends React.Component<Props, State> {
           } as State)
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({
             editDescription: false,
             editDescriptionPending: false,
@@ -284,7 +280,13 @@ class FieldRow extends React.Component<Props, State> {
   }
 }
 
-export default Relay.createContainer(FieldRow, {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedFieldRow = connect(null, mapDispatchToProps)(FieldRow)
+
+export default Relay.createContainer(MappedFieldRow, {
   fragments: {
     field: () => Relay.QL`
       fragment on Field {

@@ -4,6 +4,9 @@ import {PermanentAuthToken} from '../../types/types'
 import Icon from '../../components/Icon/Icon'
 import DeletePermanentAuthTokenMutation from '../../mutations/DeletePermanentAuthTokenMutation'
 import {ShowNotificationCallback} from '../../types/utils'
+import {connect} from 'react-redux'
+import {showNotification} from '../../actions/notification'
+import {bindActionCreators} from 'redux'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import {onFailureShowNotification} from '../../utils/relay'
 
@@ -12,6 +15,7 @@ const classes = require('./PermanentAuthTokenRow.scss')
 interface Props {
   permanentAuthToken: PermanentAuthToken
   projectId: string
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -20,14 +24,6 @@ interface State {
 }
 
 class PermanentAuthTokenRow extends React.Component<Props, State> {
-
-  static contextTypes = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
 
   constructor(props) {
     super(props)
@@ -86,12 +82,18 @@ class PermanentAuthTokenRow extends React.Component<Props, State> {
         tokenId: this.props.permanentAuthToken.id,
       }),
       {
-        onFailure: (transaction) => onFailureShowNotification(transaction, this.context.showNotification),
+        onFailure: (transaction) => onFailureShowNotification(transaction, this.props.showNotification),
       })
   }
 }
 
-export default Relay.createContainer(PermanentAuthTokenRow, {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedPermanentAuthTokenRow = connect(null, mapDispatchToProps)(PermanentAuthTokenRow)
+
+export default Relay.createContainer(MappedPermanentAuthTokenRow, {
   fragments: {
     permanentAuthToken: () => Relay.QL`
       fragment on PermanentAuthToken {

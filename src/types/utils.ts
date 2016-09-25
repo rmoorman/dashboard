@@ -1,5 +1,10 @@
 export type NotificationLevel = 'success' | 'error' | 'warning' | 'info'
-export type ShowNotificationCallback = (message: string, level: NotificationLevel) => void
+
+export interface Notification {
+  message: string
+  level: NotificationLevel
+}
+export type ShowNotificationCallback = (notification: Notification) => void
 
 export interface Query {
   query: string

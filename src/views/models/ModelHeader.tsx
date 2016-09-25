@@ -22,14 +22,6 @@ interface Props {
 
 class ModelHeader extends React.Component<Props, {}> {
 
-  static contextTypes = {
-    router: React.PropTypes.object.isRequired,
-  }
-
-  context: {
-    router: any
-  }
-
   render () {
     const dataViewOnClick = () => {
       if (this.props.gettingStartedState.isCurrentStep('STEP5_GOTO_DATA_TAB')) {

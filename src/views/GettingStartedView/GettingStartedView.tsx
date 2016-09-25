@@ -1,17 +1,16 @@
 import * as React from 'react'
-import { PropTypes } from 'react'
 import * as Relay from 'react-relay'
 import mapProps from 'map-props'
-import { Link } from 'react-router'
-import { findDOMNode } from 'react-dom'
+import {withRouter, Link} from 'react-router'
+import {findDOMNode} from 'react-dom'
 import Loading from '../../components/Loading/Loading'
-import { Follow } from 'react-twitter-widgets'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { showPopup } from '../../actions/popup'
+import {Follow} from 'react-twitter-widgets'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {showPopup} from '../../actions/popup'
 import OnboardingPopup from './OnboardingPopup'
-import { GettingStartedState } from '../../types/gettingStarted'
-import { Client } from '../../types/types'
+import {GettingStartedState} from '../../types/gettingStarted'
+import {Client} from '../../types/types'
 import cuid from 'cuid'
 
 const classes: any = require('./GettingStartedView.scss')
@@ -21,9 +20,6 @@ interface ScriptProps {
 }
 
 class Script extends React.Component<ScriptProps, {}> {
-  static propTypes = {
-    url: PropTypes.string.isRequired,
-  }
 
   componentDidMount () {
     const element = findDOMNode((this.refs as any).element)
@@ -66,11 +62,12 @@ interface Example {
 }
 
 interface ViewProps {
-  params: any,
-  projectId: string,
-  user: Client,
-  gettingStartedState: GettingStartedState,
-  showPopup: any,
+  params: any
+  projectId: string
+  user: Client
+  gettingStartedState: GettingStartedState
+  showPopup: any
+  router: any
 }
 
 interface ViewState {
@@ -78,14 +75,6 @@ interface ViewState {
 }
 
 class GettingStartedView extends React.Component<ViewProps, ViewState> {
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired,
-  }
-
-  context: {
-    router?: any
-  }
 
   constructor (props: ViewProps) {
     super(props)
@@ -96,7 +85,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
 
   componentWillMount (): void {
     if (!this.props.gettingStartedState.isActive()) {
-      this.context.router.replace(`/${this.props.params.projectName}/models`)
+      this.props.router.replace(`/${this.props.params.projectName}/models`)
     }
   }
 
@@ -296,7 +285,7 @@ function mapDispatchToProps (dispatch) {
 const ReduxContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(GettingStartedView)
+)(withRouter(GettingStartedView))
 
 const MappedGettingStartedView = mapProps({
   params: (props) => props.params,

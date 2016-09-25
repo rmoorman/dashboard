@@ -10,6 +10,7 @@ import ModelHeader from '../ModelHeader'
 import DeleteModelMutation from '../../../mutations/DeleteModelMutation'
 import {Field, Model, Viewer, Project} from '../../../types/types'
 import {ShowNotificationCallback} from '../../../types/utils'
+import {showNotification} from '../../../actions/notification'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -34,6 +35,7 @@ interface Props {
   children: Element
   viewer: Viewer
   relay: Relay.RelayProp
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -41,14 +43,6 @@ interface State {
 }
 
 class StructureView extends React.Component<Props, State> {
-
-  static contextTypes = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
 
   state = {
     menuDropdownVisible: false,
@@ -210,7 +204,7 @@ class StructureView extends React.Component<Props, State> {
             redirect()
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -236,7 +230,7 @@ class StructureView extends React.Component<Props, State> {
             })
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -260,13 +254,13 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep}, dispatch)
+  return bindActionCreators({nextStep, showNotification}, dispatch)
 }
 
 const ReduxContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(StructureView)
+)(withRouter(StructureView))
 
 const MappedStructureView = mapProps({
   relay: (props) => props.relay,
@@ -287,7 +281,7 @@ const MappedStructureView = mapProps({
   project: (props) => props.viewer.project,
 })(ReduxContainer)
 
-export default Relay.createContainer(withRouter(MappedStructureView), {
+export default Relay.createContainer(MappedStructureView, {
   initialVariables: {
     modelName: null, // injected from router
     projectName: null, // injected from router

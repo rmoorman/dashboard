@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {PropTypes} from 'react'
+import {withRouter} from 'react-router'
 import * as Relay from 'react-relay'
 import * as cookiestore from 'cookiestore'
 import {default as mapProps} from 'map-props'
@@ -11,22 +11,10 @@ const classes: any = require('./RootRedirectView.scss')
 interface Props {
   viewer: Viewer,
   projectName: string,
+  router: any
 }
 
 class RootRedirectView extends React.Component<Props, {}> {
-
-  static propTypes = {
-    viewer: PropTypes.object.isRequired,
-    projectName: PropTypes.string,
-  }
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired,
-  }
-
-  context: {
-    router?: any
-  }
 
   constructor(props: Props) {
     super(props)
@@ -34,13 +22,13 @@ class RootRedirectView extends React.Component<Props, {}> {
 
   componentWillMount(): void {
     if (this.props.projectName) {
-      this.context.router.replace(`/${this.props.projectName}`)
+      this.props.router.replace(`/${this.props.projectName}`)
     }
   }
 
   shouldComponentUpdate(nextProps: Props): boolean {
     if (nextProps.projectName) {
-      this.context.router.replace(`/${nextProps.projectName}`)
+      this.props.router.replace(`/${nextProps.projectName}`)
       return false
     }
 
@@ -75,7 +63,7 @@ class RootRedirectView extends React.Component<Props, {}> {
             analytics.track('global: created project', {
               project: projectName,
             })
-            this.context.router.relpace(`/${projectName}`)
+            this.props.router.relpace(`/${projectName}`)
           },
         })
     }
@@ -102,7 +90,7 @@ const MappedRootRedirectView = mapProps({
 
     return project.name
   },
-})(RootRedirectView)
+})(withRouter(RootRedirectView))
 
 export default Relay.createContainer(MappedRootRedirectView, {
   fragments: {

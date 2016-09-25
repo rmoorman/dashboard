@@ -5,10 +5,14 @@ import { onFailureShowNotification } from '../../utils/relay'
 import UpdateModelDescriptionMutation from '../../mutations/UpdateModelDescriptionMutation'
 import { Model } from '../../types/types'
 import { ShowNotificationCallback } from '../../types/utils'
+import {connect} from 'react-redux'
+import {showNotification} from '../../actions/notification'
+import {bindActionCreators} from 'redux'
 const classes: any = require('./ModelDescription.scss')
 
 interface Props {
   model: Model
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -18,20 +22,42 @@ interface State {
 
 class ModelDescription extends React.Component<Props, State> {
 
-  static contextTypes = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
-
   state = {
     editDescription: false,
     editDescriptionPending: false,
   }
 
-  _saveDescription = (e: any) => {
+  render () {
+    if (this.state.editDescriptionPending) {
+      return (
+        <Loading color='#B9B9C8' />
+      )
+    }
+
+    if (this.state.editDescription) {
+      return (
+        <input
+          autoFocus
+          type='text'
+          placeholder='Description'
+          defaultValue={this.props.model.description}
+          onBlur={this.saveDescription}
+          onKeyDown={(e: any) => e.keyCode === 13 ? e.target.blur() : null}
+        />
+      )
+    }
+
+    return (
+      <span
+        className={classes.descriptionText}
+        onClick={() => this.setState({ editDescription: true } as State)}
+      >
+        {this.props.model.description || 'Add description'}
+      </span>
+    )
+  }
+
+  private saveDescription = (e: any) => {
     const description = e.target.value
     if (this.props.model.description === description) {
       this.setState({ editDescription: false } as State)
@@ -55,7 +81,7 @@ class ModelDescription extends React.Component<Props, State> {
           })
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({
             editDescription: false,
             editDescriptionPending: false,
@@ -64,39 +90,15 @@ class ModelDescription extends React.Component<Props, State> {
       }
     )
   }
-
-  render () {
-    if (this.state.editDescriptionPending) {
-      return (
-        <Loading color='#B9B9C8' />
-      )
-    }
-
-    if (this.state.editDescription) {
-      return (
-        <input
-          autoFocus
-          type='text'
-          placeholder='Description'
-          defaultValue={this.props.model.description}
-          onBlur={this._saveDescription}
-          onKeyDown={(e: any) => e.keyCode === 13 ? e.target.blur() : null}
-        />
-      )
-    }
-
-    return (
-      <span
-        className={classes.descriptionText}
-        onClick={() => this.setState({ editDescription: true } as State)}
-      >
-        {this.props.model.description || 'Add description'}
-      </span>
-    )
-  }
 }
 
-export default Relay.createContainer(ModelDescription, {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedModelDescription = connect(null, mapDispatchToProps)(ModelDescription)
+
+export default Relay.createContainer(MappedModelDescription, {
   fragments: {
     model: () => Relay.QL`
       fragment on Model {

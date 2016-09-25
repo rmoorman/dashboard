@@ -9,6 +9,9 @@ import RelationsPopup from './RelationsPopup'
 import {CellRequirements, getEditCell} from './Cell/cellgenerator'
 import {TypedValue, ShowNotificationCallback} from '../../../types/utils'
 import {isNonScalarList} from '../../../utils/graphql'
+import {connect} from 'react-redux'
+import {showNotification} from '../../../actions/notification'
+import {bindActionCreators} from 'redux'
 const classes: any = require('./Cell.scss')
 
 export type UpdateCallback = (success: boolean) => void
@@ -24,6 +27,7 @@ interface Props {
   addnew: boolean
   backgroundColor: string
   needsFocus?: boolean
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -32,14 +36,6 @@ interface State {
 }
 
 class Cell extends React.Component<Props, State> {
-
-  static contextTypes = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
 
   constructor(props: Props) {
     super(props)
@@ -92,10 +88,11 @@ class Cell extends React.Component<Props, State> {
 
   private save = (value: TypedValue, keepEditing: boolean = false): void => {
     if (this.props.field.isRequired && value === null) {
-      this.context.showNotification(
-        `'${valueToString(value, this.props.field, true)}' is not a valid value for field ${this.props.field.name}`,
-        'error'
-      )
+      const valueString = valueToString(value, this.props.field, true)
+      this.props.showNotification({
+        message: `'${valueString}' is not a valid value for field ${this.props.field.name}`,
+        level: 'error',
+      })
       this.setState({editing: keepEditing} as State)
       return
     }
@@ -190,7 +187,13 @@ class Cell extends React.Component<Props, State> {
   }
 }
 
-export default Relay.createContainer(Cell, {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedCell = connect(null, mapDispatchToProps)(Cell)
+
+export default Relay.createContainer(MappedCell, {
   fragments: {
     field: () => Relay.QL`
       fragment on Field {

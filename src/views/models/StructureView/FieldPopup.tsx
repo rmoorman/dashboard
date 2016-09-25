@@ -1,12 +1,12 @@
 import * as React from 'react'
-import mapProps from 'map-props'
 import * as Relay from 'react-relay'
+import {withRouter} from 'react-router'
+import mapProps from 'map-props'
 import ClickOutside from 'react-click-outside'
 import TypeSelection from './TypeSelection'
 import ScrollBox from '../../../components/ScrollBox/ScrollBox'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {valueToString, stringToValue} from '../../../utils/valueparser'
-import {ShowNotificationCallback} from '../../../types/utils'
 import TagsInput from 'react-tagsinput'
 import Help from '../../../components/Help/Help'
 import Datepicker from '../../../components/Datepicker/Datepicker'
@@ -17,8 +17,9 @@ import AddFieldMutation from '../../../mutations/AddFieldMutation'
 import UpdateFieldMutation from '../../../mutations/UpdateFieldMutation'
 import {Field, Model} from '../../../types/types'
 import {emptyDefault} from '../utils'
-import {connect} from 'react-redux'
 import {nextStep} from '../../../actions/gettingStarted'
+import {connect} from 'react-redux'
+import {showNotification} from '../../../actions/notification'
 import {bindActionCreators} from 'redux'
 const classes: any = require('./FieldPopup.scss')
 
@@ -29,8 +30,10 @@ interface Props {
   model: Model
   params: any
   allModels: Model[]
-  gettingStartedState: any,
-  nextStep: any,
+  gettingStartedState: any
+  nextStep: any
+  showNotification: any
+  router: any
 }
 
 interface State {
@@ -48,16 +51,6 @@ interface State {
 }
 
 class FieldPopup extends React.Component<Props, State> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    router: React.PropTypes.object.isRequired,
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    router: any
-    showNotification: ShowNotificationCallback
-  }
 
   constructor(props: Props) {
     super(props)
@@ -289,7 +282,7 @@ class FieldPopup extends React.Component<Props, State> {
   }
 
   private close() {
-    this.context.router.goBack()
+    this.props.router.goBack()
   }
 
   private submit() {
@@ -358,7 +351,7 @@ class FieldPopup extends React.Component<Props, State> {
           }
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({loading: false} as State)
         },
       }
@@ -412,7 +405,7 @@ class FieldPopup extends React.Component<Props, State> {
           this.close()
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({loading: false} as State)
         },
       }
@@ -592,14 +585,14 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep}, dispatch)
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({nextStep, showNotification}, dispatch)
 }
 
 const ReduxContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(FieldPopup)
+)(withRouter(FieldPopup))
 
 const MappedFieldPopup = mapProps({
   params: (props) => props.params,
