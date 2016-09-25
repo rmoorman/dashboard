@@ -56,7 +56,7 @@ class RootRedirectView extends React.Component<Props, {}> {
         new AddProjectMutation(
           {
             projectName,
-            userId: this.props.viewer.user.id,
+            customerId: this.props.viewer.user.id,
           }),
         {
           onSuccess: () => {

@@ -1,84 +1,95 @@
+import * as React from 'react' // tslint:disable-line
 import * as Relay from 'react-relay'
-import { ReduxAction } from '../types/reducers'
-import { GettingStartedState } from './../types/gettingStarted'
+import {ReduxAction} from '../types/reducers'
+import {GettingStartedState, Step} from './../types/gettingStarted'
 import UpdateCustomerMutation from '../mutations/UpdateCustomerMutation'
 import Constants from '../constants/gettingStarted'
 import IconNotification from '../components/IconNotification/IconNotification'
 import cuid from 'cuid'
-import { showPopup } from '../actions/popup'
+import {showPopup} from '../actions/popup'
 
 export function showNotification() {
   const id = cuid()
-  return showPopup(<IconNotification id={id}/>, id)
+  const element = <IconNotification id={id}/>
+  return showPopup({id, element, blurBackground: false})
 }
 
-export function update (step: string, userId: string): ReduxAction {
-  const payload = {gettingStartedState: new GettingStartedState({step, userId})}
+export function update(step: Step, skipped: boolean, customerId: string): ReduxAction {
+  const payload = {gettingStartedState: new GettingStartedState({step, skipped, customerId})}
   return {type: Constants.UPDATE, payload}
 }
 
-function updateReduxAndRelay (dispatch: (action: ReduxAction) => any, step: string, userId: string): Promise<{}> {
+function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
+                             step: Step,
+                             skipped: boolean,
+                             customerId: string): Promise<{}> {
   return new Promise((resolve, reject) => {
     Relay.Store.commitUpdate(
       new UpdateCustomerMutation(
         {
-          userId: userId,
+          customerId: customerId,
           gettingStartedStatus: step,
         }),
       {
         onSuccess: () => {
-          dispatch(update(step, userId))
+          dispatch(update(step, skipped, customerId))
           resolve()
         },
         onFailure: reject,
-    })
+      })
   })
 }
 
-export function nextStep (): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> {
+export function nextStep(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> {
   return function (dispatch: (action: ReduxAction) => any, getState): Promise<{}> {
-    const currentStep = getState().gettingStarted.gettingStartedState.step
-    const currentStepIndex = GettingStartedState.steps.indexOf(currentStep)
+    const {step, skipped, customerId} = getState().gettingStarted.gettingStartedState
+    const currentStepIndex = GettingStartedState.steps.indexOf(step)
     const nextStep = GettingStartedState.steps[currentStepIndex + 1]
-    const userId = getState().gettingStarted.gettingStartedState.userId
 
-    return updateReduxAndRelay(dispatch, nextStep, userId)
+    return updateReduxAndRelay(dispatch, nextStep, skipped, customerId)
   }
 }
 
-export function skip (): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> {
+export function skip(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> {
   return function (dispatch: (action: ReduxAction) => any, getState): Promise<{}> {
-    const nextStep = 'STEP11_SKIPPED'
-    const userId = getState().gettingStarted.gettingStartedState.userId
+    const {step, customerId} = getState().gettingStarted.gettingStartedState
 
-    return updateReduxAndRelay(dispatch, nextStep, userId)
+    return updateReduxAndRelay(dispatch, step, true, customerId)
   }
 }
 
-export function fetchGettingStartedState (): (dispatch: (action: ReduxAction) => any) => Promise<{}> {
+export function fetchGettingStartedState(): (dispatch: (action: ReduxAction) => any) => Promise<{}> {
   return function (dispatch: (action: ReduxAction) => any): Promise<{}> {
     const query = Relay.createQuery(
       Relay.QL`
-      query {
-        viewer {
-          user {
-            id
-            gettingStartedStatus
+        query {
+          viewer {
+            user {
+              id
+              crm {
+                onboardingStatus {
+                  gettingStarted
+                  gettingStartedSkipped
+                }
+              }
+            }
           }
-        }
-      }`,
-      {})
+        }`,
+      {}
+    )
 
-    return new Promise(function (resolve: () => any, reject: (error: Error) => any) {
-      Relay.Store.primeCache({query}, ({done, error}) => {
-        if (done) {
-          const data = Relay.Store.readQuery(query)[0]
-          dispatch(update(data.user.gettingStartedStatus, data.user.id))
-          resolve()
-        } else if (error) {
-          reject(Error('Error when fetching gettingStartedState'))
-        }
-      })
+    return new Promise((resolve: () => any, reject: (error: Error) => any) => {
+      dispatch(update('STEP4_CLICK_BEGIN_PART1', false, 'my-mock'))
+      // Relay.Store.primeCache({query}, ({done, error}) => {
+      //   if (done) {
+      //     const data = Relay.Store.readQuery(query)[0]
+      //     const {gettingStarted, gettingStartedSkipped} = data.user.crm.onboardingStatus
+      //     dispatch(update(gettingStarted, gettingStartedSkipped, data.user.id))
+      //     resolve()
+      //   } else if (error) {
+      //     reject(Error('Error when fetching gettingStartedState'))
+      //   }
+      // })
     })
   }
 }

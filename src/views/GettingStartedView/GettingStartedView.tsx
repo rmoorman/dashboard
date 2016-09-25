@@ -6,12 +6,8 @@ import {findDOMNode} from 'react-dom'
 import Loading from '../../components/Loading/Loading'
 import {Follow} from 'react-twitter-widgets'
 import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import {showPopup} from '../../actions/popup'
-import OnboardingPopup from './OnboardingPopup'
 import {GettingStartedState} from '../../types/gettingStarted'
-import {Client} from '../../types/types'
-import cuid from 'cuid'
+import {Customer} from '../../types/types'
 
 const classes: any = require('./GettingStartedView.scss')
 
@@ -64,7 +60,7 @@ interface Example {
 interface ViewProps {
   params: any
   projectId: string
-  user: Client
+  user: Customer
   gettingStartedState: GettingStartedState
   showPopup: any
   router: any
@@ -94,14 +90,10 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
       project: this.props.params.projectName,
       step: this.props.gettingStartedState.step,
     })
-    if (this.props.gettingStartedState.progress === 0) {
-      const id = cuid()
-      this.props.showPopup(<OnboardingPopup id={id} firstName={this.props.user.name.split(' ')[0]}/>, id)
-    }
   }
 
   componentDidUpdate (): void {
-    if (this.props.gettingStartedState.progress === 4) {
+    if (this.props.gettingStartedState.progress.index === 4) {
       const snd = new Audio(require('assets/success.mp3') as string)
       snd.volume = 0.5
       snd.play()
@@ -110,13 +102,13 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
 
   render () {
     const { progress } = this.props.gettingStartedState
-    const overlayActive = progress === 0 || progress === 4
+    const overlayActive = progress.index === 0 || progress.index === 4
     const downloadUrl = (example) => `${__BACKEND_ADDR__}/resources/getting-started-example?repository=${example.path}&project_id=${this.props.projectId}` // tslint:disable-line
     const guideUrl = 'https://docs.graph.cool/guides/setting-up-a-graphql-backend-in-5-minutes#2-defining-relations-between-your-models' // tslint:disable-line
 
     return (
       <div className={classes.root}>
-        {progress === 4 &&
+        {progress.index === 4 &&
           <div className={classes.overlay}>
             <div className={classes.emoji}>🎉</div>
             <div>
@@ -153,7 +145,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             </div>
           </div>
         }
-        {progress <= 1 &&
+        {progress.index <= 1 &&
           <div className={`${classes.step} ${overlayActive ? classes.blurred : ''}`}>
             <div className={classes.text}>
               <h2>1. Create <strong>Post</strong> model</h2>
@@ -169,7 +161,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             </div>
           </div>
         }
-        {progress === 2 &&
+        {progress.index === 2 &&
           <div className={`${classes.step} ${overlayActive ? classes.blurred : ''}`}>
             <div className={classes.text}>
               <h2>2. Add some data</h2>
@@ -186,7 +178,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             </div>
           </div>
         }
-        {progress >= 3 &&
+        {progress.index >= 3 &&
           <div className={`${classes.step} ${overlayActive ? classes.blurred : ''}`}>
             <div className={classes.text}>
               <h2>3. Run example app</h2>
@@ -240,7 +232,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
                 <h3>
                   <a href='http://localhost:3000' target='_blank'>3. Open the example app</a>
                 </h3>
-                {progress === 3 &&
+                {progress.index === 3 &&
                   <div className={classes.status}>
                     <Loading color='#8989B1' />
                     &nbsp;&nbsp;Checking status...
@@ -251,9 +243,9 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
           </div>
         }
         <div className={classes.pagination}>
-          <span className={progress <= 1 ? classes.active : ''} />
-          <span className={progress === 2 ? classes.active : ''} />
-          <span className={progress >= 3 ? classes.active : ''} />
+          <span className={progress.index <= 1 ? classes.active : ''} />
+          <span className={progress.index === 2 ? classes.active : ''} />
+          <span className={progress.index >= 3 ? classes.active : ''} />
         </div>
       </div>
     )
@@ -278,13 +270,8 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ showPopup }, dispatch)
-}
-
 const ReduxContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProps
 )(withRouter(GettingStartedView))
 
 const MappedGettingStartedView = mapProps({

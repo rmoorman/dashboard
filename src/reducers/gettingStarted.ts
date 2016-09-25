@@ -1,15 +1,15 @@
-import { ReduxAction } from '../types/reducers'
+import {ReduxAction} from '../types/reducers'
 import Constants from '../constants/gettingStarted'
-import { GettingStartedState } from './../types/gettingStarted'
+import {GettingStartedState} from './../types/gettingStarted'
 
 interface State {
-  checkStatus: boolean,
+  poll: boolean,
   gettingStartedState?: GettingStartedState
 }
 
-const initialState: State = {checkStatus: false}
+const initialState: State = {poll: false}
 
-export function reduceGettingStartedState (state: State = initialState, action: ReduxAction): State {
+export function reduceGettingStartedState(state: State = initialState, action: ReduxAction): State {
   switch (action.type) {
     case Constants.UPDATE:
       const gettingStartedState = action.payload.gettingStartedState
@@ -17,7 +17,7 @@ export function reduceGettingStartedState (state: State = initialState, action: 
       // TODO: use reselect for derived data
       return Object.assign({}, state, {
         gettingStartedState,
-        checkStatus: gettingStartedState.isCurrentStep('STEP9_WAITING_FOR_REQUESTS'),
+        poll: gettingStartedState.isCurrentStep('STEP5_WAITING'),
       })
     default:
       return state

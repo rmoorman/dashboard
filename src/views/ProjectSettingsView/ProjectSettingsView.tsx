@@ -181,7 +181,7 @@ class ProjectSettingsView extends React.Component<Props, State> {
       Relay.Store.commitUpdate(
         new DeleteProjectMutation({
           projectId: this.props.viewer.project.id,
-          userId: this.props.viewer.user.id,
+          customerId: this.props.viewer.user.id,
         }),
         {
           onSuccess: () => {

@@ -1,8 +1,9 @@
 {
   "schema": {
     "request": {
-      "url" : "http://localhost:60000/system/schema.json",
-      "method" : "GET"
+      "url" : "https://dev.api.graph.cool/system",
+      "method" : "POST",
+      "postIntrospectionQuery" : true
     }
   }
 }

@@ -9,6 +9,7 @@ import Tether from '../../../components/Tether/Tether'
 import ModelHeader from '../ModelHeader'
 import DeleteModelMutation from '../../../mutations/DeleteModelMutation'
 import {Field, Model, Viewer, Project} from '../../../types/types'
+import {GettingStartedState} from '../../../types/gettingStarted'
 import {ShowNotificationCallback} from '../../../types/utils'
 import {showNotification} from '../../../actions/notification'
 import {onFailureShowNotification} from '../../../utils/relay'
@@ -28,7 +29,7 @@ interface Props {
   allModels: Model[]
   project: Project
   model: Model
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   nextStep: any
   router: any
   route: any
@@ -69,11 +70,13 @@ class StructureView extends React.Component<Props, State> {
           project={this.props.project}
         >
           <Tether
-            steps={{
-              STEP3_CREATE_TEXT_FIELD: 'Add a new field called "imageUrl" and select type "String".' +
-              ' Then click the "Create" button.',
-              STEP4_CREATE_COMPLETED_FIELD: 'Good job! Create another one called "description" with type "String"',
-            }}
+            steps={[{
+              step: 'STEP3_CREATE_TEXT_FIELD',
+              title: 'Add a new field called "imageUrl" and select type "String". Then click the "Create" button.',
+            }, {
+              step: 'STEP4_CREATE_COMPLETED_FIELD',
+              title: 'Good job! Create another one called "description" with type "String"',
+            }]}
             offsetX={5}
             offsetY={5}
             width={240}

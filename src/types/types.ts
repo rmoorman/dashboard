@@ -1,3 +1,5 @@
+import {Step} from './gettingStarted'
+
 interface RelayConnection<T> {
   edges: RelayEdge<T>[]
 }
@@ -8,15 +10,31 @@ interface RelayEdge<T> {
 
 export interface Viewer {
   id: string
-  user: Client
+  user: Customer
 }
 
-export interface Client {
+export interface Customer {
+  id: string
+  projects: RelayConnection<Project>
+  crm: CrmSystemBridge
+}
+
+export interface CrmSystemBridge {
+  id: string
+  information: CrmCustomerInformation
+  onboardingStatus: CrmOnboardingStatus
+}
+
+export interface CrmCustomerInformation {
   id: string
   name: string
   email: string
-  gettingStartedStatus: string
-  projects: RelayConnection<Project>
+}
+
+export interface CrmOnboardingStatus {
+  id: string
+  gettingStarted: Step
+  gettingStartedSkipped: boolean
 }
 
 export interface Project {

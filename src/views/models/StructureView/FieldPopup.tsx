@@ -16,10 +16,12 @@ import {ToggleSide} from '../../../components/ToggleButton/ToggleButton'
 import AddFieldMutation from '../../../mutations/AddFieldMutation'
 import UpdateFieldMutation from '../../../mutations/UpdateFieldMutation'
 import {Field, Model} from '../../../types/types'
+import {ShowNotificationCallback} from '../../../types/utils'
+import {GettingStartedState} from '../../../types/gettingStarted'
 import {emptyDefault} from '../utils'
-import {nextStep} from '../../../actions/gettingStarted'
+import {showNotification as showSystemNotification} from '../../../actions/notification'
 import {connect} from 'react-redux'
-import {showNotification} from '../../../actions/notification'
+import {nextStep, showNotification} from '../../../actions/gettingStarted'
 import {bindActionCreators} from 'redux'
 const classes: any = require('./FieldPopup.scss')
 
@@ -30,10 +32,11 @@ interface Props {
   model: Model
   params: any
   allModels: Model[]
-  gettingStartedState: any
-  nextStep: any
-  showNotification: any
   router: any
+  gettingStartedState: GettingStartedState
+  nextStep: any
+  showSystemNotification: ShowNotificationCallback
+  showNotification: () => void
 }
 
 interface State {
@@ -340,18 +343,20 @@ class FieldPopup extends React.Component<Props, State> {
           this.close()
 
           // getting-started onboarding steps
-          const isStep3 = this.props.gettingStartedState.isActive('STEP3_CREATE_TEXT_FIELD')
+          const isStep3 = this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CONFIRM_IMAGEURL')
           if (isStep3 && name === 'imageUrl' && typeIdentifier === 'String') {
+            this.props.showNotification()
             this.props.nextStep()
           }
 
-          const isStep4 = this.props.gettingStartedState.isActive('STEP4_CREATE_COMPLETED_FIELD')
+          const isStep4 = this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_FIELD_DESCRIPTION')
           if (isStep4 && name === 'description' && typeIdentifier === 'String') {
+            this.props.showNotification()
             this.props.nextStep()
           }
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.props.showNotification)
+          onFailureShowNotification(transaction, this.props.showSystemNotification)
           this.setState({loading: false} as State)
         },
       }
@@ -405,7 +410,7 @@ class FieldPopup extends React.Component<Props, State> {
           this.close()
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.props.showNotification)
+          onFailureShowNotification(transaction, this.props.showSystemNotification)
           this.setState({loading: false} as State)
         },
       }
@@ -586,7 +591,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, showNotification}, dispatch)
+  return bindActionCreators({nextStep, showNotification, showSystemNotification}, dispatch)
 }
 
 const ReduxContainer = connect(
@@ -611,50 +616,50 @@ export default Relay.createContainer(MappedFieldPopup, {
   prepareVariables: (prevVariables: any) => (Object.assign({}, prevVariables, {
     fieldExists: !!prevVariables.fieldName,
   })),
-    fragments: {
-        viewer: () => Relay.QL`
-            fragment on Viewer {
-                model: modelByName(projectName: $projectName, modelName: $modelName) {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on Viewer {
+        model: modelByName(projectName: $projectName, modelName: $modelName) {
+          id
+          itemCount
+        }
+        field: fieldByName(
+        projectName: $projectName
+        modelName: $modelName
+        fieldName: $fieldName
+        ) @include(if: $fieldExists) {
+          id
+          name
+          typeIdentifier
+          isRequired
+          isList
+          enumValues
+          defaultValue
+          relation {
+            id
+          }
+          reverseRelationField {
+            name
+          }
+        }
+        project: projectByName(projectName: $projectName) {
+          models(first: 100) {
+            edges {
+              node {
+                id
+                name
+                unconnectedReverseRelationFieldsFrom(relatedModelName: $modelName) {
+                  id
+                  name
+                  relation {
                     id
-                    itemCount
+                  }
                 }
-                field: fieldByName(
-                projectName: $projectName
-                modelName: $modelName
-                fieldName: $fieldName
-                ) @include(if: $fieldExists) {
-                    id
-                    name
-                    typeIdentifier
-                    isRequired
-                    isList
-                    enumValues
-                    defaultValue
-                    relation {
-                        id
-                    }
-                    reverseRelationField {
-                        name
-                    }
-                }
-                project: projectByName(projectName: $projectName) {
-                    models(first: 100) {
-                        edges {
-                            node {
-                                id
-                                name
-                                unconnectedReverseRelationFieldsFrom(relatedModelName: $modelName) {
-                                    id
-                                    name
-                                    relation {
-                                        id
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+              }
             }
-        `,
-    },
+          }
+        }
+      }
+    `,
+  },
 })

@@ -1,4 +1,11 @@
+import * as Immutable from 'immutable'
+
 export interface Popup {
-  element: Element
+  element: JSX.Element
   id: string
+  blurBackground: boolean
+}
+
+export interface PopupState {
+  popups: Immutable.List<Popup>
 }

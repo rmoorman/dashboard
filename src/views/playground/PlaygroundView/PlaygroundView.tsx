@@ -110,7 +110,7 @@ class PlaygroundView extends React.Component<Props, State> {
     })
 
     // TODO: Change here
-    if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
+    if (this.props.gettingStartedState.isCurrentStep('STEP0_OVERVIEW')) {
       const id = cuid()
       this.props.showPopup(<div></div>, id)
     }
@@ -259,7 +259,7 @@ class PlaygroundView extends React.Component<Props, State> {
 
             analytics.track('playground: user changed', {
               project: this.props.params.projectName,
-              userId: selectedUserId,
+              customerId: selectedUserId,
             })
           },
           onFailure: (transaction) => {

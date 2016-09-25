@@ -1,7 +1,7 @@
 import * as Relay from 'react-relay'
 
 interface Props {
-  userId: string
+  customerId: string
   oldPassword: string
   newPassword: string
 }
@@ -24,7 +24,7 @@ export default class UpdatePasswordMutation extends Relay.Mutation<Props, {}> {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
-        user: this.props.userId,
+        user: this.props.customerId,
       },
     }]
   }
@@ -39,7 +39,7 @@ export default class UpdatePasswordMutation extends Relay.Mutation<Props, {}> {
   getOptimisticResponse () {
     return {
       user: {
-        id: this.props.userId,
+        id: this.props.customerId,
         oldPassword: this.props.oldPassword,
         newPassword: this.props.newPassword,
       },

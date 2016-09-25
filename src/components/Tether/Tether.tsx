@@ -1,12 +1,19 @@
 import * as React from 'react'
 import TetherComponent from 'react-tether'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
+import {Step,GettingStartedState} from '../../types/gettingStarted'
 const classes: any = require('./Tether.scss')
 
+interface TetherStep {
+  step: Step
+  title: string
+  description?: string
+}
+
 interface Props {
-  steps: { [key: string]: string }
+  steps: TetherStep[]
   children: Element
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   offsetX?: number
   offsetY?: number
   width?: number
@@ -22,8 +29,8 @@ class Tether extends React.Component<Props, {}> {
     side: 'bottom',
   }
 
-  render () {
-    const step = this.props.steps[this.props.gettingStartedState.step]
+  render() {
+    const step = this.props.steps.find((s) => s.step === this.props.gettingStartedState.step)
     const isBottom = this.props.side === 'bottom'
 
     return (
@@ -34,12 +41,12 @@ class Tether extends React.Component<Props, {}> {
       >
         {this.props.children}
         {step &&
-          <div
-            className={`${classes.tether} ${isBottom ? classes.bottom : classes.top}`}
-            style={{width: this.props.width, zIndex: 9}}
-          >
-            {step}
-          </div>
+        <div
+          className={`${classes.tether} ${isBottom ? classes.bottom : classes.top}`}
+          style={{width: this.props.width, zIndex: 9}}
+        >
+          {step.title}
+        </div>
         }
       </TetherComponent>
     )
