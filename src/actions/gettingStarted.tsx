@@ -60,23 +60,23 @@ export function skip(): (dispatch: (action: ReduxAction) => any, getState: any) 
 
 export function fetchGettingStartedState(): (dispatch: (action: ReduxAction) => any) => Promise<{}> {
   return function (dispatch: (action: ReduxAction) => any): Promise<{}> {
-    const query = Relay.createQuery(
-      Relay.QL`
-        query {
-          viewer {
-            user {
-              id
-              crm {
-                onboardingStatus {
-                  gettingStarted
-                  gettingStartedSkipped
-                }
-              }
-            }
-          }
-        }`,
-      {}
-    )
+    // const query = Relay.createQuery(
+    //   Relay.QL`
+    //     query {
+    //       viewer {
+    //         user {
+    //           id
+    //           crm {
+    //             onboardingStatus {
+    //               gettingStarted
+    //               gettingStartedSkipped
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }`,
+    //   {}
+    // )
 
     return new Promise((resolve: () => any, reject: (error: Error) => any) => {
       dispatch(update('STEP4_CLICK_BEGIN_PART1', false, 'my-mock'))
