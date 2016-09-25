@@ -77,6 +77,9 @@ module.exports = {
     }, {
       test: /graphics\/.*\.svg$/,
       loader: 'file',
+    }, {
+      test: /graphics\/.*\.png$/,
+      loader: 'file',
     }],
   },
   plugins: [

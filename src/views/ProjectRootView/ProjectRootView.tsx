@@ -86,10 +86,6 @@ class ProjectRootView extends React.Component<Props, {}> {
         'Product': 'Dashboard',
       })
     }
-    // TODO remove after testing
-    const id = cuid()
-    const element = <PlaygroundCPopup />
-    this.props.showPopup({element, id})
   }
 
   componentWillUnmount() {
