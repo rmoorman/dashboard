@@ -419,7 +419,7 @@ class BrowserView extends React.Component<Props, State> {
   private loadData = (skip: number, first: number = 50): Promise<Immutable.List<Immutable.Map<string, any>>> => {
     return queryNodes(this.lokka, this.props.model.namePlural, this.props.fields,
                       skip, first, this.state.filter, this.state.orderBy)
-      .then((results) => {
+      .then(results => {
         const newNodes = results.viewer[`all${this.props.model.namePlural}`]
           .edges.map(({node}) => {
             // Transforms the relay query into something that the valueparser understands
@@ -508,7 +508,7 @@ class BrowserView extends React.Component<Props, State> {
         }
       })
       .catch((err) => {
-        err.rawError.forEach((error) => this.context.showNotification(error.message, 'error'))
+        err.rawError.forEach(error => this.context.showNotification(error.message, 'error'))
         this.setState({loading: false} as State)
       })
   }
@@ -528,10 +528,10 @@ class BrowserView extends React.Component<Props, State> {
       (field) => field.name,
       (field) => {
          const cellWidths = this.state.nodes
-          .filter((node) => !!node)
-          .map((node) => node.get(field.name))
-          .map((value) => valueToString(value, field, false))
-          .map((str) => calculateSize(str, cellFontOptions).width + 41)
+          .filter(node => !!node)
+          .map(node => node.get(field.name))
+          .map(value => valueToString(value, field, false))
+          .map(str => calculateSize(str, cellFontOptions).width + 41)
           .toArray()
         const headerWidth = calculateSize(`${field.name} ${getFieldTypeName(field)}`, headerFontOptions).width + 90
 
@@ -546,16 +546,14 @@ class BrowserView extends React.Component<Props, State> {
     const totalWidth = this.props.fields.reduce((sum, {name}) => sum + widths[name], 0)
     const fieldWidth = width - 34 - 250
     if (totalWidth < fieldWidth) {
-      this.props.fields.forEach(({name}) => {
-        widths[name] = (widths[name] / totalWidth) * fieldWidth
-      })
+      this.props.fields.forEach(({name}) => widths[name] = (widths[name] / totalWidth) * fieldWidth)
     }
     return widths
   }
 
   private onSelectRow = (nodeId: string) => {
     if (this.state.selectedNodeIds.includes(nodeId)) {
-      this.setState({selectedNodeIds: this.state.selectedNodeIds.filter((id) => id !== nodeId)} as State)
+      this.setState({selectedNodeIds: this.state.selectedNodeIds.filter(id => id !== nodeId)} as State)
     } else {
       this.setState({selectedNodeIds: this.state.selectedNodeIds.push(nodeId)} as State)
     }
@@ -567,7 +565,7 @@ class BrowserView extends React.Component<Props, State> {
 
   private selectAllOnClick = (checked: boolean) => {
     if (checked) {
-      const selectedNodeIds = this.state.nodes.map((node) => node.get('id'))
+      const selectedNodeIds = this.state.nodes.map(node => node.get('id'))
       this.setState({selectedNodeIds: selectedNodeIds} as State)
     } else {
       this.setState({selectedNodeIds: Immutable.List()} as State)
