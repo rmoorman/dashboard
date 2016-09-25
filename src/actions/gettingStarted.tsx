@@ -79,7 +79,7 @@ export function fetchGettingStartedState(): (dispatch: (action: ReduxAction) => 
     // )
 
     return new Promise((resolve: () => any, reject: (error: Error) => any) => {
-      dispatch(update('STEP4_CLICK_BEGIN_PART1', false, 'my-mock'))
+      dispatch(update('STEP4_CLICK_BEGIN_PART2', false, 'my-mock'))
       // Relay.Store.primeCache({query}, ({done, error}) => {
       //   if (done) {
       //     const data = Relay.Store.readQuery(query)[0]

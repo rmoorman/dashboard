@@ -8,7 +8,7 @@ import cuid from 'cuid'
 import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
 import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
-import PlaygroundAPopup from '../../components/onboarding/PlaygroundAPopup/PlaygroundAPopup'
+import PlaygroundCPopup from '../../components/onboarding/PlaygroundCPopup/PlaygroundCPopup'
 import {showPopup} from '../../actions/popup'
 import {connect} from 'react-redux'
 import {validateProjectName} from '../../utils/nameValidator'
@@ -79,7 +79,7 @@ class ProjectRootView extends React.Component<Props, {}> {
       if (this.props.gettingStartedState.step === 'STEP0_OVERVIEW') {
         const id = cuid()
         const element = <OnboardingPopup id={id} firstName={this.props.user.crm.information.name.split(' ')[0]}/>
-        this.props.showPopup({element, id, blurBackground: true})
+        this.props.showPopup({element, id})
       }
     } else {
       analytics.identify({
@@ -88,8 +88,8 @@ class ProjectRootView extends React.Component<Props, {}> {
     }
     // TODO remove after testing
     const id = cuid()
-    const element = <PlaygroundAPopup />
-    this.props.showPopup({element, id, blurBackground: true})
+    const element = <PlaygroundCPopup />
+    this.props.showPopup({element, id})
   }
 
   componentWillUnmount() {
@@ -160,9 +160,9 @@ class ProjectRootView extends React.Component<Props, {}> {
             }
           </div>
         </div>
-        {this.props.popup.popups.map((popup) =>
+        {this.props.popup.popups.map(popup =>
           <div className='fixed left-0 right-0 top-0 bottom-0 z-999'
-               style={{pointerEvents: 'auto', overflow: 'scroll' }} key={popup.id}>
+               style={{pointerEvents: 'none', overflow: 'scroll' }} key={popup.id}>
             {popup.element}
           </div>
         )}
