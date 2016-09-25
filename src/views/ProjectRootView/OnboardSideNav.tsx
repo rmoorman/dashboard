@@ -23,7 +23,7 @@ interface StepData {
 class OnboardSideNav extends React.Component<Props, {}> {
 
   render() {
-    const progress = 32.1
+    const progress = 100 * this.props.gettingStartedState.progress.index / 5
 
     return (
       <div className='flex flex-column'>
