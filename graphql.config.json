@@ -1,7 +1,7 @@
 {
   "schema": {
     "request": {
-      "url" : "https://dev.api.graph.cool/system",
+      "url" : "http://localhost:60000/system",
       "method" : "POST",
       "postIntrospectionQuery" : true
     }

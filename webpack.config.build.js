@@ -59,7 +59,7 @@ module.exports = {
       loader: 'style!css',
     }, {
       test: /\.scss/,
-      loader: 'style!css?modules&importLoaders=1!postcss!sass?sourceMap',
+      loader: 'style!css?modules&importLoaders=1!postcss!sass',
     }, {
       test: /\.ts(x?)$/,
       loader: 'babel!awesome-typescript',
