@@ -84,9 +84,7 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
   }
 
   private next = (): void => {
-    this.props.nextStep().then(() => {
-      this.props.router.push(`/${this.props.params.projectName}/playground`)
-    })
+    this.props.nextStep()
   }
 }
 

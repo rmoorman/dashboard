@@ -21,6 +21,7 @@ import endpoints from '../../../utils/endpoints'
 import { sideNavSyncer } from '../../../utils/sideNavSyncer'
 import LoginClientUserMutation from '../../../mutations/LoginClientUserMutation'
 import {GettingStartedState} from '../../../types/gettingStarted'
+import {nextStep} from '../../../actions/gettingStarted'
 import cuid from 'cuid'
 const classes: any = require('./PlaygroundView.scss')
 
@@ -46,6 +47,7 @@ interface Props {
   params: any
   showPopup: any
   gettingStartedState: GettingStartedState
+  nextStep: () => any
 }
 
 interface State {
@@ -121,8 +123,11 @@ class PlaygroundView extends React.Component<Props, State> {
   }
 
   render () {
-    const fetcher = (graphQLParams) => (
-      fetch(`${__BACKEND_ADDR__}/${endpoints[this.state.selectedEndpoint].alias}/${this.props.viewer.project.id}`, {
+    const fetcher = (graphQLParams) => {
+      if (this.props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART1')) {
+        this.props.nextStep()
+      }
+      return fetch(`${__BACKEND_ADDR__}/${endpoints[this.state.selectedEndpoint].alias}/${this.props.viewer.project.id}`, { // tslint:disable-line
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -155,7 +160,7 @@ class PlaygroundView extends React.Component<Props, State> {
 
         return response.json()
       })
-    )
+    }
 
     return (
       <div className={classes.root}>
@@ -171,7 +176,7 @@ class PlaygroundView extends React.Component<Props, State> {
           <div
             className={classes.history}
             onClick={() => this.setState({ historyVisible: !this.state.historyVisible } as State)}
-            >
+          >
             {this.state.historyVisible &&
               <div className={classes.historyOverlay}>
                 <QueryHistory
@@ -293,7 +298,7 @@ class PlaygroundView extends React.Component<Props, State> {
     }
   }
 
-  private rememberPlaygroundUsed = () => {
+  private rememberPlaygroundUsed = (a, b, c) => {
     window.localStorage.setItem(`used-playground-${this.props.viewer.project.id}`, 'true')
   }
 }
@@ -305,7 +310,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ showPopup }, dispatch)
+  return bindActionCreators({ nextStep, showPopup }, dispatch)
 }
 
 const MappedPlaygroudView = connect(mapStateToProps, mapDispatchToProps)(PlaygroundView)
