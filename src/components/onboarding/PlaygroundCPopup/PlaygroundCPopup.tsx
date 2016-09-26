@@ -7,9 +7,8 @@ import {closePopup} from '../../../actions/popup'
 import {classnames} from '../../../utils/classnames'
 import Loading from '../../Loading/Loading'
 import {GettingStartedState} from '../../../types/gettingStarted'
+import {Example} from '../../../types/types'
 const classes: any = require('./PlaygroundCPopup.scss')
-
-type Examples = 'ReactRelay' | 'ReactApollo' | 'AngularApollo' | null
 
 interface Guide {
   title: string
@@ -63,15 +62,13 @@ interface Props {
 }
 
 interface State {
-  hovering: boolean
   mouseOver: boolean
-  selectedExample: Examples
+  selectedExample: Example | null
 }
 
 class PlaygroundCPopup extends React.Component<Props, State> {
 
   state = {
-    hovering: false,
     mouseOver: false,
     selectedExample: null,
   }
@@ -95,7 +92,8 @@ class PlaygroundCPopup extends React.Component<Props, State> {
   }
 
   render() {
-    const {hovering, mouseOver} = this.state
+    const {mouseOver} = this.state
+    const hovering = !this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5')
     const downloadUrl = (example) => `${__BACKEND_ADDR__}/resources/getting-started-example?repository=${examples[example].path}&project_id=${this.props.projectId}` // tslint:disable-line
     return (
       <div
@@ -118,7 +116,6 @@ class PlaygroundCPopup extends React.Component<Props, State> {
             overflow: hovering ? 'auto' : 'hidden',
             alignItems: this.state.selectedExample ? 'flex-start' : 'center',
           }}
-          onClick={() => hovering && !this.state.selectedExample ? this.setState({hovering: false} as State) : null}
         >
           <div
             className='bg-white br-2 shadow-2 mv-96'
@@ -132,7 +129,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
             onClick={(e: any) => {
               e.stopPropagation()
               e.preventDefault()
-              this.setState({ hovering: true } as State)
+              this.props.nextStep()
             }}
           >
             <div className='ma-16 tc pb-25'>
@@ -320,7 +317,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
     )
   }
 
-  private getExampleVideoUrl = (example: Examples): string => {
+  private getExampleVideoUrl = (example: Example): string => {
     switch (example) {
       case 'ReactRelay': return 'RDrfE9I8_hs'
       case 'ReactApollo': return 'RDrfE9I8_hs'

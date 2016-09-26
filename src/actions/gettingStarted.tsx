@@ -80,7 +80,7 @@ export function fetchGettingStartedState(): (dispatch: (action: ReduxAction) => 
     )
 
     return new Promise((resolve: () => any, reject: (error: Error) => any) => {
-      Relay.Store.primeCache({query}, ({done, error}) => {
+      Relay.Store.primeCache({ query }, ({done, error}) => {
         if (done) {
           const data = Relay.Store.readQuery(query)[0]
           const {id, gettingStarted, gettingStartedSkipped} = data.user.crm.onboardingStatus

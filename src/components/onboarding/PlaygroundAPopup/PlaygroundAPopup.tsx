@@ -3,13 +3,11 @@ import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {nextStep} from '../../../actions/gettingStarted'
-import {closePopup} from '../../../actions/popup'
 import Icon from '../../Icon/Icon'
 
 interface Props {
   id: string
   nextStep: () => Promise<void>
-  closePopup: (id: string) => void
   params: any
   router: any
 }
@@ -85,7 +83,6 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
   private next = (): void => {
     this.props.nextStep().then(() => {
       this.props.router.push(`/${this.props.params.projectName}/playground`)
-      this.props.closePopup(this.props.id)
     })
   }
 }
@@ -97,7 +94,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, closePopup}, dispatch)
+  return bindActionCreators({nextStep}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PlaygroundAPopup))

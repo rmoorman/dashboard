@@ -222,13 +222,13 @@ class PlaygroundView extends React.Component<Props, State> {
             <PlaygroundAPopup />
           </PopupWrapper>
         }
-        {this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_PART2') &&
+        {(this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_PART2') ||
+          this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_BEGIN_PART2')) &&
           <PopupWrapper>
             <PlaygroundBPopup />
           </PopupWrapper>
         }
-        {(this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_BEGIN_PART2') ||
-          this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5') ||
+        {(this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5') ||
           this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') ||
           this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) &&
           <PopupWrapper>

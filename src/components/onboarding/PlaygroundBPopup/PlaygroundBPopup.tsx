@@ -3,31 +3,30 @@ import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {nextStep} from '../../../actions/gettingStarted'
-import {closePopup} from '../../../actions/popup'
+import {GettingStartedState} from '../../../types/gettingStarted'
 import Icon from '../../Icon/Icon'
 
 interface Props {
   id: string
   nextStep: () => Promise<void>
-  closePopup: (id: string) => void
   params: any
   router: any
+  gettingStartedState: GettingStartedState
 }
 
 interface State {
-  hovering: boolean
   mouseOver: boolean
 }
 
 class PlaygroundBPopup extends React.Component<Props, State> {
 
   state = {
-    hovering: false,
     mouseOver: false,
   }
 
   render() {
-    const {hovering, mouseOver} = this.state
+    const {mouseOver} = this.state
+    const hovering = this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_BEGIN_PART2')
     return (
       <div
         className='flex justify-center items-start w-100 h-100'
@@ -46,7 +45,6 @@ class PlaygroundBPopup extends React.Component<Props, State> {
             pointerEvents: hovering ? 'all' : 'none',
             cursor: hovering ? 'auto' : 'pointer',
           }}
-          onClick={() => hovering ? this.setState({hovering: false} as State) : null}
         >
           <div
             className='bg-white br-2 shadow-2 mv-96'
@@ -60,7 +58,7 @@ class PlaygroundBPopup extends React.Component<Props, State> {
             onClick={(e: any) => {
               e.stopPropagation()
               e.preventDefault()
-              this.setState({ hovering: true } as State)
+              this.next()
             }}
           >
 
@@ -107,10 +105,7 @@ class PlaygroundBPopup extends React.Component<Props, State> {
   }
 
   private next = (): void => {
-    this.props.nextStep().then(() => {
-      this.props.router.push(`/${this.props.params.projectName}/playground`)
-      this.props.closePopup(this.props.id)
-    })
+    this.props.nextStep()
   }
 }
 
@@ -121,7 +116,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, closePopup}, dispatch)
+  return bindActionCreators({nextStep}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PlaygroundBPopup))

@@ -4,6 +4,7 @@ import { Route, IndexRoute, IndexRedirect } from 'react-router'
 import Loading from './components/Loading/Loading'
 import RedirectOnMount from './components/RedirectOnMount/RedirectOnMount'
 import RootView from './views/RootView/RootView'
+import SignUpView from './views/SignUpView/SignUpView'
 import ProjectRootView from './views/ProjectRootView/ProjectRootView'
 import RootRedirectView from './views/ProjectRootView/RootRedirectView'
 import TokenRedirectView from './views/ProjectRootView/TokenRedirectView'
@@ -82,6 +83,7 @@ export default (
     <Route path='token' component={TokenRedirectView} />
     <Route path='login' component={LoginView} queries={ViewerQuery} render={render} />
     <Route path='reset-password' component={ResetPasswordView} />
+    <Route path='signup' component={SignUpView} />
     <Route path=':projectName' component={ProjectRootView} queries={ViewerQuery} render={render}>
       <Route path='account' component={AccountView} queries={ViewerQuery} render={render}>
         <Route path='settings' component={SettingsTab} queries={ViewerQuery} render={render} />

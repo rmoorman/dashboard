@@ -31,10 +31,13 @@ export interface CrmCustomerInformation {
   email: string
 }
 
+export type Example = 'ReactRelay' | 'ReactApollo' | 'AngularApollo'
+
 export interface CrmOnboardingStatus {
   id: string
   gettingStarted: Step
   gettingStartedSkipped: boolean
+  gettingStartedExample: Example | null
 }
 
 export interface Project {

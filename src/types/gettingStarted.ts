@@ -10,10 +10,13 @@ export type Step =
   'STEP3_CLICK_ADD_NODE1' |
   'STEP3_CLICK_ADD_NODE2' |
   'STEP4_CLICK_PLAYGROUND' |
-  'STEP4_CLICK_BEGIN_PART1' |
+  'STEP4_CLICK_BEGIN_PART1' | // GraphiQL intro
+  'STEP4_WAITING_PART1' |
   'STEP4_CLICK_TEASER_PART2' |
   'STEP4_CLICK_BEGIN_PART2' |
+  'STEP4_WAITING_PART2' |
   'STEP4_CLICK_TEASER_STEP5' |
+  'STEP5_SELECT_EXAMPLE' |
   'STEP5_WAITING' |
   'STEP5_DONE' |
   'STEP6_CLOSED'
@@ -45,9 +48,12 @@ export class GettingStartedState {
     'STEP3_CLICK_ADD_NODE2',
     'STEP4_CLICK_PLAYGROUND',
     'STEP4_CLICK_BEGIN_PART1',
+    'STEP4_WAITING_PART1',
     'STEP4_CLICK_TEASER_PART2',
     'STEP4_CLICK_BEGIN_PART2',
+    'STEP4_WAITING_PART2',
     'STEP4_CLICK_TEASER_STEP5',
+    'STEP5_SELECT_EXAMPLE',
     'STEP5_WAITING',
     'STEP5_DONE',
     'STEP6_CLOSED',
@@ -98,9 +104,12 @@ export class GettingStartedState {
       'STEP3_CLICK_ADD_NODE2': () => ({ index: 3, total: 2, done: 1 }),
       'STEP4_CLICK_PLAYGROUND': () => ({ index: 4, total: 2, done: 0 }),
       'STEP4_CLICK_BEGIN_PART1': () => ({ index: 4, total: 2, done: 0 }),
+      'STEP4_WAITING_PART1': () => ({ index: 4, total:  2, done: 1 }),
       'STEP4_CLICK_TEASER_PART2': () => ({ index: 4, total: 2, done: 1 }),
       'STEP4_CLICK_BEGIN_PART2': () => ({ index: 4, total: 2, done: 1 }),
+      'STEP4_WAITING_PART2': () => ({ index: 4, total:  2, done: 2 }),
       'STEP4_CLICK_TEASER_STEP5': () => ({ index: 4, total: 2, done: 2 }),
+      'STEP5_SELECT_EXAMPLE': () => ({ index: 5, total: 0, done: 0 }),
       'STEP5_WAITING': () => ({ index: 5, total: 0, done: 0 }),
       'STEP5_DONE': () => ({ index: 5, total: 0, done: 0 }),
       'STEP6_CLOSED': () => ({ index: 6, total: 0, done: 0 }),
