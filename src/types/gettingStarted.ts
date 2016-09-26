@@ -27,7 +27,7 @@ interface StepProgress {
 interface Props {
   step: Step
   skipped: boolean
-  customerId: string
+  onboardingStatusId: string
 }
 
 export class GettingStartedState {
@@ -54,12 +54,12 @@ export class GettingStartedState {
 
   step: Step
   skipped: boolean
-  customerId: string
+  onboardingStatusId: string
 
   progress: StepProgress
 
   constructor(props: Props) {
-    this.customerId = props.customerId
+    this.onboardingStatusId = props.onboardingStatusId
     this.skipped = props.skipped
     this.update(props.step)
   }

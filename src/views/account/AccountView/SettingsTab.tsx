@@ -3,7 +3,7 @@ import * as Relay from 'react-relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {Viewer} from '../../../types/types'
-import UpdateCustomerMutation from '../../../mutations/UpdateCustomerMutation'
+import UpdateCustomerInformationMutation from '../../../mutations/UpdateCustomerInformationMutation'
 import UpdatePasswordMutation from '../../../mutations/UpdatePasswordMutation'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {ShowNotificationCallback} from '../../../types/utils'
@@ -118,8 +118,8 @@ class SettingsTab extends React.Component<Props, State> {
 
   private handleCustomerChange () {
     Relay.Store.commitUpdate(
-      new UpdateCustomerMutation({
-        customerId: this.props.viewer.user.id,
+      new UpdateCustomerInformationMutation({
+        customerInformationId: this.props.viewer.user.crm.information.id,
         email: this.state.email,
         name: this.state.name,
       }),
@@ -176,6 +176,7 @@ export default Relay.createContainer(MappedSettingsTab, {
           id
           crm {
             information {
+              id
               name
               email
             }
