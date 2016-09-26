@@ -205,10 +205,10 @@ class BrowserView extends React.Component<Props, State> {
     return (
       <Tether
         steps={[{
-          step: 'STEP6_ADD_DATA_ITEM_1',
+          step: 'STEP3_CLICK_ADD_NODE1',
           title: `Add your first Post node to the database.`,
         }, {
-          step: 'STEP7_ADD_DATA_ITEM_2',
+          step: 'STEP3_CLICK_ADD_NODE2',
           title: `Well done. Let's add another one.`,
         }]}
         offsetX={5}

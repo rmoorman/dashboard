@@ -35,6 +35,7 @@ class Tether extends React.Component<Props, {}> {
 
     return (
       <TetherComponent
+        className='z-999'
         offset={`${this.props.offsetY}px ${this.props.offsetX}px`}
         attachment={`${isBottom ? 'top' : 'bottom'} left`}
         targetAttachment={`${isBottom ? 'bottom' : 'top'} left`}

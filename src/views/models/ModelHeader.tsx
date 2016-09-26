@@ -24,7 +24,7 @@ class ModelHeader extends React.Component<Props, {}> {
 
   render () {
     const dataViewOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP5_GOTO_DATA_TAB')) {
+      if (this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_DATA_BROWSER')) {
         this.props.nextStep()
       }
     }
@@ -55,7 +55,7 @@ class ModelHeader extends React.Component<Props, {}> {
           <div className={classes.tabs}>
             <Tether
               steps={[{
-                step: 'STEP5_GOTO_DATA_TAB',
+                step: 'STEP3_CLICK_DATA_BROWSER',
                 title: 'Nice, you\'re done setting up the structure. Let\'s add some data.',
               }]}
               width={200}

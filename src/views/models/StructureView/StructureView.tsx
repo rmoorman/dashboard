@@ -30,7 +30,7 @@ interface Props {
   project: Project
   model: Model
   gettingStartedState: GettingStartedState
-  nextStep: any
+  nextStep: () => any
   router: any
   route: any
   children: Element
@@ -80,9 +80,10 @@ class StructureView extends React.Component<Props, State> {
             offsetX={5}
             offsetY={5}
             width={240}
-          >
+        >
             <Link
               className={`${classes.button} ${classes.green}`}
+              onClick={this.handleCreateFieldClick}
               to={`${urlPrefix}/models/${this.props.params.modelName}/structure/create`}
             >
               <Icon
@@ -180,6 +181,12 @@ class StructureView extends React.Component<Props, State> {
 
   private toggleMenuDropdown = () => {
     this.setState({menuDropdownVisible: !this.state.menuDropdownVisible} as State)
+  }
+
+  private handleCreateFieldClick = (e: any) => {
+    if (this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CREATE_FIELD_IMAGEURL')) {
+      this.props.nextStep()
+    }
   }
 
   private renameModel = () => {

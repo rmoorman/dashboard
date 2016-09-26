@@ -4,6 +4,7 @@ import {withRouter} from 'react-router'
 import mapProps from 'map-props'
 import ClickOutside from 'react-click-outside'
 import TypeSelection from './TypeSelection'
+import Tether from '../../../components/Tether/Tether'
 import ScrollBox from '../../../components/ScrollBox/ScrollBox'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {valueToString, stringToValue} from '../../../utils/valueparser'
@@ -79,6 +80,18 @@ class FieldPopup extends React.Component<Props, State> {
     }
   }
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state.name === 'imageUrl' &&
+        this.props.gettingStartedState.isCurrentStep('STEP2_ENTER_FIELD_NAME_IMAGEURL')) {
+      this.props.nextStep()
+    }
+
+    if (this.state.typeIdentifier === 'String' &&
+        this.props.gettingStartedState.isCurrentStep('STEP2_SELECT_TYPE_IMAGEURL')) {
+      this.props.nextStep()
+    }
+  }
+
   componentWillMount() {
     window.addEventListener('keydown', this.listenForKeys, false)
   }
@@ -120,14 +133,24 @@ class FieldPopup extends React.Component<Props, State> {
                     <Help text='Fieldnames must be camelCase like "firstName" or "dateOfBirth".'/>
                   </div>
                   <div className={classes.right}>
-                    <input
-                      autoFocus={!this.props.field}
-                      type='text'
-                      placeholder='Fieldname'
-                      defaultValue={this.state.name}
-                      onChange={(e: any) => this.setState({ name: (e.target as HTMLInputElement).value } as State)}
-                      onKeyUp={(e: any) => e.keyCode === 13 ? this.submit() : null}
-                    />
+                    <Tether
+                      steps={[{
+                        step: 'STEP2_ENTER_FIELD_NAME_IMAGEURL',
+                        title: 'Add a new field called "imageUrl".',
+                      }]}
+                      offsetX={5}
+                      offsetY={5}
+                      width={240}
+                    >
+                      <input
+                        autoFocus={!this.props.field}
+                        type='text'
+                        placeholder='Fieldname'
+                        defaultValue={this.state.name}
+                        onChange={(e: any) => this.setState({ name: (e.target as HTMLInputElement).value } as State)}
+                        onKeyUp={(e: any) => e.keyCode === 13 ? this.submit() : null}
+                      />
+                    </Tether>
                   </div>
                 </div>
                 <div className={classes.row}>
@@ -137,10 +160,20 @@ class FieldPopup extends React.Component<Props, State> {
                     or setup relations between existing models.`}/>
                   </div>
                   <div className={classes.right}>
-                    <TypeSelection
-                      selected={this.state.typeIdentifier}
-                      select={(typeIdentifier) => this.updateTypeIdentifier(typeIdentifier)}
-                    />
+                    <Tether
+                      steps={[{
+                        step: 'STEP2_SELECT_TYPE_IMAGEURL',
+                        title: 'Select the type "String".',
+                      }]}
+                      offsetX={5}
+                      offsetY={5}
+                      width={240}
+                    >
+                      <TypeSelection
+                        selected={this.state.typeIdentifier}
+                        select={(typeIdentifier) => this.updateTypeIdentifier(typeIdentifier)}
+                      />
+                    </Tether>
                   </div>
                 </div>
                 {this.state.typeIdentifier === 'Enum' &&
@@ -262,12 +295,22 @@ class FieldPopup extends React.Component<Props, State> {
                 <div className={classes.button} onClick={() => this.close()}>
                   Cancel
                 </div>
-                <button
-                  className={`${classes.button} ${this.isValid() ? classes.green : classes.disabled}`}
-                  onClick={() => this.submit()}
+                <Tether
+                  steps={[{
+                    step: 'STEP2_CLICK_CONFIRM_IMAGEURL',
+                    title: 'Click "Create" to create the field.',
+                  }]}
+                  offsetX={5}
+                  offsetY={5}
+                  width={240}
                 >
-                  {this.props.field ? 'Save' : 'Create'}
-                </button>
+                  <button
+                    className={`${classes.button} ${this.isValid() ? classes.green : classes.disabled}`}
+                    onClick={this.submit}
+                  >
+                    {this.props.field ? 'Save' : 'Create'}
+                  </button>
+                </Tether>
               </div>
             </div>
           </ClickOutside>
@@ -284,11 +327,11 @@ class FieldPopup extends React.Component<Props, State> {
     }
   }
 
-  private close() {
+  private close = () => {
     this.props.router.goBack()
   }
 
-  private submit() {
+  private submit = () => {
     if (this.props.field) {
       this.update()
     } else {
@@ -296,9 +339,26 @@ class FieldPopup extends React.Component<Props, State> {
     }
   }
 
-  private create() {
+  private create = () => {
     if (!this.isValid()) {
       return
+    }
+
+    if (this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CONFIRM_IMAGEURL')) {
+      if (this.state.name === 'imageUrl' && this.state.typeIdentifier === 'String') {
+        this.props.nextStep()
+      } else {
+        // TODO add failure notification
+        return
+      }
+    }
+    if (this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_FIELD_DESCRIPTION')) {
+      if (this.state.name === 'description' && this.state.typeIdentifier === 'String') {
+        this.props.nextStep()
+      } else {
+        // TODO add notification
+        return
+      }
     }
 
     this.setState({loading: true} as State)
@@ -363,7 +423,7 @@ class FieldPopup extends React.Component<Props, State> {
     )
   }
 
-  private update() {
+  private update = () => {
     if (!this.isValid()) {
       return
     }
@@ -417,7 +477,7 @@ class FieldPopup extends React.Component<Props, State> {
     )
   }
 
-  private isValid(): boolean {
+  private isValid = (): boolean => {
     if (this.state.name === '') {
       return false
     }
@@ -433,7 +493,7 @@ class FieldPopup extends React.Component<Props, State> {
     return true
   }
 
-  private needsMigrationValue(): boolean {
+  private needsMigrationValue = (): boolean => {
     if (this.props.model.itemCount === 0) {
       return false
     }

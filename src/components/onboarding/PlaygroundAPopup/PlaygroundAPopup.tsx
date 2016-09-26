@@ -16,7 +16,10 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
 
   render() {
     return (
-      <div className='flex justify-center items-center w-100 bg-white-50' style={{pointerEvents: 'all'}}>
+      <div
+        className='flex justify-center items-start w-100 bg-white-50 h-100 overflow-auto'
+        style={{pointerEvents: 'all'}}
+      >
         <div className='bg-white br-2 shadow-2 mv-96' style={{ minWidth: 600, maxWidth: 900 }}>
 
           <div className='ma-16 bb bc-grey-2 tc pb-25'>
