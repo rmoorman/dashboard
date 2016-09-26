@@ -1,4 +1,5 @@
-export type Step = 'STEP0_OVERVIEW' |
+export type Step =
+  'STEP0_OVERVIEW' |
   'STEP1_CREATE_POST_MODEL' |
   'STEP2_CLICK_CREATE_FIELD_IMAGEURL' |
   'STEP2_ENTER_FIELD_NAME_IMAGEURL' |
@@ -14,7 +15,8 @@ export type Step = 'STEP0_OVERVIEW' |
   'STEP4_CLICK_BEGIN_PART2' |
   'STEP4_CLICK_TEASER_STEP5' |
   'STEP5_WAITING' |
-  'STEP5_DONE'
+  'STEP5_DONE' |
+  'STEP6_CLOSED'
 
 interface StepProgress {
   index: number
@@ -97,6 +99,7 @@ export class GettingStartedState {
       'STEP4_CLICK_TEASER_STEP5': () => ({ index: 4, total: 2, done: 2 }),
       'STEP5_WAITING': () => ({ index: 5, total: 0, done: 0 }),
       'STEP5_DONE': () => ({ index: 5, total: 0, done: 0 }),
+      'STEP6_CLOSED': () => ({ index: 6, total: 0, done: 0 }),
     }[step]()
   }
 }

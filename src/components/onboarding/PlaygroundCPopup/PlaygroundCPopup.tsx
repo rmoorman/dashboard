@@ -6,6 +6,7 @@ import {nextStep} from '../../../actions/gettingStarted'
 import {closePopup} from '../../../actions/popup'
 import {classnames} from '../../../utils/classnames'
 import Loading from '../../Loading/Loading'
+import {GettingStartedState} from '../../../types/gettingStarted'
 const classes: any = require('./PlaygroundCPopup.scss')
 
 type Examples = 'ReactRelay' | 'ReactApollo' | 'AngularApollo' | null
@@ -58,6 +59,7 @@ interface Props {
   closePopup: (id: string) => void
   params: any
   router: any
+  gettingStartedState: GettingStartedState
 }
 
 interface State {
@@ -66,12 +68,24 @@ interface State {
   selectedExample: Examples
 }
 
-class PlaygroundBPopup extends React.Component<Props, State> {
+class PlaygroundCPopup extends React.Component<Props, State> {
 
   state = {
     hovering: false,
     mouseOver: false,
     selectedExample: null,
+  }
+
+  refs: {
+    [key: string]: any
+    exampleAnchor: HTMLDivElement
+    scroller: HTMLDivElement
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (prevState.selectedExample !== this.state.selectedExample) {
+      this.refs.scroller.scrollTop = this.refs.scroller.scrollTop + this.refs.exampleAnchor.getBoundingClientRect().top
+    }
   }
 
   render() {
@@ -88,6 +102,7 @@ class PlaygroundBPopup extends React.Component<Props, State> {
         }}
       >
         <div
+          ref='scroller'
           className='flex justify-center w-100'
           style={{
             transition: 'height 0.5s ease',
@@ -133,7 +148,7 @@ class PlaygroundBPopup extends React.Component<Props, State> {
               <div className='fw3 ma-38 f-25'>
                 Select your preferred technology to download the example.
               </div>
-              <div className='flex justify-between items-center w-100'>
+              <div className='flex justify-between items-center w-100' ref='exampleAnchor'>
                 <div
                   className={classnames(
                     classes.exampleButton,
@@ -210,13 +225,15 @@ class PlaygroundBPopup extends React.Component<Props, State> {
                   # You might wanna come back to this page as soon as it’s done, we’re waiting here.
                 </div>
               </div>
+              {this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') &&
               <div className='w-100 mv-96 flex justify-center'>
                 <Loading />
               </div>
+              }
             </div>
           </div>
           }
-          {true &&
+        {this.props.gettingStartedState.isCurrentStep('STEP5_DONE') &&
           <div className='w-100 mb-96'>
             <div className='flex items-center flex-column mv-38 fw1'>
               <div className='f-96'>
@@ -317,4 +334,4 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({nextStep, closePopup}, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PlaygroundBPopup))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PlaygroundCPopup))
