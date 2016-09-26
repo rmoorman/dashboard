@@ -61,7 +61,7 @@ class OnboardSideNav extends React.Component<Props, {}> {
             })}
             {this.renderStep({
               index: 3,
-              text: 'Create 3 Posts',
+              text: 'Create 2 Posts',
             })}
             {this.renderStep({
               index: 4,

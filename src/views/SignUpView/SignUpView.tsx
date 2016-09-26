@@ -105,7 +105,7 @@ export default class SignUpView extends React.Component<{}, {}> {
                 />
               </div>
               <div className='bb w-100' style={{borderColor: '#EAEAEA'}}/>
-              <button
+              <div
                 className='flex justify-center w-100 pa-25 items-center f-25 pointer bg-transparent bn'
               >
                 <Icon
@@ -114,7 +114,7 @@ export default class SignUpView extends React.Component<{}, {}> {
                   width={25}
                 />
                 <span className='pl-10' style={{color: '#8B8D8F'}}>Sign up</span>
-              </button>
+              </div>
             </div>
             <div className='mt-16'>
               Already signed up? <Link to='/login' className='underline black'>Log in</Link>
