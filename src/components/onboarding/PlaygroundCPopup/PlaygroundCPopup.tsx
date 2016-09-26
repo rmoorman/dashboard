@@ -79,12 +79,18 @@ class PlaygroundCPopup extends React.Component<Props, State> {
   refs: {
     [key: string]: any
     exampleAnchor: HTMLDivElement
+    congratsAnchor: HTMLDivElement
     scroller: HTMLDivElement
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (prevState.selectedExample !== this.state.selectedExample) {
-      this.refs.scroller.scrollTop = this.refs.scroller.scrollTop + this.refs.exampleAnchor.getBoundingClientRect().top
+      this.refs.scroller.scrollTop += this.refs.exampleAnchor.getBoundingClientRect().top
+    }
+
+    if (prevProps.gettingStartedState.isCurrentStep('STEP5_WAITING')
+        && this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) {
+      this.refs.scroller.scrollTop += this.refs.congratsAnchor.getBoundingClientRect().top
     }
   }
 
@@ -234,7 +240,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
           </div>
           }
         {this.props.gettingStartedState.isCurrentStep('STEP5_DONE') &&
-          <div className='w-100 mb-96'>
+          <div className='w-100 mb-96' ref='congratsAnchor'>
             <div className='flex items-center flex-column mv-38 fw1'>
               <div className='f-96'>
                 🎉
