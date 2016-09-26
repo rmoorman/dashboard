@@ -258,6 +258,11 @@ class PlaygroundBPopup extends React.Component<Props, State> {
                 </div>
               </div>
             </div>
+            <div className='flex w-100 justify-center'>
+              <div className='mv-16 pa-16 ttu pointer bg-accent white dim'>
+                Finish Onboarding
+              </div>
+            </div>
           </div>
           }
           </div>
