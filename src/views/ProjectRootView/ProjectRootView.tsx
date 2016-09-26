@@ -17,7 +17,7 @@ import LoginView from '../../views/LoginView/LoginView'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
 import {update} from '../../actions/gettingStarted'
 import {Viewer, Customer, Project} from '../../types/types'
-import {Popup, PopupState} from '../../types/popup'
+import {PopupState} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
 const classes: any = require('./ProjectRootView.scss')
 

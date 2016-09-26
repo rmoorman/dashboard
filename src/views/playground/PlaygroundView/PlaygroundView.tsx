@@ -21,7 +21,6 @@ import { sideNavSyncer } from '../../../utils/sideNavSyncer'
 import LoginClientUserMutation from '../../../mutations/LoginClientUserMutation'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {nextStep} from '../../../actions/gettingStarted'
-import cuid from 'cuid'
 const classes: any = require('./PlaygroundView.scss')
 
 require('graphiql/graphiql.css')
