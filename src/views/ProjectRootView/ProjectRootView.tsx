@@ -8,6 +8,7 @@ import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
 import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
 import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
+import PlaygroundCPopup from '../../components/onboarding/PlaygroundCPopup/PlaygroundCPopup'
 import {connect} from 'react-redux'
 import {validateProjectName} from '../../utils/nameValidator'
 import ProjectSelection from '../../components/ProjectSelection/ProjectSelection'
@@ -17,7 +18,7 @@ import LoginView from '../../views/LoginView/LoginView'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
 import {update} from '../../actions/gettingStarted'
 import {Viewer, Customer, Project} from '../../types/types'
-import {Popup, PopupState} from '../../types/popup'
+import {PopupState} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
 const classes: any = require('./ProjectRootView.scss')
 
@@ -155,6 +156,14 @@ class ProjectRootView extends React.Component<Props, {}> {
         {this.props.gettingStartedState.isCurrentStep('STEP0_OVERVIEW') &&
           <PopupWrapper>
             <OnboardingPopup firstName={this.props.user.crm.information.name}/>
+          </PopupWrapper>
+        }
+        {(this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5') ||
+        this.props.gettingStartedState.isCurrentStep('STEP5_SELECT_EXAMPLE') ||
+        this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') ||
+        this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) &&
+          <PopupWrapper>
+            <PlaygroundCPopup projectId={this.props.project.id} />
           </PopupWrapper>
         }
       </div>

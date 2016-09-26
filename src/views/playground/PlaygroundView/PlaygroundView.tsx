@@ -4,7 +4,6 @@ import Helmet from 'react-helmet'
 import PopupWrapper from '../../../components/PopupWrapper/PopupWrapper'
 import PlaygroundAPopup from '../../../components/onboarding/PlaygroundAPopup/PlaygroundAPopup'
 import PlaygroundBPopup from '../../../components/onboarding/PlaygroundBPopup/PlaygroundBPopup'
-import PlaygroundCPopup from '../../../components/onboarding/PlaygroundCPopup/PlaygroundCPopup'
 import { Lokka } from 'lokka'
 import { Transport } from 'lokka-transport-http'
 import GraphiQL from 'graphiql'
@@ -21,7 +20,6 @@ import { sideNavSyncer } from '../../../utils/sideNavSyncer'
 import LoginClientUserMutation from '../../../mutations/LoginClientUserMutation'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {nextStep} from '../../../actions/gettingStarted'
-import cuid from 'cuid'
 const classes: any = require('./PlaygroundView.scss')
 
 require('graphiql/graphiql.css')
@@ -226,14 +224,6 @@ class PlaygroundView extends React.Component<Props, State> {
           this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_BEGIN_PART2')) &&
           <PopupWrapper>
             <PlaygroundBPopup />
-          </PopupWrapper>
-        }
-        {(this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5') ||
-          this.props.gettingStartedState.isCurrentStep('STEP5_SELECT_EXAMPLE') ||
-          this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') ||
-          this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) &&
-          <PopupWrapper>
-            <PlaygroundCPopup />
           </PopupWrapper>
         }
       </div>

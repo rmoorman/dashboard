@@ -56,8 +56,6 @@ interface Props {
   projectId: string
   nextStep: () => Promise<void>
   closePopup: (id: string) => void
-  params: any
-  router: any
   gettingStartedState: GettingStartedState
 }
 
