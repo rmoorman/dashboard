@@ -6,7 +6,6 @@ import * as cookiestore from 'cookiestore'
 import {bindActionCreators} from 'redux'
 import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
-import {showPopup} from '../../actions/popup'
 import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
 import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
 import {connect} from 'react-redux'
@@ -38,7 +37,6 @@ interface Props {
   popup: PopupState
   pollGettingStartedOnboarding: boolean
   update: (step: string, skipped: boolean, customerId: string) => void
-  showPopup: (popup: Popup) => void
 }
 
 class ProjectRootView extends React.Component<Props, {}> {
@@ -219,7 +217,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({showPopup, update}, dispatch)
+  return bindActionCreators({update}, dispatch)
 }
 
 const ReduxContainer = connect(

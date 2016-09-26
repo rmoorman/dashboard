@@ -108,11 +108,7 @@ export class SideNav extends React.Component<Props, State> {
     const playgroundPageActive = this.props.router.isActive(`/${this.props.params.projectName}/playground`)
     const showGettingStartedOnboardingPopup = () => {
       if (this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_PLAYGROUND')) {
-        this.props.nextStep().then(() => {
-          const id = cuid()
-          const element = <PlaygroundAPopup id={id} params={this.props.params} />
-          this.props.showPopup({element, id, blurBackground: true})
-        })
+        this.props.nextStep()
       }
     }
 

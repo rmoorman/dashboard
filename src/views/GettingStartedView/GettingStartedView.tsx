@@ -62,7 +62,6 @@ interface ViewProps {
   projectId: string
   user: Customer
   gettingStartedState: GettingStartedState
-  showPopup: any
   router: any
 }
 

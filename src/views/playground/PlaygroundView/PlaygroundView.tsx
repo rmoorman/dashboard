@@ -12,7 +12,6 @@ import { Viewer, User, Project } from '../../../types/types'
 import { saveQuery } from '../../../utils/QueryHistoryStorage'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {showPopup} from '../../../actions/popup'
 import QueryHistory from '../../../components/QueryHistory/QueryHistory'
 import Header from '../../../components/Header/Header'
 import Icon from '../../../components/Icon/Icon'
@@ -45,7 +44,6 @@ type Endpoint = 'SIMPLE' | 'RELAY'
 interface Props {
   viewer: Viewer & { project: Project }
   params: any
-  showPopup: any
   gettingStartedState: GettingStartedState
   nextStep: () => any
 }
@@ -114,18 +112,15 @@ class PlaygroundView extends React.Component<Props, State> {
     analytics.track('playground: viewed', {
       project: this.props.params.projectName,
     })
-
-    // TODO: Change here
-    if (this.props.gettingStartedState.isCurrentStep('STEP0_OVERVIEW')) {
-      const id = cuid()
-      this.props.showPopup(<div></div>, id)
-    }
   }
 
   render () {
     const fetcher = (graphQLParams) => {
       if (this.props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART1')) {
-        this.props.nextStep()
+        const { query } = graphQLParams
+        if (query.includes('allPosts') && query.includes('imageUrl') && query.includes('description')) {
+          this.props.nextStep()
+        }
       }
       return fetch(`${__BACKEND_ADDR__}/${endpoints[this.state.selectedEndpoint].alias}/${this.props.viewer.project.id}`, { // tslint:disable-line
         method: 'post',
@@ -310,7 +305,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ nextStep, showPopup }, dispatch)
+  return bindActionCreators({ nextStep }, dispatch)
 }
 
 const MappedPlaygroudView = connect(mapStateToProps, mapDispatchToProps)(PlaygroundView)
