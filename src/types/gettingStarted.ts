@@ -50,6 +50,7 @@ export class GettingStartedState {
     'STEP4_CLICK_TEASER_STEP5',
     'STEP5_WAITING',
     'STEP5_DONE',
+    'STEP6_CLOSED',
   ]
 
   step: Step
@@ -65,7 +66,7 @@ export class GettingStartedState {
   }
 
   isActive = (): boolean => {
-    return this.step !== 'STEP5_DONE' && !this.skipped
+    return this.step !== 'STEP6_CLOSED' && !this.skipped
   }
 
   isCurrentStep = (step: Step): boolean => {
