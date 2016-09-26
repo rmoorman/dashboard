@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Link} from 'react-router'
 import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
 import Icon from '../../components/Icon/Icon'
 
@@ -7,21 +8,28 @@ export default class SignUpView extends React.Component<{}, {}> {
     return (
       <div className='bg-accent w-100 h-100' style={{pointerEvents: 'none'}}>
         <PopupWrapper>
-          <div className='flex justify-center items-center w-100 h-100 fw1' style={{pointerEvents: 'all'}}>
+          <div className='flex flex-column justify-center items-center w-100 h-100 fw1' style={{pointerEvents: 'all'}}>
             <div
               className='tc bg-white br1 shadow-2'
               style={{
                 width: 440,
               }}
             >
-              <div className='ttu mv-38'>
+              <div className='ttu mb-10 mt-60'>
                 Sign Up
               </div>
-              <div className='mb-38 f-38'>
+              <div className='mb-60 f-38'>
                 Nice that you're here.
               </div>
-              <div className='w-100 tc pt-16'>
-                Sign up using
+              <div
+                className='w-100 tc bb'
+                style={{
+                  lineHeight: '0.1em',
+                  margin: '10px 0 20px',
+                  borderColor: '#EAEAEA',
+                }}
+              >
+                <span className='bg-white' style={{padding: '0 10px'}}>Sign up using</span>
               </div>
               <div className='flex justify-between pa-16 white'>
                 <div className='w-50 pr-6'>
@@ -52,8 +60,15 @@ export default class SignUpView extends React.Component<{}, {}> {
                   </div>
                 </div>
               </div>
-              <div className='w-100 tc'>
-                or fill out all those fields
+              <div
+                className='w-100 tc bb'
+                style={{
+                  lineHeight: '0.1em',
+                  margin: '10px 0 20px',
+                  borderColor: '#EAEAEA',
+                }}
+              >
+                <span className='bg-white' style={{padding: '0 10px'}}>or fill out all those fields</span>
               </div>
               <div className='flex justify-between pa-16'>
                 <div className='w-50 pr-6'>
@@ -82,19 +97,25 @@ export default class SignUpView extends React.Component<{}, {}> {
                   placeholder='Email'
                 />
               </div>
-              <div className='w-100 ph-16 pb-16'>
+              <div className='w-100 ph-16 pb-25'>
                 <input
                   type='password'
                   className='w-100 pa-16 br2 bg-light-gray bn'
                   placeholder='Password'
                 />
               </div>
-              <hr className='ma0'/>
-              <div className='flex justify-center w-100 pa-16'>
-                <div className='pa-16 f-25'>
-                  <span>Sign up</span>
-                </div>
+              <div className='bb w-100' style={{borderColor: '#EAEAEA'}}/>
+              <div className='flex justify-center w-100 pa-25 items-center f-25 pointer'>
+                <Icon
+                  src={require('../../assets/new_icons/login.svg')}
+                  height={25}
+                  width={25}
+                />
+                <span className='pl-10' style={{color: '#8B8D8F'}}>Sign up</span>
               </div>
+            </div>
+            <div className='mt-16'>
+              Already signed up? <Link to='/login' className='underline black'>Log in</Link>
             </div>
           </div>
         </PopupWrapper>
