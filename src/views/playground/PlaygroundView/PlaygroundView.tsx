@@ -1,6 +1,10 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
 import Helmet from 'react-helmet'
+import PopupWrapper from '../../../components/PopupWrapper/PopupWrapper'
+import PlaygroundAPopup from '../../../components/onboarding/PlaygroundAPopup/PlaygroundAPopup'
+import PlaygroundBPopup from '../../../components/onboarding/PlaygroundBPopup/PlaygroundBPopup'
+import PlaygroundCPopup from '../../../components/onboarding/PlaygroundCPopup/PlaygroundCPopup'
 import { Lokka } from 'lokka'
 import { Transport } from 'lokka-transport-http'
 import GraphiQL from 'graphiql'
@@ -213,6 +217,24 @@ class PlaygroundView extends React.Component<Props, State> {
             onEditQuery={this.rememberPlaygroundUsed}
             />
         </div>
+        {this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_BEGIN_PART1') &&
+          <PopupWrapper>
+            <PlaygroundAPopup />
+          </PopupWrapper>
+        }
+        {this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_PART2') &&
+          <PopupWrapper>
+            <PlaygroundBPopup />
+          </PopupWrapper>
+        }
+        {(this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_BEGIN_PART2') ||
+          this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5') ||
+          this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') ||
+          this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) &&
+          <PopupWrapper>
+            <PlaygroundCPopup />
+          </PopupWrapper>
+        }
       </div>
     )
   }

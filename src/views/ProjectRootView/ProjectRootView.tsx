@@ -4,11 +4,11 @@ import * as Relay from 'react-relay'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import * as cookiestore from 'cookiestore'
 import {bindActionCreators} from 'redux'
-import cuid from 'cuid'
 import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
-import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
 import {showPopup} from '../../actions/popup'
+import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
+import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
 import {connect} from 'react-redux'
 import {validateProjectName} from '../../utils/nameValidator'
 import ProjectSelection from '../../components/ProjectSelection/ProjectSelection'
@@ -74,12 +74,6 @@ class ProjectRootView extends React.Component<Props, {}> {
           headerText: 'Can I help you? 🙌',
         },
       })
-
-      if (this.props.gettingStartedState.step === 'STEP0_OVERVIEW') {
-        const id = cuid()
-        const element = <OnboardingPopup id={id} firstName={this.props.user.crm.information.name.split(' ')[0]}/>
-        this.props.showPopup({element, id})
-      }
     } else {
       analytics.identify({
         'Product': 'Dashboard',
@@ -156,11 +150,15 @@ class ProjectRootView extends React.Component<Props, {}> {
           </div>
         </div>
         {this.props.popup.popups.map(popup =>
-          <div className='fixed left-0 right-0 top-0 bottom-0 z-999'
-               style={{pointerEvents: 'none', overflow: 'scroll' }} key={popup.id}>
+          <PopupWrapper key={popup.id}>
             {popup.element}
-          </div>
+          </PopupWrapper>
         )}
+        {this.props.gettingStartedState.isCurrentStep('STEP0_OVERVIEW') &&
+          <PopupWrapper>
+            <OnboardingPopup firstName={this.props.user.crm.information.name}/>
+          </PopupWrapper>
+        }
       </div>
     )
   }

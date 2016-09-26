@@ -70,6 +70,9 @@ export class GettingStartedState {
   }
 
   isCurrentStep = (step: Step): boolean => {
+    if (this.skipped) {
+      return false
+    }
     return step === this.step
   }
 

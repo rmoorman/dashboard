@@ -4,7 +4,6 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {nextStep, skip} from '../../../actions/gettingStarted'
-import {closePopup} from '../../../actions/popup'
 
 interface Props {
   params: any
@@ -12,7 +11,6 @@ interface Props {
   nextStep: () => any
   skip: any
   gettingStartedState: GettingStartedState
-  closePopup: any
   firstName: string
   id: string
 }
@@ -63,7 +61,6 @@ class OnboardingPopup extends React.Component<Props, {}> {
       // TODO: fix this hack
       Promise.resolve(this.props.skip())
         .then(() => {
-          this.props.closePopup(this.props.id)
           this.props.router.replace(`/${this.props.params.projectName}/models`)
         })
     }
@@ -71,7 +68,6 @@ class OnboardingPopup extends React.Component<Props, {}> {
 
   private getStarted = (): void => {
     if (this.props.gettingStartedState.isCurrentStep('STEP0_OVERVIEW')) {
-      this.props.closePopup(this.props.id)
       this.props.nextStep()
     }
   }
@@ -85,7 +81,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, skip, closePopup}, dispatch)
+  return bindActionCreators({nextStep, skip}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(OnboardingPopup))
