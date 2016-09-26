@@ -1,5 +1,6 @@
 import * as React from 'react' // tslint:disable-line
 import * as Relay from 'react-relay'
+import {Example} from '../types/types'
 import {ReduxAction} from '../types/reducers'
 import {GettingStartedState, Step} from './../types/gettingStarted'
 import UpdateCustomerOnboardingStatusMutation from '../mutations/UpdateCustomerOnboardingStatusMutation'
@@ -14,15 +15,19 @@ export function showNotification() {
   return showPopup({id, element, blurBackground: false})
 }
 
-export function update(step: Step, skipped: boolean, onboardingStatusId: string): ReduxAction {
-  const payload = {gettingStartedState: new GettingStartedState({step, skipped, onboardingStatusId})}
+export function update(step: Step,
+                       skipped: boolean,
+                       onboardingStatusId: string,
+                       selectedExample: Example = null): ReduxAction {
+  const payload = {gettingStartedState: new GettingStartedState({step, skipped, onboardingStatusId, selectedExample})}
   return {type: Constants.UPDATE, payload}
 }
 
 function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
                              gettingStarted: Step,
                              gettingStartedSkipped: boolean,
-                             onboardingStatusId: string): Promise<{}> {
+                             onboardingStatusId: string,
+                             gettingStartedExample: Example = null): Promise<{}> {
   return new Promise((resolve, reject) => {
     Relay.Store.commitUpdate(
       new UpdateCustomerOnboardingStatusMutation(
@@ -30,6 +35,7 @@ function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
           onboardingStatusId,
           gettingStarted,
           gettingStartedSkipped,
+          gettingStartedExample,
         }),
       {
         onSuccess: () => {
@@ -41,13 +47,13 @@ function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
   })
 }
 
-export function nextStep(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> {
-  return function (dispatch: (action: ReduxAction) => any, getState): Promise<{}> {
+export function nextStep(selectedExample: Example = null): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
+  return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
     const {step, skipped, onboardingStatusId} = getState().gettingStarted.gettingStartedState
     const currentStepIndex = GettingStartedState.steps.indexOf(step)
     const nextStep = GettingStartedState.steps[currentStepIndex + 1]
 
-    return updateReduxAndRelay(dispatch, nextStep, skipped, onboardingStatusId)
+    return updateReduxAndRelay(dispatch, nextStep, skipped, onboardingStatusId, selectedExample)
   }
 }
 
@@ -71,6 +77,7 @@ export function fetchGettingStartedState(): (dispatch: (action: ReduxAction) => 
                   id
                   gettingStarted
                   gettingStartedSkipped
+                  gettingStartedExample
                 }
               }
             }

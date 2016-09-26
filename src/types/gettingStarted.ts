@@ -1,3 +1,5 @@
+import {Example} from './types'
+
 export type Step =
   'STEP0_OVERVIEW' |
   'STEP1_CREATE_POST_MODEL' |
@@ -31,6 +33,7 @@ interface Props {
   step: Step
   skipped: boolean
   onboardingStatusId: string
+  selectedExample?: Example
 }
 
 export class GettingStartedState {
@@ -62,11 +65,13 @@ export class GettingStartedState {
   step: Step
   skipped: boolean
   onboardingStatusId: string
+  selectedExample: Example
 
   progress: StepProgress
 
   constructor(props: Props) {
     this.onboardingStatusId = props.onboardingStatusId
+    this.selectedExample = props.selectedExample
     this.skipped = props.skipped
     this.update(props.step)
   }

@@ -56,9 +56,9 @@ class PlaygroundBPopup extends React.Component<Props, State> {
             onMouseLeave={() => this.setState({ mouseOver: false } as State)}
             onMouseEnter={() => this.setState({ mouseOver: true } as State)}
             onClick={(e: any) => {
-              e.stopPropagation()
-              e.preventDefault()
-              this.next()
+              if (this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_PART2')) {
+                this.next()
+              }
             }}
           >
 

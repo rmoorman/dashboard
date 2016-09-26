@@ -54,21 +54,19 @@ const examples = {
 interface Props {
   id: string
   projectId: string
-  nextStep: () => Promise<void>
+  nextStep: (selectedExample?: Example) => Promise<void>
   closePopup: (id: string) => void
   gettingStartedState: GettingStartedState
 }
 
 interface State {
   mouseOver: boolean
-  selectedExample: Example | null
 }
 
 class PlaygroundCPopup extends React.Component<Props, State> {
 
   state = {
     mouseOver: false,
-    selectedExample: null,
   }
 
   refs: {
@@ -79,7 +77,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (prevState.selectedExample !== this.state.selectedExample) {
+    if (prevProps.gettingStartedState.selectedExample !== this.props.gettingStartedState.selectedExample) {
       this.refs.scroller.scrollTop += this.refs.exampleAnchor.getBoundingClientRect().top
     }
 
@@ -91,6 +89,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
 
   render() {
     const {mouseOver} = this.state
+    const {selectedExample} = this.props.gettingStartedState
     const hovering = !this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5')
     const downloadUrl = (example) => `${__BACKEND_ADDR__}/resources/getting-started-example?repository=${examples[example].path}&project_id=${this.props.projectId}` // tslint:disable-line
     return (
@@ -112,7 +111,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
             pointerEvents: hovering ? 'all' : 'none',
             cursor: hovering ? 'auto' : 'pointer',
             overflow: hovering ? 'auto' : 'hidden',
-            alignItems: this.state.selectedExample ? 'flex-start' : 'center',
+            alignItems: selectedExample ? 'flex-start' : 'center',
           }}
         >
           <div
@@ -122,12 +121,12 @@ class PlaygroundCPopup extends React.Component<Props, State> {
               maxWidth: 900,
               pointerEvents: 'all',
             }}
-            onMouseLeave={() => this.setState({ mouseOver: false } as State)}
-            onMouseEnter={() => this.setState({ mouseOver: true } as State)}
+            onMouseLeave={() => this.setState({ mouseOver: false })}
+            onMouseEnter={() => this.setState({ mouseOver: true })}
             onClick={(e: any) => {
-              e.stopPropagation()
-              e.preventDefault()
-              this.props.nextStep()
+              if (this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5')) {
+                this.props.nextStep()
+              }
             }}
           >
             <div className='ma-16 tc pb-25'>
@@ -153,33 +152,33 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                 <div
                   className={classnames(
                     classes.exampleButton,
-                    this.state.selectedExample === 'ReactRelay' ? classes.active : ''
+                    selectedExample === 'ReactRelay' ? classes.active : ''
                   )}
-                  onClick={() => this.setState({selectedExample: 'ReactRelay'} as State)}
+                  onClick={() => this.props.nextStep('ReactRelay')}
                 >
                   React + Relay
                 </div>
                 <div
                   className={classnames(
                     classes.exampleButton,
-                    this.state.selectedExample === 'ReactApollo' ? classes.active : ''
+                    selectedExample === 'ReactApollo' ? classes.active : ''
                   )}
-                  onClick={() => this.setState({selectedExample: 'ReactApollo'} as State)}
+                  onClick={() => this.props.nextStep('ReactApollo')}
                 >
                   React + Apollo
                 </div>
                 <div
                   className={classnames(
                     classes.exampleButton,
-                    this.state.selectedExample === 'AngularApollo' ? classes.active : ''
+                    selectedExample === 'AngularApollo' ? classes.active : ''
                   )}
-                  onClick={() => this.setState({selectedExample: 'AngularApollo'} as State)}
+                  onClick={() => this.props.nextStep('AngularApollo')}
                 >
                   Angular + Apollo
                 </div>
               </div>
             </div>
-          {this.state.selectedExample &&
+          {selectedExample &&
           <div>
             <div className='w-100'>
               <iframe
@@ -187,7 +186,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                 height='480'
                 allowFullScreen
                 frameBorder='0'
-                src={`https://www.youtube.com/embed/${this.getExampleVideoUrl(this.state.selectedExample)}`}
+                src={`https://www.youtube.com/embed/${this.getExampleVideoUrl(selectedExample)}`}
               />
             </div>
             <div
@@ -198,7 +197,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
             >
               <div className='mt-25 mb-38 w-100 flex justify-center'>
                 <a
-                  href={downloadUrl(this.state.selectedExample)}
+                  href={downloadUrl(selectedExample)}
                   className='pa-16 white'
                   style={{
                     backgroundColor: '#4A90E2',

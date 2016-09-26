@@ -120,6 +120,14 @@ class PlaygroundView extends React.Component<Props, State> {
           this.props.nextStep()
         }
       }
+
+      if (this.props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')) {
+        const { query } = graphQLParams
+        if (query.includes('allPosts') && query.includes('filter') &&
+            query.includes('imageUrl') && query.includes('description')) {
+          this.props.nextStep()
+        }
+      }
       return fetch(`${__BACKEND_ADDR__}/${endpoints[this.state.selectedEndpoint].alias}/${this.props.viewer.project.id}`, { // tslint:disable-line
         method: 'post',
         headers: {

@@ -1,10 +1,12 @@
 import * as Relay from 'react-relay'
 import {Step} from '../types/gettingStarted'
+import {Example} from '../types/types'
 
 interface Props {
   onboardingStatusId: string
   gettingStarted: Step
   gettingStartedSkipped: boolean
+  gettingStartedExample: Example
 }
 
 export default class UpdateCustomerOnboardingStatusMutation extends Relay.Mutation<Props, {}> {
@@ -34,6 +36,7 @@ export default class UpdateCustomerOnboardingStatusMutation extends Relay.Mutati
     return {
       gettingStarted: this.props.gettingStarted,
       gettingStartedSkipped: this.props.gettingStartedSkipped,
+      gettingStartedExample: this.props.gettingStartedExample,
     }
   }
 
