@@ -1,6 +1,10 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
+import {toggleNodeSelection, clearNodeSelection, setNodeSelection,
+        toggleNewRow, hideNewRow, toggleFilter, resetUI} from '../../../actions/databrowser/ui'
 import calculateSize from 'calculate-size'
 import * as Immutable from 'immutable'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -20,8 +24,6 @@ import {valueToString} from '../../../utils/valueparser'
 import {isNonScalarList} from '../../../utils/graphql'
 import {sideNavSyncer} from '../../../utils/sideNavSyncer'
 import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
 import ModelHeader from '../ModelHeader'
 import {showDonePopup, nextStep} from '../../../actions/gettingStarted'
 import {GettingStartedState} from '../../../types/gettingStarted'
@@ -52,6 +54,16 @@ interface Props {
   showPopup: (content: JSX.Element, id: string) => any
   closePopup: (id: string) => any
   showDonePopup: () => any
+  newRowVisible: boolean
+  toggleNewRow: () => any
+  hideNewRow: () => any
+  toggleFilter: () => any
+  resetUI: () => any
+  clearNodeSelection: () => any
+  setNodeSelection: (ids: Immutable.List<string>) => any
+  toggleNodeSelection: (id: string) => any
+  filtersVisible: boolean
+  selectedNodeIds: Immutable.List<string>
 }
 
 interface State {
@@ -59,9 +71,6 @@ interface State {
   loading: boolean
   orderBy: OrderBy
   filter: Immutable.Map<string, any>
-  filtersVisible: boolean
-  newRowVisible: boolean
-  selectedNodeIds: Immutable.List<string>
   itemCount: number
   loaded: Immutable.List<boolean>
   scrollTop: number
@@ -88,9 +97,6 @@ class BrowserView extends React.Component<Props, State> {
         order: 'DESC',
       },
       filter: Immutable.Map<string, any>(),
-      filtersVisible: false,
-      newRowVisible: false,
-      selectedNodeIds: Immutable.List<string>(),
       itemCount: this.props.model.itemCount,
       loaded: Immutable.List<boolean>(),
       scrollTop: 0,
@@ -107,16 +113,20 @@ class BrowserView extends React.Component<Props, State> {
     })
 
     this.props.router.setRouteLeaveHook(this.props.route, () => {
-      if (this.state.newRowVisible) {
+      if (this.props.newRowVisible) {
         // TODO with custom dialogs use "return false" and display custom dialog
         return 'Are you sure you want to discard unsaved changes?'
       }
     })
   }
 
+  componentWillUnmount = () => {
+    this.props.resetUI()
+  }
+
   render() {
     return (
-      <div className={`${classes.root} ${this.state.filtersVisible ? classes.filtersVisible : ''}`}>
+      <div className={`${classes.root} ${this.props.filtersVisible ? classes.filtersVisible : ''}`}>
         <ModelHeader
           params={this.props.params}
           model={this.props.model}
@@ -128,19 +138,19 @@ class BrowserView extends React.Component<Props, State> {
             Import JSON
           </label>
           {this.renderTether()}
-          {this.state.selectedNodeIds.size > 0 &&
+          {this.props.selectedNodeIds.size > 0 &&
           <div className={`${classes.button} ${classes.red}`} onClick={this.deleteSelectedNodes}>
             <Icon
               width={16}
               height={16}
               src={require('assets/icons/delete.svg')}
             />
-            <span>Delete Selected ({this.state.selectedNodeIds.size})</span>
+            <span>Delete Selected ({this.props.selectedNodeIds.size})</span>
           </div>
           }
           <div
-            className={`${classes.button} ${this.state.filtersVisible ? classes.blue : ''}`}
-            onClick={() => this.setState({ filtersVisible: !this.state.filtersVisible } as State)}
+            className={`${classes.button} ${this.props.filtersVisible ? classes.blue : ''}`}
+            onClick={this.props.toggleFilter}
           >
             <Icon
               width={16}
@@ -179,7 +189,7 @@ class BrowserView extends React.Component<Props, State> {
                     columnCount={this.props.fields.length + 2}
                     columnWidth={(input) => this.getColumnWidth(fieldColumnWidths, input)}
                     loadMoreRows={(input) => this.loadData(input.startIndex)}
-                    addNew={this.state.newRowVisible}
+                    addNew={this.props.newRowVisible}
                     onScroll={(input) => this.setState({scrollTop: input.scrollTop} as State)}
 
                     headerHeight={74}
@@ -206,11 +216,11 @@ class BrowserView extends React.Component<Props, State> {
     return (
       <Tether
         steps={[{
-          step: this.state.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE1',
+          step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE1',
           title: 'Create a Node',
           description: 'A Node represents a set of data structurized by its Model. Since our Model is a post, a new Node creates a new post.', // tslint:disable-line
         }, {
-          step: this.state.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE2',
+          step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE2',
           title: `Awesome! Let's add another one.`,
         }]}
         offsetX={5}
@@ -219,15 +229,15 @@ class BrowserView extends React.Component<Props, State> {
         horizontal='right'
       >
         <div
-          className={`${classes.button} ${this.state.newRowVisible ? '' : classes.green}`}
+          className={`${classes.button} ${this.props.newRowVisible ? '' : classes.green}`}
           onClick={this.handleAddNodeClick}
         >
           <Icon
             width={16}
             height={16}
-            src={require(`assets/icons/${this.state.newRowVisible ? 'close' : 'add'}.svg`)}
+            src={require(`assets/icons/${this.props.newRowVisible ? 'close' : 'add'}.svg`)}
           />
-          <span>{this.state.newRowVisible ? 'Cancel' : 'Add node'}</span>
+          <span>{this.props.newRowVisible ? 'Cancel' : 'Add node'}</span>
         </div>
       </Tether>
     )
@@ -264,7 +274,7 @@ class BrowserView extends React.Component<Props, State> {
 
   private handleAddNodeClick = () => {
     if (getFirstInputFieldIndex(this.props.fields) !== null) {
-      this.setState({ newRowVisible: !this.state.newRowVisible } as State)
+      this.props.toggleNewRow()
     } else {
       const fieldValues = this.props.model.fields.edges
         .map((edge) => edge.node)
@@ -287,7 +297,7 @@ class BrowserView extends React.Component<Props, State> {
         projectId={this.props.project.id}
         columnWidths={columnWidths}
         add={this.addNewNode}
-        cancel={() => this.setState({newRowVisible: false} as State)}
+        cancel={this.props.hideNewRow}
       />
     )
   }
@@ -326,7 +336,7 @@ class BrowserView extends React.Component<Props, State> {
         <CheckboxCell
           height={74}
           onChange={this.selectAllOnClick}
-          checked={this.state.selectedNodeIds.size === this.state.nodes.size && this.state.nodes.size > 0}
+          checked={this.props.selectedNodeIds.size === this.state.nodes.size && this.state.nodes.size > 0}
           backgroundColor={'transparent'}
         />
       )
@@ -341,7 +351,7 @@ class BrowserView extends React.Component<Props, State> {
           sortOrder={this.state.orderBy.fieldName === field.name ? this.state.orderBy.order : null}
           toggleSortOrder={() => this.setSortOrder(field)}
           updateFilter={(value) => this.updateFilter(value, field)}
-          filterVisible={this.state.filtersVisible}
+          filterVisible={this.props.filtersVisible}
           params={this.props.params}
         />
       )
@@ -357,7 +367,7 @@ class BrowserView extends React.Component<Props, State> {
       return (
         <CheckboxCell
           checked={this.isSelected(nodeId)}
-          onChange={() => this.onSelectRow(nodeId)}
+          onChange={() => this.props.toggleNodeSelection(nodeId)}
           height={47}
           backgroundColor={backgroundColor}
         />
@@ -373,7 +383,7 @@ class BrowserView extends React.Component<Props, State> {
       const value = node.get(field.name)
       return (
         <Cell
-          isSelected={this.state.selectedNodeIds.includes(nodeId)}
+          isSelected={this.isSelected(nodeId)}
           backgroundColor={backgroundColor}
           field={field}
           value={value}
@@ -466,7 +476,7 @@ class BrowserView extends React.Component<Props, State> {
     this.setState({filter: this.state.filter.set(field.name, value)} as State, this.reloadData)
 
     // TODO: select cut set of selected and filtered nodes
-    this.setState({selectedNodeIds: Immutable.List()} as State)
+    this.props.clearNodeSelection()
   }
 
   private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, index: number) => {
@@ -491,9 +501,7 @@ class BrowserView extends React.Component<Props, State> {
     return addNode(this.lokka, this.props.params.modelName, fieldValues)
       .then(() => this.reloadData(0))
       .then(() => {
-        this.setState({
-          newRowVisible: false,
-        } as State)
+        this.props.hideNewRow()
         analytics.track('models/browser: created node', {
           project: this.props.params.projectName,
           model: this.props.params.modelName,
@@ -552,32 +560,24 @@ class BrowserView extends React.Component<Props, State> {
     return widths
   }
 
-  private onSelectRow = (nodeId: string) => {
-    if (this.state.selectedNodeIds.includes(nodeId)) {
-      this.setState({selectedNodeIds: this.state.selectedNodeIds.filter(id => id !== nodeId)} as State)
-    } else {
-      this.setState({selectedNodeIds: this.state.selectedNodeIds.push(nodeId)} as State)
-    }
-  }
-
   private isSelected = (nodeId: string): boolean => {
-    return this.state.selectedNodeIds.indexOf(nodeId) > -1
+    return this.props.selectedNodeIds.indexOf(nodeId) > -1
   }
 
   private selectAllOnClick = (checked: boolean) => {
     if (checked) {
-      const selectedNodeIds = this.state.nodes.map(node => node.get('id'))
-      this.setState({selectedNodeIds: selectedNodeIds} as State)
+      const selectedNodeIds = this.state.nodes.map(node => node.get('id')).toList()
+      this.props.setNodeSelection(selectedNodeIds)
     } else {
-      this.setState({selectedNodeIds: Immutable.List()} as State)
+      this.props.clearNodeSelection()
     }
   }
 
   private deleteSelectedNodes = () => {
-    if (confirm(`Do you really want to delete ${this.state.selectedNodeIds.size} node(s)?`)) {
+    if (confirm(`Do you really want to delete ${this.props.selectedNodeIds.size} node(s)?`)) {
       // only reload once after all the deletions
 
-      Promise.all(this.state.selectedNodeIds.toArray()
+      Promise.all(this.props.selectedNodeIds.toArray()
         .map((nodeId) => deleteNode(this.lokka, this.props.params.modelName, nodeId)))
         .then(analytics.track('models/browser: deleted node', {
           project: this.props.params.projectName,
@@ -587,8 +587,7 @@ class BrowserView extends React.Component<Props, State> {
         .catch((err) => {
           err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
         })
-
-      this.setState({selectedNodeIds: Immutable.List()} as State)
+      this.props.clearNodeSelection()
     }
   }
 }
@@ -596,12 +595,22 @@ class BrowserView extends React.Component<Props, State> {
 const mapStateToProps = (state) => {
   return {
     gettingStartedState: state.gettingStarted.gettingStartedState,
+    newRowVisible: state.databrowser.ui.newRowVisible,
+    filtersVisible: state.databrowser.ui.filtersVisible,
+    selectedNodeIds: state.databrowser.ui.selectedNodeIds,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
+      toggleNewRow,
+      hideNewRow,
+      toggleFilter,
+      setNodeSelection,
+      clearNodeSelection,
+      toggleNodeSelection,
+      resetUI,
       showDonePopup,
       nextStep,
       showPopup,
