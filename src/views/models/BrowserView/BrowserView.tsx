@@ -206,15 +206,17 @@ class BrowserView extends React.Component<Props, State> {
     return (
       <Tether
         steps={[{
-          step: 'STEP3_CLICK_ADD_NODE1',
-          title: `Add your first Post node to the database.`,
+          step: this.state.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE1',
+          title: 'Create a Node',
+          description: 'A Node represents a set of data structurized by its Model. Since our Model is a post, a new Node creates a new post.', // tslint:disable-line
         }, {
-          step: 'STEP3_CLICK_ADD_NODE2',
-          title: `Well done. Let's add another one.`,
+          step: this.state.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE2',
+          title: `Awesome! Let's add another one.`,
         }]}
         offsetX={5}
         offsetY={5}
         width={260}
+        horizontal='right'
       >
         <div
           className={`${classes.button} ${this.state.newRowVisible ? '' : classes.green}`}

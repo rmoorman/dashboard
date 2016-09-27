@@ -176,13 +176,14 @@ class PlaygroundView extends React.Component<Props, State> {
         <div className={classes.head}>
           <div
             className={classes.history}
-            onClick={() => this.setState({ historyVisible: !this.state.historyVisible } as State)}
+            onClick={() => this.setState({ historyVisible: true } as State)}
           >
             {this.state.historyVisible &&
               <div className={classes.historyOverlay}>
                 <QueryHistory
                   projectId={this.props.viewer.project.id}
                   onQuerySelect={this.onHistoryQuerySelect}
+                  onClickOutside={() => this.setState({historyVisible: false} as State)}
                   />
               </div>
             }
@@ -291,7 +292,7 @@ class PlaygroundView extends React.Component<Props, State> {
     }
   }
 
-  private rememberPlaygroundUsed = (a, b, c) => {
+  private rememberPlaygroundUsed = () => {
     window.localStorage.setItem(`used-playground-${this.props.viewer.project.id}`, 'true')
   }
 }

@@ -112,23 +112,24 @@ export class SideNav extends React.Component<Props, State> {
 
     return (
       <div className={`${classes.listBlock} ${playgroundPageActive ? classes.active : ''}`}>
-        <Tether
-          steps={[{
-            step: 'STEP4_CLICK_PLAYGROUND',
-            title: 'Open up the Playground to run GraphQL queries.',
-          }]}
-          offsetY={this.state.addingNewModel ? -75 : -5}
-          width={260}
-        >
           <Link
             to={`/${this.props.params.projectName}/playground`}
             className={`${classes.head} ${playgroundPageActive ? classes.active : ''}`}
             onClick={showGettingStartedOnboardingPopup}
           >
             <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
-            <span>Playground</span>
+            <Tether
+              steps={[{
+                step: 'STEP4_CLICK_PLAYGROUND',
+                title: 'Check out the Playground',
+                description: 'We have our data structure and we have our posts - time to test the backend.', // tslint:disable-line
+              }]}
+              offsetY={this.state.addingNewModel ? -75 : -5}
+              width={260}
+            >
+              <span>Playground</span>
+            </Tether>
           </Link>
-        </Tether>
       </div>
     )
   }

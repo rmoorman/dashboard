@@ -59,7 +59,7 @@ class ModelHeader extends React.Component<Props, {}> {
                 title: 'Switch to the Data Browser',
                 description: 'The Data Browser lets you create and edit the individual Nodes (our posts). Switch back if you want to modify your Post Model structure.', // tslint:disable-line
               }]}
-              width={200}
+              width={255}
               offsetX={-5}
               offsetY={5}
             >
