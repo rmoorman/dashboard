@@ -10,3 +10,9 @@ export function showNotification(notification: Notification) {
     },
   }
 }
+
+export function clearNotification() {
+  return {
+    type: Constants.CLEAR_NOTIFICATION,
+  }
+}

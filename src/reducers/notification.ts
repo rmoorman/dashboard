@@ -19,6 +19,11 @@ export function reduceNotification(state: State = initialState, action: ReduxAct
         message: action.payload.message,
         level: action.payload.level,
       }
+    case Constants.CLEAR_NOTIFICATION:
+      return {
+        message: null,
+        level: null,
+      }
     default:
       return state
   }

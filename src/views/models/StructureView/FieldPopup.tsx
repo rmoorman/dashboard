@@ -168,6 +168,7 @@ class FieldPopup extends React.Component<Props, State> {
                       offsetX={5}
                       offsetY={5}
                       width={240}
+                      side={'top'}
                     >
                       <TypeSelection
                         selected={this.state.typeIdentifier}
