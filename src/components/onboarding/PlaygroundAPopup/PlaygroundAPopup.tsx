@@ -28,7 +28,7 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
 
             <div className='fw2 f-16 mh-96 lh-1-4'>
               GraphQL makes it intuitive and fun to play around with your API. The easiest
-              way to do that is using the "Playground" which comes with helpful features.
+              way to do that is using our built-in "Playground" which comes with several helpful features.
             </div>
             <a href='https://learngraphql.com/' target='_blank' className='db ma-25 accent underline'>
               Don't know GraphQL?
@@ -36,7 +36,7 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
           </div>
 
           <div className='ma-16 bc-grey-2 tc'>
-            <div className='fw2 ls-2 gray-50 mv-38'>HOW IT BASICALLY WORKS</div>
+            <div className='fw2 ls-2 gray-50 mv-38'>HOW IT WORKS</div>
             <div>
               <img src={require('../../../assets/gifs/playground1.gif')} />
             </div>
@@ -48,16 +48,16 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
 
           <div className='tc bg-gray-06'>
             <div className='fw4 ls-2 pt-25 pb-38 accent'>
-              SO HERE'S YOUR FIRST TASK:
+              HERE'S YOUR FIRST TASK:
             </div>
             <div className='flex justify-center items-center'>
               <div className='mw6 bg-accent br-2 tl shadow-2'>
                 <div className='w-100 pa-16 white fw8' style={{backgroundColor: '#00A854'}}>
-                  Query all posts with their imageUrls and hashtags
+                  Query the imageUrl and hashtags of all posts
                 </div>
                 <div className='w-100 pa-16 black-50 lh-1-4'>
-                  If you’re stuck, try the autocompletion or look into the docs to get an overview.
-                  If that doesn’t help, try the chat.
+                  If you're stuck, try the auto completion or look into the docs to get an overview.
+                  If that doesn't help, try the chat.
                 </div>
               </div>
             </div>

@@ -57,7 +57,7 @@ class ModelHeader extends React.Component<Props, {}> {
               steps={[{
                 step: 'STEP3_CLICK_DATA_BROWSER',
                 title: 'Switch to the Data Browser',
-                description: 'The Data Browser lets you manage your data (“Post” nodes in our case).', // tslint:disable-line
+                description: 'In the Data Browser you can view and manage your data ("Post" nodes in our case).', // tslint:disable-line
               }]}
               width={280}
               offsetX={-35}

@@ -37,7 +37,7 @@ class OnboardSideNav extends React.Component<Props, {}> {
           </div>
           <div className='f-25 black-40 fwb mh-25 mv-16'>Getting Started</div>
           <div className='f-16 black-50 mh-25 mb-38 lh-1-4'>
-            Building Instagram in minutes. Define data structure, create posts, test the backend and implement it.
+            Building Instagram in minutes.
           </div>
           <div
             className='br-1 absolute'
@@ -53,11 +53,11 @@ class OnboardSideNav extends React.Component<Props, {}> {
           <div className='ph-16 pv-38'>
             {this.renderStep({
               index: 1,
-              text: 'Create a „Post“-Model',
+              text: 'Create a "Post" Model',
             })}
             {this.renderStep({
               index: 2,
-              text: 'Define the Model',
+              text: 'Define its fields',
             })}
             {this.renderStep({
               index: 3,
@@ -65,7 +65,7 @@ class OnboardSideNav extends React.Component<Props, {}> {
             })}
             {this.renderStep({
               index: 4,
-              text: 'Test in Playground',
+              text: 'Explore the Playground',
             })}
             {this.renderStep({
               index: 5,

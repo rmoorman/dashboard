@@ -28,10 +28,10 @@ class OnboardingPopup extends React.Component<Props, {}> {
               for Instagram in 5 minutes
             </div>
             <div className='lh-1-4 mv-16'>
-              Hi {this.props.firstName}, let’s get started building a backend for a simple Instagram clone.
-              To keep our example light, we will reduce our Instagram posts to a picture and some hashtags.
-              After we set up the data structure and create some posts,
-              we are going to put the backend to work and query all posts, that contain a specific hashtag.
+              Hi {this.props.firstName}, let's get started by building a backend for a simple Instagram clone.{' '}
+              To keep our example light, our Instagram posts only consist of a picture and some hashtags.{' '}
+              After setting up the data structure and creating some example posts,{' '}
+              we are ready to put the backend to work and query all posts that contain a specific hashtag.
             </div>
             <div className='w-100 flex justify-center flex-column items-center'>
               <div

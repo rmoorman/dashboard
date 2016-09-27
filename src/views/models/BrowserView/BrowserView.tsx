@@ -219,11 +219,11 @@ class BrowserView extends React.Component<Props, State> {
         steps={[{
           step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE1',
           title: 'Create a Node',
-          description: 'A Node represents one data item of a model. It doesn\'t matter what data you will enter in this example.', // tslint:disable-line
+          description: 'Items in your data belonging to a certain model are called nodes. Create a new post node and provide values for the "imageUrl" and "description" fields.', // tslint:disable-line
         }, {
           step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE2',
-          title: `Awesome! Let's one more.`,
-          description: 'You can also use your keyboard to navigate and submit.', // tslint:disable-line
+          title: `Awesome! Let's create another post node.`,
+          description: 'You can also use your keyboard to navigate between fields (Tab or Shift+Tab) and submit (Enter).', // tslint:disable-line
         }]}
         offsetX={15}
         offsetY={5}

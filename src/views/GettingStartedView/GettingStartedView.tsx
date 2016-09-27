@@ -114,7 +114,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
               <h2><strong>Congratulations</strong>, you did it!</h2>
               <p>
                 We hope you like how easy it is to setup your own GraphQL backend.<br />
-                If you need any help please join our Slack community. We’d love to talk to you!
+                If you need any help please join our Slack community. We'd love to talk to you!
               </p>
             </div>
             <div className={classes.social}>
@@ -166,10 +166,10 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
               <h2>2. Add some data</h2>
               <p>
                 In this step you will add some data to the <strong>Post</strong> model you just created.
-                It doesn’t matter what you add, it’s just about populating the database.
+                It doesn't matter what you add, it's just about populating the database.
               </p>
               <p>
-                It’s also possible to import existing data.
+                It's also possible to import existing data.
               </p>
             </div>
             <div className={classes.image}>
@@ -182,10 +182,10 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             <div className={classes.text}>
               <h2>3. Run example app</h2>
               <p>
-                Awesome. You’re done setting up the backend.
+                Awesome. You're done setting up the backend.
               </p>
               <p>
-                Now it’s time to test the backend from an actual app. Choose your own example below!
+                Now it's time to test the backend from an actual app. Choose your own example below!
               </p>
             </div>
             <div className={classes.image}>
