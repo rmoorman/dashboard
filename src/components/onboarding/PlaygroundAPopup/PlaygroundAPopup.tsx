@@ -20,7 +20,7 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
         className='flex justify-center items-start w-100 bg-white-50 h-100 overflow-auto'
         style={{pointerEvents: 'all'}}
       >
-        <div className='bg-white br-2 shadow-2 mv-96' style={{ minWidth: 600, maxWidth: 900 }}>
+        <div className='bg-white br-2 shadow-2 mv-60' style={{ minWidth: 600, maxWidth: 900 }}>
 
           <div className='ma-16 bb bc-grey-2 tc pb-25'>
             <div className='fw2 ls-2 mv-60'>OUR PLAYGROUND</div>
@@ -30,23 +30,19 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
               GraphQL makes it intuitive and fun to play around with your API. The easiest
               way to do that is using the "Playground" which comes with helpful features.
             </div>
-            <a href='https://learngraphql.com/' className='db ma-25 accent underline'>
+            <a href='https://learngraphql.com/' target='_blank' className='db ma-25 accent underline'>
               Don't know GraphQL?
             </a>
           </div>
 
-          <div className='ma-16 bb bc-grey-2 tc'>
-            <div className='fw2 ls-2 gray-50'>HOW IT BASICALLY WORKS</div>
-            <div className='fw2 f-16 mh-96 mv-25'>
-              Enter your query in the left pane. Hit the &#9658; button and get the result in the right pane.
+          <div className='ma-16 bc-grey-2 tc'>
+            <div className='fw2 ls-2 gray-50 mv-38'>HOW IT BASICALLY WORKS</div>
+            <div>
+              <img src={require('../../../assets/gifs/playground1.gif')} />
             </div>
-          </div>
-
-          <div className='ma-16 tc'>
-            <div className='fw2 ls-2 gray-50'>HELPFUL FEATURES</div>
-            <div className='fw2 f-16 mh-96 mv-25 lh-1-4'>
-              Press CTRL + SPACE to trigger auto completion.<br />
-              Hit Docs to get an complete overview of what you can do with your API.
+            <div className='fw2 lh-1-4 f-16 mh-96 mv-25'>
+              Enter your query in the left pane. Hit the &#9658; button and get the result in the right pane. <br />
+              Press CTRL + SPACE for auto completion. Hit Docs to explore your API.
             </div>
           </div>
 

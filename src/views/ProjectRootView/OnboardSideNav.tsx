@@ -126,13 +126,14 @@ class OnboardSideNav extends React.Component<Props, {}> {
         </div>
         }
         {isComplete &&
-        <Icon
-          style={{ marginLeft: 'auto' }}
-          width={13}
-          height={13}
-          color='#fff'
-          src={require('assets/icons/check.svg')}
-        />
+          <div style={{ marginLeft: 'auto' }}>
+            <Icon
+              width={13}
+              height={13}
+              color='#fff'
+              src={require('assets/icons/check.svg')}
+            />
+          </div>
         }
       </div>
     )

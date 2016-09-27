@@ -159,6 +159,28 @@ export interface PermanentAuthToken {
   token: string
 }
 
+export interface AuthProvider {
+  type: AuthProviderType
+  digits: AuthProviderDigits | null
+  auth0: AuthProviderAuth0 | null
+}
+
+export type AuthProviderType = 'Digits' | 'EmailPassword' | 'Auth0'
+
+export interface AuthProviderAuth0 {
+  domain: string
+  clientId: string
+  clientSecret: string
+  methodFacebook: boolean
+  methodTwitter: boolean
+  methodGoogle: boolean
+}
+
+export interface AuthProviderDigits {
+  consumerKey: string
+  consumerSecret: string
+}
+
 export interface OrderBy {
   fieldName: string
   order: 'ASC' | 'DESC'
