@@ -23,7 +23,7 @@ export function resetUI(): ReduxAction {
 export function setNodeSelection(ids: Immutable.List<string>): ReduxAction {
   return {
     type: Constants.SET_NODE_SELECTION,
-    payload: { ids },
+    payload: ids,
   }
 }
 
@@ -36,7 +36,14 @@ export function clearNodeSelection(): ReduxAction {
 export function toggleNodeSelection(id: string) {
   return {
     type: Constants.TOGGLE_NODE_SELECTION,
-    payload: { id },
+    payload: id,
+  }
+}
+
+export function setScrollTop(scrollTop: number) {
+  return {
+    type: Constants.SET_SCROLL_TOP,
+    payload: scrollTop,
   }
 }
 

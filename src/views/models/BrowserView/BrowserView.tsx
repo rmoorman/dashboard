@@ -3,8 +3,9 @@ import * as Relay from 'react-relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
-import {toggleNodeSelection, clearNodeSelection, setNodeSelection,
+import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop,
         toggleNewRow, hideNewRow, toggleFilter, resetUI} from '../../../actions/databrowser/ui'
+import {Popup} from '../../../types/popup'
 import calculateSize from 'calculate-size'
 import * as Immutable from 'immutable'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -51,19 +52,21 @@ interface Props {
   nextStep: () => void
   startProgress: () => any
   incrementProgress: () => any
-  showPopup: (content: JSX.Element, id: string) => any
+  showPopup: (popup: Popup) => any
   closePopup: (id: string) => any
   showDonePopup: () => any
   newRowVisible: boolean
   toggleNewRow: () => any
   hideNewRow: () => any
   toggleFilter: () => any
+  setScrollTop: (scrollTop: number) => any
   resetUI: () => any
   clearNodeSelection: () => any
   setNodeSelection: (ids: Immutable.List<string>) => any
   toggleNodeSelection: (id: string) => any
   filtersVisible: boolean
   selectedNodeIds: Immutable.List<string>
+  scrollTop: number
 }
 
 interface State {
@@ -73,7 +76,6 @@ interface State {
   filter: Immutable.Map<string, any>
   itemCount: number
   loaded: Immutable.List<boolean>
-  scrollTop: number
 }
 
 class BrowserView extends React.Component<Props, State> {
@@ -99,7 +101,6 @@ class BrowserView extends React.Component<Props, State> {
       filter: Immutable.Map<string, any>(),
       itemCount: this.props.model.itemCount,
       loaded: Immutable.List<boolean>(),
-      scrollTop: 0,
     }
   }
 
@@ -158,7 +159,7 @@ class BrowserView extends React.Component<Props, State> {
               src={require('assets/icons/search.svg')}
             />
           </div>
-          <div className={classes.button} onClick={() => this.reloadData(Math.floor(this.state.scrollTop / 47))}>
+          <div className={classes.button} onClick={() => this.reloadData(Math.floor(this.props.scrollTop / 47))}>
             <Icon
               width={16}
               height={16}
@@ -185,12 +186,12 @@ class BrowserView extends React.Component<Props, State> {
                     minimumBatchSize={50}
                     width={this.props.fields.reduce((sum, {name}) => sum + fieldColumnWidths[name], 0) + 34 + 250}
                     height={height}
-                    scrollTop={this.state.scrollTop}
+                    scrollTop={this.props.scrollTop}
                     columnCount={this.props.fields.length + 2}
                     columnWidth={(input) => this.getColumnWidth(fieldColumnWidths, input)}
                     loadMoreRows={(input) => this.loadData(input.startIndex)}
                     addNew={this.props.newRowVisible}
-                    onScroll={(input) => this.setState({scrollTop: input.scrollTop} as State)}
+                    onScroll={(input) => this.props.setScrollTop(input.scrollTop)}
 
                     headerHeight={74}
                     headerRenderer={this.headerRenderer}
@@ -262,7 +263,10 @@ class BrowserView extends React.Component<Props, State> {
     const chunk = 10
     const id = cuid()
     this.props.startProgress()
-    this.props.showPopup(<ProgressIndicator title='Importing' total={Math.floor(values.length / chunk)} />, id)
+    this.props.showPopup({
+      element: <ProgressIndicator title='Importing' total={Math.floor(values.length / chunk)} />,
+      id,
+    })
     for (let i = 0; i < Math.floor(values.length / chunk); i++) {
       promises.push(
         addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
@@ -598,6 +602,7 @@ const mapStateToProps = (state) => {
     newRowVisible: state.databrowser.ui.newRowVisible,
     filtersVisible: state.databrowser.ui.filtersVisible,
     selectedNodeIds: state.databrowser.ui.selectedNodeIds,
+    scrollTop: state.databrowser.ui.scrollTop,
   }
 }
 
@@ -610,6 +615,7 @@ function mapDispatchToProps(dispatch) {
       setNodeSelection,
       clearNodeSelection,
       toggleNodeSelection,
+      setScrollTop,
       resetUI,
       showDonePopup,
       nextStep,
