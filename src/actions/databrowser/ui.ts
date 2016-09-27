@@ -47,6 +47,13 @@ export function setScrollTop(scrollTop: number) {
   }
 }
 
+export function setLoading(loading: boolean) {
+  return {
+    type: Constants.SET_LOADING,
+    payload: loading,
+  }
+}
+
 export function toggleFilter(): ReduxAction {
   return {
     type: Constants.TOGGLE_FILTER,

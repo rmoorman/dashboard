@@ -3,7 +3,7 @@ import * as Relay from 'react-relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
-import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop,
+import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
         toggleNewRow, hideNewRow, toggleFilter, resetUI} from '../../../actions/databrowser/ui'
 import {Popup} from '../../../types/popup'
 import calculateSize from 'calculate-size'
@@ -60,18 +60,19 @@ interface Props {
   hideNewRow: () => any
   toggleFilter: () => any
   setScrollTop: (scrollTop: number) => any
+  setLoading: (loading: boolean) => any
   resetUI: () => any
   clearNodeSelection: () => any
   setNodeSelection: (ids: Immutable.List<string>) => any
   toggleNodeSelection: (id: string) => any
   filtersVisible: boolean
   selectedNodeIds: Immutable.List<string>
+  loading: boolean
   scrollTop: number
 }
 
 interface State {
   nodes: Immutable.List<Immutable.Map<string, any>>
-  loading: boolean
   orderBy: OrderBy
   filter: Immutable.Map<string, any>
   itemCount: number
@@ -93,7 +94,6 @@ class BrowserView extends React.Component<Props, State> {
 
     this.state = {
       nodes: Immutable.List<Immutable.Map<string, any>>(),
-      loading: true,
       orderBy: {
         fieldName: 'id',
         order: 'DESC',
@@ -167,17 +167,12 @@ class BrowserView extends React.Component<Props, State> {
             />
           </div>
         </ModelHeader>
-        {this.state.loading &&
-        <div className={classes.loadingOverlay}>
-          <Loading color='#B9B9C8'/>
-        </div>
-        }
-        <div className={`${classes.table} ${this.state.loading ? classes.loading : ''}`}>
+        <div className={`${classes.table} ${this.props.loading ? classes.loading : ''}`}>
           <div className={classes.tableContainer} style={{ width: '100%' }}>
             <AutoSizer>
               {({width, height}) => {
                 const fieldColumnWidths = this.calculateFieldColumnWidths(width)
-                if (this.state.loading) {
+                if (this.props.loading) {
                   return
                 }
                 return (
@@ -209,6 +204,11 @@ class BrowserView extends React.Component<Props, State> {
             </AutoSizer>
           </div>
         </div>
+        {this.props.loading &&
+        <div className={classes.loadingOverlay}>
+          <Loading color='#B9B9C8'/>
+        </div>
+        }
       </div>
     )
   }
@@ -450,9 +450,9 @@ class BrowserView extends React.Component<Props, State> {
           loaded = loaded.set(skip + index, true)
         }
 
+        this.props.setLoading(false)
         this.setState({
           nodes: nodes,
-          loading: false,
           loaded: loaded,
           itemCount: results.viewer[`all${this.props.model.namePlural}`].count,
         } as State)
@@ -522,7 +522,7 @@ class BrowserView extends React.Component<Props, State> {
       })
       .catch((err) => {
         err.rawError.forEach(error => this.props.showNotification({message: error.message, level: 'error'}))
-        this.setState({loading: false} as State)
+        this.props.setLoading(false)
       })
   }
 
@@ -581,12 +581,14 @@ class BrowserView extends React.Component<Props, State> {
     if (confirm(`Do you really want to delete ${this.props.selectedNodeIds.size} node(s)?`)) {
       // only reload once after all the deletions
 
+      this.props.setLoading(true)
       Promise.all(this.props.selectedNodeIds.toArray()
         .map((nodeId) => deleteNode(this.lokka, this.props.params.modelName, nodeId)))
         .then(analytics.track('models/browser: deleted node', {
           project: this.props.params.projectName,
           model: this.props.params.modelName,
         }))
+        .then(() => this.props.setLoading(false))
         .then(() => this.reloadData())
         .catch((err) => {
           err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
@@ -603,6 +605,7 @@ const mapStateToProps = (state) => {
     filtersVisible: state.databrowser.ui.filtersVisible,
     selectedNodeIds: state.databrowser.ui.selectedNodeIds,
     scrollTop: state.databrowser.ui.scrollTop,
+    loading: state.databrowser.ui.loading,
   }
 }
 
@@ -616,6 +619,7 @@ function mapDispatchToProps(dispatch) {
       clearNodeSelection,
       toggleNodeSelection,
       setScrollTop,
+      setLoading,
       resetUI,
       showDonePopup,
       nextStep,

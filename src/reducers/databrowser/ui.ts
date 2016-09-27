@@ -7,6 +7,7 @@ interface State {
   newRowVisible: boolean
   selectedNodeIds: Immutable.List<string>
   scrollTop: number
+  loading: boolean
 }
 
 const initialState: State = {
@@ -14,6 +15,7 @@ const initialState: State = {
   newRowVisible: false,
   selectedNodeIds: Immutable.List<string>(),
   scrollTop: 0,
+  loading: true,
 }
 
 export function reduceUI(state: State = initialState, action: ReduxAction) {
@@ -36,6 +38,8 @@ export function reduceUI(state: State = initialState, action: ReduxAction) {
       return Object.assign({}, state, { selectedNodeIds: state.selectedNodeIds.push(id)})
     case Constants.SET_SCROLL_TOP:
       return Object.assign({}, state, { scrollTop: action.payload })
+    case Constants.SET_LOADING:
+      return Object.assign({}, state, { loading: action.payload })
     case Constants.RESET_UI:
       return initialState
   }
