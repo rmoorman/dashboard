@@ -15,6 +15,8 @@ import { reduceGettingStartedState } from './reducers/gettingStarted'
 import { fetchGettingStartedState } from './actions/gettingStarted'
 import { reducePopup } from './reducers/popup'
 import { reduceProgress } from './reducers/progressIndicator'
+import { reduceData as reduceDataBrowserData } from './reducers/databrowser/data'
+import { reduceUI as reduceDataBrowserUI } from './reducers/databrowser/ui'
 import { reduceNotification } from './reducers/notification'
 
 import loadAnalytics from './utils/analytics'
@@ -45,6 +47,10 @@ const reducers = combineReducers({
   popup: reducePopup,
   progressIndicator: reduceProgress,
   notification: reduceNotification,
+  databrowser: combineReducers({
+    data: reduceDataBrowserData,
+    ui: reduceDataBrowserUI,
+  }),
 })
 
 const store = createStore(reducers, compose(
