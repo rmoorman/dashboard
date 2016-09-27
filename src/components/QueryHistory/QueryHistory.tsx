@@ -38,10 +38,6 @@ export default class QueryHistory extends React.Component<Props, State> {
     }
   }
 
-  _selectQuery (index) {
-    this.props.onQuerySelect(this.state.queries[index])
-  }
-
   render () {
     if (this.state.queries.length === 0) {
       return (
@@ -60,7 +56,7 @@ export default class QueryHistory extends React.Component<Props, State> {
                 key={index}
                 className={`${classes.query} ${this.state.selectedIndex === index ? classes.querySelected : ''}`}
                 onMouseEnter={() => this.setState({ selectedIndex: index } as State)}
-                onClick={() => this._selectQuery(index)}
+                onClick={() => this.selectQuery(index)}
                 >
                 <div className={classes.queryDate}>
                   {query.date.toLocaleString()}
@@ -78,7 +74,7 @@ export default class QueryHistory extends React.Component<Props, State> {
           </div>
           <div
             className={classes.details}
-            onClick={() => this._selectQuery(this.state.selectedIndex)}
+            onClick={() => this.selectQuery(this.state.selectedIndex)}
             >
             Query:
             <div
@@ -97,5 +93,9 @@ export default class QueryHistory extends React.Component<Props, State> {
         </div>
       </ClickOutside>
     )
+  }
+
+  private selectQuery (index) {
+    this.props.onQuerySelect(this.state.queries[index])
   }
 }
