@@ -18,7 +18,7 @@ export function showDonePopup() {
 export function selectExample(selectedExample: Example): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
   return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
     const {onboardingStatusId} = getState().gettingStarted.gettingStartedState
-    const step = 'STEP5_WAITING'
+    const step: Step = 'STEP5_WAITING'
     return updateReduxAndRelay(dispatch, step, false, onboardingStatusId, selectedExample)
   }
 }
