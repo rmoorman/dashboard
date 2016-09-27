@@ -86,7 +86,8 @@ class PlaygroundBPopup extends React.Component<Props, State> {
                     Query all posts that contain the #coolgraph hashtag in their description.
                 </div>
                   <div className='w-100 pa-16 black-50 lh-1-4'>
-                    Use the built-in filter "description_contains". If you need more information look in the docs section or open up the chat!
+                    Use the built-in filter "description_contains".{' '}
+                    If you need more information look in the docs section or open up the chat!
                 </div>
                 </div>
               </div>
