@@ -72,7 +72,7 @@ class StructureView extends React.Component<Props, State> {
           <Tether
             steps={[{
               step: 'STEP2_CLICK_CREATE_FIELD_IMAGEURL',
-              title: 'Add a new field called "imageUrl" and select type "String". Then click the "Create" button.',
+              title: 'Create a field for the image URL',
             }, {
               step: 'STEP2_CREATE_FIELD_DESCRIPTION',
               title: 'Good job! Create another one called "description" with type "String"',
@@ -80,7 +80,9 @@ class StructureView extends React.Component<Props, State> {
             offsetX={5}
             offsetY={5}
             width={240}
-        >
+            horizontal='right'
+            zIndex={2}
+          >
             <Link
               className={`${classes.button} ${classes.green}`}
               onClick={this.handleCreateFieldClick}

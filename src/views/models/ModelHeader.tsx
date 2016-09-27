@@ -56,7 +56,8 @@ class ModelHeader extends React.Component<Props, {}> {
             <Tether
               steps={[{
                 step: 'STEP3_CLICK_DATA_BROWSER',
-                title: 'Nice, you\'re done setting up the structure. Let\'s add some data.',
+                title: 'Switch to the Data Browser',
+                description: 'The Data Browser lets you create and edit the individual Nodes (our posts). Switch back if you want to modify your Post Model structure.', // tslint:disable-line
               }]}
               width={200}
               offsetX={-5}

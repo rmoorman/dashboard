@@ -136,7 +136,8 @@ class FieldPopup extends React.Component<Props, State> {
                     <Tether
                       steps={[{
                         step: 'STEP2_ENTER_FIELD_NAME_IMAGEURL',
-                        title: 'Add a new field called "imageUrl".',
+                        title: 'Call the field "imageUrl".',
+                        description: 'Fields are always lowercase.',
                       }]}
                       offsetX={5}
                       offsetY={5}
@@ -299,7 +300,7 @@ class FieldPopup extends React.Component<Props, State> {
                 <Tether
                   steps={[{
                     step: 'STEP2_CLICK_CONFIRM_IMAGEURL',
-                    title: 'Click "Create" to create the field.',
+                    title: 'That’s it, click create!',
                   }]}
                   offsetX={5}
                   offsetY={5}

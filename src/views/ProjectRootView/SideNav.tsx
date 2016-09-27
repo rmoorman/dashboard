@@ -225,10 +225,11 @@ export class SideNav extends React.Component<Props, State> {
           <Tether
             steps={[{
               step: 'STEP1_CREATE_POST_MODEL',
-              title: 'First you need to create a new model called "Post"',
+              title: 'Create a data Model and name it “Post”',
+              description: 'Models represent a certain type of data. Our “Post” model will contain an image URL and Hashtags (Models are always upper case).', // tslint:disable-line
             }]}
             offsetY={this.state.addingNewModel ? -75 : -5}
-            width={260}
+            width={350}
           >
             <div>+ Add model</div>
           </Tether>

@@ -2,35 +2,53 @@
 
 .tether {
   margin-top: 20px;
-  background: $accent;
+  background: #00A954;
   color: #fff;
-  padding: 12px 16px;
-  border-radius: 5px;
-  box-shadow: 2px 2px 25px #363636;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 0px 25px -6px rgba(128,128,128,1);
+
+  &.left:before {
+    left: 0;
+    margin-left: 13px;
+  }
+
+  &.right:before {
+    right: 0;
+    margin-right: 13px;
+  }
 
   &:before {
     width: 0;
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    left: 0;
     content: ' ';
-    margin-left: 13px;
     position: absolute;
   }
 
   &.bottom:before {
     margin-top: 20px;
-    border-bottom: 10px solid $accent;
+    border-bottom: 10px solid #00A954;
     top: -10px;
   }
 
   &.top:before {
     margin-bottom: -20px;
-    border-top: 10px solid $accent;
+    border-top: 10px solid #00A954;
     bottom: 10px;
   }
 }
 
+.title {
+  padding: 12px 16px;
+  font-weight: 800;
+}
+
+.description {
+  padding: 12px 16px;
+  background-color: $accent;
+  color: rgba(23, 26, 31, 0.5)
+}
