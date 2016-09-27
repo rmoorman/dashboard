@@ -16,9 +16,16 @@ export default class UpdateCustomerOnboardingStatusMutation extends Relay.Mutati
   }
 
   getFatQuery () {
+    // TODO don't know why I have to specify so much otherwise it thinks that onboardingStatus is a user
     return Relay.QL`
       fragment on UpdateCrmOnboardingStatusPayload {
-        onboardingStatus
+        onboardingStatus {
+          id
+          gettingStarted
+          gettingStartedExample
+          systemBridge
+          gettingStartedSkipped
+        }
       }
     `
   }
@@ -42,7 +49,7 @@ export default class UpdateCustomerOnboardingStatusMutation extends Relay.Mutati
 
   getOptimisticResponse () {
     return {
-      user: {
+      onboardingStatus: {
         id: this.props.onboardingStatusId,
         gettingStarted: this.props.gettingStarted,
         gettingStartedSkipped: this.props.gettingStartedSkipped,

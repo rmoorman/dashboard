@@ -9,16 +9,24 @@ import IconNotification from '../components/IconNotification/IconNotification'
 import cuid from 'cuid'
 import {showPopup} from '../actions/popup'
 
-export function showNotification() {
+export function showDonePopup() {
   const id = cuid()
   const element = <IconNotification id={id}/>
   return showPopup({id, element, blurBackground: false})
 }
 
+export function selectExample(selectedExample: Example): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
+  return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
+    const {onboardingStatusId} = getState().gettingStarted.gettingStartedState
+    const step = 'STEP5_WAITING'
+    return updateReduxAndRelay(dispatch, step, false, onboardingStatusId, selectedExample)
+  }
+}
+
 export function update(step: Step,
                        skipped: boolean,
                        onboardingStatusId: string,
-                       selectedExample: Example = null): ReduxAction {
+                       selectedExample?: Example): ReduxAction {
   const payload = {gettingStartedState: new GettingStartedState({step, skipped, onboardingStatusId, selectedExample})}
   return {type: Constants.UPDATE, payload}
 }
@@ -39,7 +47,7 @@ function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
         }),
       {
         onSuccess: () => {
-          dispatch(update(gettingStarted, gettingStartedSkipped, onboardingStatusId))
+          dispatch(update(gettingStarted, gettingStartedSkipped, onboardingStatusId, gettingStartedExample))
           resolve()
         },
         onFailure: reject,
@@ -47,9 +55,9 @@ function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
   })
 }
 
-export function nextStep(selectedExample: Example = null): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
+export function nextStep(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
   return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
-    const {step, skipped, onboardingStatusId} = getState().gettingStarted.gettingStartedState
+    const {step, skipped, onboardingStatusId, selectedExample} = getState().gettingStarted.gettingStartedState
     const currentStepIndex = GettingStartedState.steps.indexOf(step)
     const nextStep = GettingStartedState.steps[currentStepIndex + 1]
 
@@ -58,7 +66,7 @@ export function nextStep(selectedExample: Example = null): (dispatch: (action: R
 }
 
 export function skip(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> {
-  return function (dispatch: (action: ReduxAction) => any, getState): Promise<{}> {
+  return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
     const {step, onboardingStatusId} = getState().gettingStarted.gettingStartedState
 
     return updateReduxAndRelay(dispatch, step, true, onboardingStatusId)
@@ -66,7 +74,7 @@ export function skip(): (dispatch: (action: ReduxAction) => any, getState: any) 
 }
 
 export function fetchGettingStartedState(): (dispatch: (action: ReduxAction) => any) => Promise<{}> {
-  return function (dispatch: (action: ReduxAction) => any): Promise<{}> {
+  return (dispatch: (action: ReduxAction) => any): Promise<{}> => {
     const query = Relay.createQuery(
       Relay.QL`
         query {
@@ -90,8 +98,8 @@ export function fetchGettingStartedState(): (dispatch: (action: ReduxAction) => 
       Relay.Store.primeCache({ query }, ({done, error}) => {
         if (done) {
           const data = Relay.Store.readQuery(query)[0]
-          const {id, gettingStarted, gettingStartedSkipped} = data.user.crm.onboardingStatus
-          dispatch(update(gettingStarted, gettingStartedSkipped, id))
+          const {id, gettingStarted, gettingStartedSkipped, gettingStartedExample} = data.user.crm.onboardingStatus
+          dispatch(update(gettingStarted, gettingStartedSkipped, id, gettingStartedExample))
           resolve()
         } else if (error) {
           reject(Error('Error when fetching gettingStartedState'))

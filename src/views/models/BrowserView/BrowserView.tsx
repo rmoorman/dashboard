@@ -23,7 +23,7 @@ import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ModelHeader from '../ModelHeader'
-import {nextStep} from '../../../actions/gettingStarted'
+import {showDonePopup, nextStep} from '../../../actions/gettingStarted'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {showPopup, closePopup} from '../../../actions/popup'
 import InfiniteTable from '../../../components/InfiniteTable/InfiniteTable'
@@ -51,6 +51,7 @@ interface Props {
   incrementProgress: () => any
   showPopup: (content: JSX.Element, id: string) => any
   closePopup: (id: string) => any
+  showDonePopup: () => any
 }
 
 interface State {
@@ -501,6 +502,7 @@ class BrowserView extends React.Component<Props, State> {
             this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE1') ||
             this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE2')
           )) {
+          this.props.showDonePopup()
           this.props.nextStep()
         }
       })
@@ -598,6 +600,7 @@ const mapStateToProps = (state) => {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
+      showDonePopup,
       nextStep,
       showPopup,
       closePopup,

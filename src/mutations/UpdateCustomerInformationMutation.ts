@@ -39,7 +39,7 @@ export default class UpdateCustomerInformationMutation extends Relay.Mutation<Pr
 
   getOptimisticResponse () {
     return {
-      user: {
+      customerInformation: {
         id: this.props.customerInformationId,
         name: this.props.name,
         email: this.props.email,

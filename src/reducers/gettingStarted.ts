@@ -18,7 +18,6 @@ export function reduceGettingStartedState(state: State = initialState, action: R
   switch (action.type) {
     case Constants.UPDATE:
       const gettingStartedState: GettingStartedState = action.payload.gettingStartedState
-
       if (!gettingStartedState.selectedExample) {
         gettingStartedState.selectedExample = state.gettingStartedState.selectedExample
       }

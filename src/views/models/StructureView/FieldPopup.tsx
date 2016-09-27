@@ -20,9 +20,9 @@ import {Field, Model} from '../../../types/types'
 import {ShowNotificationCallback} from '../../../types/utils'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {emptyDefault} from '../utils'
-import {showNotification as showSystemNotification} from '../../../actions/notification'
+import {showNotification} from '../../../actions/notification'
 import {connect} from 'react-redux'
-import {nextStep, showNotification} from '../../../actions/gettingStarted'
+import {nextStep, showDonePopup} from '../../../actions/gettingStarted'
 import {bindActionCreators} from 'redux'
 const classes: any = require('./FieldPopup.scss')
 
@@ -36,8 +36,8 @@ interface Props {
   router: any
   gettingStartedState: GettingStartedState
   nextStep: any
-  showSystemNotification: ShowNotificationCallback
-  showNotification: () => void
+  showNotification: ShowNotificationCallback
+  showDonePopup: () => void
 }
 
 interface State {
@@ -346,17 +346,25 @@ class FieldPopup extends React.Component<Props, State> {
 
     if (this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CONFIRM_IMAGEURL')) {
       if (this.state.name === 'imageUrl' && this.state.typeIdentifier === 'String') {
+        this.props.showDonePopup()
         this.props.nextStep()
       } else {
-        // TODO add failure notification
+        this.props.showNotification({
+          level: 'warning',
+          message: 'Make sure that the name is "imageUrl" and the type is "String".',
+        })
         return
       }
     }
     if (this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_FIELD_DESCRIPTION')) {
       if (this.state.name === 'description' && this.state.typeIdentifier === 'String') {
+        this.props.showDonePopup()
         this.props.nextStep()
       } else {
-        // TODO add notification
+        this.props.showNotification({
+          level: 'warning',
+          message: 'Make sure that the name is "description" and the type is "String".',
+        })
         return
       }
     }
@@ -399,24 +407,10 @@ class FieldPopup extends React.Component<Props, State> {
             model: this.props.params.modelName,
             field: name,
           })
-
           this.close()
-
-          // getting-started onboarding steps
-          const isStep3 = this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CONFIRM_IMAGEURL')
-          if (isStep3 && name === 'imageUrl' && typeIdentifier === 'String') {
-            this.props.showNotification()
-            this.props.nextStep()
-          }
-
-          const isStep4 = this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_FIELD_DESCRIPTION')
-          if (isStep4 && name === 'description' && typeIdentifier === 'String') {
-            this.props.showNotification()
-            this.props.nextStep()
-          }
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.props.showSystemNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({loading: false} as State)
         },
       }
@@ -470,7 +464,7 @@ class FieldPopup extends React.Component<Props, State> {
           this.close()
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.props.showSystemNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({loading: false} as State)
         },
       }
@@ -651,7 +645,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, showNotification, showSystemNotification}, dispatch)
+  return bindActionCreators({nextStep, showDonePopup, showNotification}, dispatch)
 }
 
 const ReduxContainer = connect(

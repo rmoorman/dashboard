@@ -2,8 +2,7 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {nextStep} from '../../../actions/gettingStarted'
-import {closePopup} from '../../../actions/popup'
+import {nextStep, selectExample} from '../../../actions/gettingStarted'
 import {classnames} from '../../../utils/classnames'
 import Loading from '../../Loading/Loading'
 import {GettingStartedState} from '../../../types/gettingStarted'
@@ -54,8 +53,8 @@ const examples = {
 interface Props {
   id: string
   projectId: string
-  nextStep: (selectedExample?: Example) => Promise<void>
-  closePopup: (id: string) => void
+  nextStep: () => Promise<void>
+  selectExample: (selectedExample: Example) => any
   gettingStartedState: GettingStartedState
 }
 
@@ -154,7 +153,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                     classes.exampleButton,
                     selectedExample === 'ReactRelay' ? classes.active : ''
                   )}
-                  onClick={() => this.props.nextStep('ReactRelay')}
+                  onClick={() => this.props.selectExample('ReactRelay')}
                 >
                   React + Relay
                 </div>
@@ -163,7 +162,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                     classes.exampleButton,
                     selectedExample === 'ReactApollo' ? classes.active : ''
                   )}
-                  onClick={() => this.props.nextStep('ReactApollo')}
+                  onClick={() => this.props.selectExample('ReactApollo')}
                 >
                   React + Apollo
                 </div>
@@ -172,7 +171,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                     classes.exampleButton,
                     selectedExample === 'AngularApollo' ? classes.active : ''
                   )}
-                  onClick={() => this.props.nextStep('AngularApollo')}
+                  onClick={() => this.props.selectExample('AngularApollo')}
                 >
                   Angular + Apollo
                 </div>
@@ -276,7 +275,10 @@ class PlaygroundCPopup extends React.Component<Props, State> {
               </div>
             </div>
             <div className='flex w-100 justify-center'>
-              <div className='mv-16 pa-16 ttu pointer bg-accent white dim'>
+              <div
+                className='mv-16 pa-16 ttu pointer bg-accent white dim'
+                onClick={this.props.nextStep}
+              >
                 Finish Onboarding
               </div>
             </div>
@@ -331,7 +333,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, closePopup}, dispatch)
+  return bindActionCreators({nextStep, selectExample}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PlaygroundCPopup))

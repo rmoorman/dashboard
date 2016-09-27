@@ -13,11 +13,11 @@ import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
 import {onFailureShowNotification} from '../../utils/relay'
-import {nextStep, showNotification} from '../../actions/gettingStarted'
+import {nextStep, showDonePopup} from '../../actions/gettingStarted'
 import {showPopup} from '../../actions/popup'
 import {Project, Viewer, Model} from '../../types/types'
 import {ShowNotificationCallback} from '../../types/utils'
-import {showNotification as showSystemNotification} from '../../actions/notification'
+import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
 import {classnames} from '../../utils/classnames'
@@ -34,9 +34,9 @@ interface Props {
   gettingStartedState: GettingStartedState
   nextStep: () => Promise<any>
   skip: () => Promise<any>
-  showSystemNotification: ShowNotificationCallback
+  showNotification: ShowNotificationCallback
   router: any
-  showNotification: () => void
+  showDonePopup: () => void
   showPopup: (popup: Popup) => void
 }
 
@@ -299,14 +299,14 @@ export class SideNav extends React.Component<Props, State> {
               this.state.newModelName === 'Post' &&
               this.props.gettingStartedState.isCurrentStep('STEP1_CREATE_POST_MODEL')
             ) {
-              this.props.showNotification()
+              this.props.showDonePopup()
               this.props.nextStep().then(redirect)
             } else {
               redirect()
             }
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.props.showSystemNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -321,7 +321,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({nextStep, showNotification, showSystemNotification, showPopup}, dispatch)
+  return bindActionCreators({nextStep, showDonePopup, showNotification, showPopup}, dispatch)
 }
 
 const ReduxContainer = connect(
