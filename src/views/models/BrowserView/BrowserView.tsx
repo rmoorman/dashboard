@@ -470,6 +470,7 @@ class BrowserView extends React.Component<Props, State> {
     } as State)
     return this.loadData(index)
       .then((nodes) => {
+        this.props.setLoading(false)
         // _update side nav model node count
         // THIS IS A HACK
         sideNavSyncer.notifySideNav()
@@ -642,7 +643,6 @@ const MappedBrowserView = mapProps({
   fields: (props) => (
     props.viewer.model.fields.edges
       .map((edge) => edge.node)
-      // .sort(compareFields) // TODO remove this once field ordering is implemented
   ),
   model: (props) => props.viewer.model,
   project: (props) => props.viewer.project,

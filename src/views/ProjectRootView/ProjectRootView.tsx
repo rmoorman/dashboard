@@ -84,7 +84,7 @@ class ProjectRootView extends React.Component<Props, {}> {
     clearInterval(this.refreshInterval)
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     const {gettingStarted, gettingStartedSkipped} = this.props.user.crm.onboardingStatus
     const prevGettingStarted = prevProps.user.crm.onboardingStatus.gettingStarted
 

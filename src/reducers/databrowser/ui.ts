@@ -43,5 +43,5 @@ export function reduceUI(state: State = initialState, action: ReduxAction) {
     case Constants.RESET_UI:
       return initialState
   }
-  return initialState
+  return state
 }

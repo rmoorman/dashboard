@@ -37,6 +37,13 @@ const DEFAULT_QUERY = `{
   }
 }`
 
+const ONBOARDING_QUERY = `{
+  allPosts {
+    imageUrl
+    description
+  }
+}`
+
 type Endpoint = 'SIMPLE' | 'RELAY'
 
 interface Props {
@@ -61,7 +68,7 @@ class PlaygroundView extends React.Component<Props, State> {
 
   private lokka: any
 
-  constructor (props) {
+  constructor (props: Props) {
     super(props)
 
     const clientEndpoint = `${__BACKEND_ADDR__}/relay/v1/${this.props.viewer.project.id}`
@@ -71,10 +78,13 @@ class PlaygroundView extends React.Component<Props, State> {
 
     this.lokka = new Lokka({ transport })
 
+    const usedPlayground = window.localStorage.getItem(`used-playground-${this.props.viewer.project.id}`)
+    const isOnboarding = props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')
+
     this.state = {
       users: [DASHBOARD_ADMIN],
       historyVisible: false,
-      query: window.localStorage.getItem(`used-playground-${this.props.viewer.project.id}`) ? undefined : DEFAULT_QUERY,
+      query: isOnboarding ? ONBOARDING_QUERY : usedPlayground ? undefined : DEFAULT_QUERY,
       variables: undefined,
       selectedEndpoint: (window.localStorage.getItem('SELECTED_ENDPOINT') || 'SIMPLE') as Endpoint,
       selectedUserId: DASHBOARD_ADMIN.id,
@@ -124,10 +134,12 @@ class PlaygroundView extends React.Component<Props, State> {
       if (this.props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')) {
         const { query } = graphQLParams
         if (query.includes('allPosts') && query.includes('filter') &&
+            query.includes('description_contains') && query.includes('#graphcool') &&
             query.includes('imageUrl') && query.includes('description')) {
           this.props.nextStep()
         }
       }
+
       return fetch(`${__BACKEND_ADDR__}/${endpoints[this.state.selectedEndpoint].alias}/${this.props.viewer.project.id}`, { // tslint:disable-line
         method: 'post',
         headers: {
