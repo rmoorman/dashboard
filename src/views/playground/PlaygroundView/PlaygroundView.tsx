@@ -134,8 +134,7 @@ class PlaygroundView extends React.Component<Props, State> {
       if (this.props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')) {
         const { query } = graphQLParams
         if (query.includes('allPosts') && query.includes('filter') &&
-            query.includes('description_contains') &&
-            query.includes('imageUrl') && query.includes('description')) {
+            query.includes('description_contains')) {
           this.props.nextStep()
         }
       }
