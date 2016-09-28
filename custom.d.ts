@@ -31,6 +31,7 @@ declare module 'cuid'
 declare var Smooch: any
 declare var analytics: any
 declare var __BACKEND_ADDR__: any
+declare var __HEARTBEAT_ADDR__: any
 declare var __SMOOCH_TOKEN__: any
 declare var __ENABLE_SEGMENT__: any
 declare var __SEGMENT_TOKEN__: any
