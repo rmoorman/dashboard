@@ -1,8 +1,6 @@
 machine:
   node:
     version: 5.6.0
-  services:
-    - docker
 
 dependencies:
   override:
@@ -16,8 +14,8 @@ deployment:
   production:
     branch: master
     commands:
-      - BACKEND_ADDR=$BACKEND_MASTER_ADDR SURGE_DOMAIN=graphcool-dashboard.surge.sh npm run deploy
+      - BACKEND_ADDR=$BACKEND_MASTER_ADDR NETLIFY_ID=dashboard-graph-cool npm run deploy
   dev:
     branch: dev
     commands:
-      - BACKEND_ADDR=$BACKEND_DEV_ADDR SURGE_DOMAIN=graphcool-dashboard-dev.surge.sh npm run deploy
+      - BACKEND_ADDR=$BACKEND_DEV_ADDR NETLIFY_ID=dev-dashboard-graph-cool npm run deploy
