@@ -24,9 +24,9 @@ import loadAnalytics from './utils/analytics'
 
 import './utils/polyfils'
 
-if (cookiestore.has('graphcool_auth_token')) {
+if (__HEARTBEAT_ADDR__ && cookiestore.has('graphcool_auth_token')) {
   drumstick.start({
-    endpoint: 'https://6apsb2qt0b.execute-api.eu-west-1.amazonaws.com/Prod',
+    endpoint: __HEARTBEAT_ADDR__,
     payload: {
       resource: 'dashboard',
       token: cookiestore.get('graphcool_auth_token'),
