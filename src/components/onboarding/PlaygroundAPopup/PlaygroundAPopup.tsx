@@ -53,7 +53,7 @@ class PlaygroundAPopup extends React.Component<Props, {}> {
             <div className='flex justify-center items-center'>
               <div className='mw6 bg-accent br-2 tl shadow-2'>
                 <div className='w-100 pa-16 white fw8' style={{backgroundColor: '#00A854'}}>
-                  Query the imageUrl and hashtags of all posts
+                  Query all posts with the imageUrl and description
                 </div>
                 <div className='w-100 pa-16 black-50 lh-1-4'>
                   If you're stuck, try the auto completion or look into the docs to get an overview.
