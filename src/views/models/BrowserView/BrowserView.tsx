@@ -81,7 +81,7 @@ interface Props {
   nodes: Immutable.List<Immutable.Map<string, any>>
   loaded: Immutable.List<boolean>
   addNodeAsync: (lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }) => any
-  updateNodeAsync: (lokka: any, model: Model, fields: Field[], value: TypedValue, field: Field, callback, nodeId: string, index: number) => any
+  updateNodeAsync: (lokka: any, model: Model, fields: Field[], value: TypedValue, field: Field, callback, nodeId: string, index: number) => any // tslint:disable-line
   reloadDataAsync: (lokka: any, modelNamePlural: string, fields: Field[], index?: number) => any
   loadDataAsync: (lokka: any, modelNamePlural: string, field: Field[], first: number, skip: number) => any
 }
@@ -432,14 +432,7 @@ class BrowserView extends React.Component<Props, {}> {
 
   private reloadData = (index: number = 0) => {
     this.props.reloadDataAsync(this.lokka, this.props.model.namePlural, this.props.fields, index)
-    // return this.loadData(index)
-    //   .then((nodes) => {
-    //     this.props.setLoading(false)
-    //     // _update side nav model node count
-    //     // THIS IS A HACK
-    //     sideNavSyncer.notifySideNav()
-    //     return nodes
-    //   })
+      .then(() => sideNavSyncer.notifySideNav())
   }
 
   private updateFilter = (value: TypedValue, field: Field) => {
@@ -453,21 +446,6 @@ class BrowserView extends React.Component<Props, {}> {
 
   private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, index: number) => {
     this.props.updateNodeAsync(this.lokka, this.props.model, this.props.fields, value, field, callback, nodeId, index)
-    // updateNode(this.lokka, this.props.params.modelName, value, field, nodeId)
-    //   .then(() => this.setState({loaded: this.state.loaded.set(index, false)} as State))
-    //   .then(() => this.loadData(index, 1))
-    //   .then(() => {
-    //     callback(true)
-    //     analytics.track('models/browser: updated node', {
-    //       project: this.props.params.projectName,
-    //       model: this.props.params.modelName,
-    //       field: field.name,
-    //     })
-    //   })
-    //   .catch((err) => {
-    //     callback(false)
-    //     err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
-    //   })
   }
 
   private addNewNode = (fieldValues: { [key: string]: any }): any => {
