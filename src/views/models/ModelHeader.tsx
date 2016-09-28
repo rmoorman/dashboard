@@ -57,10 +57,10 @@ class ModelHeader extends React.Component<Props, {}> {
               steps={[{
                 step: 'STEP3_CLICK_DATA_BROWSER',
                 title: 'Switch to the Data Browser',
-                description: 'The Data Browser lets you create and edit the individual Nodes (our posts). Switch back if you want to modify your Post Model structure.', // tslint:disable-line
+                description: 'In the Data Browser you can view and manage your data ("Post" nodes in our case).', // tslint:disable-line
               }]}
-              width={255}
-              offsetX={-5}
+              width={280}
+              offsetX={-35}
               offsetY={5}
             >
               <Link
@@ -91,7 +91,6 @@ class ModelHeader extends React.Component<Props, {}> {
 
 const mapStateToProps = (state) => {
   return {
-    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 

@@ -80,7 +80,7 @@ module.exports = {
       test: /graphics\/.*\.svg$/,
       loader: 'file',
     }, {
-      test: /graphics\/.*\.png$/,
+      test: /(graphics|gifs)\/.*\.(png|gif)$/,
       loader: 'file',
     }],
   },

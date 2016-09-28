@@ -134,13 +134,13 @@ class PlaygroundCPopup extends React.Component<Props, State> {
               </div>
               <div className='fw2 f-16 mh-96 lh-1-4'>
                 You have successfully set up your own Instagram backend.{' '}
-                When building an app with Graphcool you can easily query in the{' '}
-                playground and “copy &amp; paste” the result into your code.{' '}
-                Of course, to do so, you need to implement the backend first.
+                When building an app with Graphcool you can easily explore queries in the{' '}
+                playground and "copy &amp; paste" selected queries into your code.{' '}
+                Of course, to do so, you need to implement the frontend first.
               </div>
               <div className='fw2 f-16 mh-96 lh-1-4 mt-16'>
                 <div>We put together a simple app to show and add posts</div>
-                <div>using the backend you just build, to test and run it locally.</div>
+                <div>using the backend you just built, to test and run it locally.</div>
               </div>
             </div>
             <div className='ma-16 tc pb-25'>
@@ -221,7 +221,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                   # The app opens automatically at localhost:3000. See the magic happen :)
                 </div>
                 <div>
-                  # You might wanna come back to this page as soon as it’s done, we’re waiting here.
+                  # You might want to come back to this page as soon as it's done, we're waiting here.
                 </div>
               </div>
               {this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') &&
@@ -251,7 +251,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
             <div className='flex justify-between pa-16'>
               <div className='w-50 pr-16'>
                 <div className='ttu f-25 fw1'>
-                  Get started with on your own with those excellent guides
+                  Continue on your own with these guides
                 </div>
                 <div className='mv-38'>
                   {guides.map(guide => this.renderBox(guide))}

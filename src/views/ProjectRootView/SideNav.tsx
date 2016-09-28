@@ -121,11 +121,11 @@ export class SideNav extends React.Component<Props, State> {
             <Tether
               steps={[{
                 step: 'STEP4_CLICK_PLAYGROUND',
-                title: 'Check out the Playground',
-                description: 'We have our data structure and we have our posts - time to test the backend.', // tslint:disable-line
+                title: 'Open the Playground',
+                description: 'Now that we have defined our data model and added example data it\'s time to send some queries to our backend!', // tslint:disable-line
               }]}
               offsetY={this.state.addingNewModel ? -75 : -5}
-              width={260}
+              width={280}
             >
               <span>Playground</span>
             </Tether>
@@ -226,8 +226,8 @@ export class SideNav extends React.Component<Props, State> {
           <Tether
             steps={[{
               step: 'STEP1_CREATE_POST_MODEL',
-              title: 'Create a data Model and name it “Post”',
-              description: 'Models represent a certain type of data. Our “Post” model will contain an image URL and Hashtags (Models are always upper case).', // tslint:disable-line
+              title: 'Create a "Post" Model',
+              description: 'Models represent a certain type of data. To manage our Instagram posts, the "Post" model will have an image URL and a description.', // tslint:disable-line
             }]}
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={350}
