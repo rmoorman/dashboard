@@ -59,7 +59,7 @@ class Tether extends React.Component<Props, {}> {
             {step.title}
           </div>
           {step.description &&
-          <div className={classes.description}>
+          <div className={`${classes.description} lh-1-4`}>
             {step.description}
           </div>
           }

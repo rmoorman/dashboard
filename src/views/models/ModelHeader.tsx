@@ -8,12 +8,13 @@ import ModelDescription from './ModelDescription'
 import Tether from '../../components/Tether/Tether'
 import Header from '../../components/Header/Header'
 import { Model, Viewer, Project } from '../../types/types'
+import {GettingStartedState} from '../../types/gettingStarted'
 const classes: any = require('./ModelHeader.scss')
 
 interface Props {
   children: Element
   params: any
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   model: Model
   nextStep: any
   viewer: Viewer
@@ -91,6 +92,7 @@ class ModelHeader extends React.Component<Props, {}> {
 
 const mapStateToProps = (state) => {
   return {
+    gettingStartedState: state.gettingStarted.gettingStartedState,
   }
 }
 

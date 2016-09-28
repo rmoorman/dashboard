@@ -206,7 +206,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                 </a>
               </div>
               <div className='code dark-gray'>
-                <div>
+                <div className='black-50'>
                   # To see the example in action, run the following commands:
                 </div>
                 <div className='mv-16'>
@@ -217,11 +217,11 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                     npm start
                   </div>
                 </div>
-                <div>
-                  # The app opens automatically at localhost:3000. See the magic happen :)
+                <div className='black-50'>
+                  # You can now open the app on localhost:3000
                 </div>
-                <div>
-                  # You might want to come back to this page as soon as it's done, we're waiting here.
+                <div className='black-50'>
+                  # Please come back to this page once you're done, we're waiting here 💤
                 </div>
               </div>
               {this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') &&

@@ -3,7 +3,7 @@ import {classnames} from '../../utils/classnames'
 import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {nextStep, skip} from '../../actions/gettingStarted'
+import {nextStep, previousStep, skip} from '../../actions/gettingStarted'
 import {GettingStartedState} from '../../types/gettingStarted'
 import Icon from '../../components/Icon/Icon'
 
@@ -12,6 +12,7 @@ interface Props {
   router: any
   gettingStartedState: GettingStartedState
   nextStep: () => Promise<any>
+  previousStep: () => Promise<any>
   skip: () => Promise<any>
 }
 
@@ -71,6 +72,12 @@ class OnboardSideNav extends React.Component<Props, {}> {
               index: 5,
               text: 'Run example app',
             })}
+            {(this.props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART1') ||
+            this.props.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')) &&
+            <div className='bg-white br-2 dib f-16 mt-25 pv-10 ph-16 pointer' onClick={this.props.previousStep}>
+              Show task again
+            </div>
+            }
           </div>
           <div>
             <div className='f-16 black-50 mh-25 mb-25 lh-1-4'>
@@ -241,7 +248,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep, skip}, dispatch)
+  return bindActionCreators({nextStep, previousStep, skip}, dispatch)
 }
 
 export default connect(

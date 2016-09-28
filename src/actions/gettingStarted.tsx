@@ -55,6 +55,16 @@ function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
   })
 }
 
+export function previousStep(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
+  return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
+    const {step, skipped, onboardingStatusId, selectedExample} = getState().gettingStarted.gettingStartedState
+    const currentStepIndex = GettingStartedState.steps.indexOf(step)
+    const nextStep = GettingStartedState.steps[currentStepIndex - 1]
+
+    return updateReduxAndRelay(dispatch, nextStep, skipped, onboardingStatusId, selectedExample)
+  }
+}
+
 export function nextStep(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
   return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
     const {step, skipped, onboardingStatusId, selectedExample} = getState().gettingStarted.gettingStartedState

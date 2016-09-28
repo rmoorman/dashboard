@@ -222,12 +222,12 @@ class BrowserView extends React.Component<Props, State> {
           description: 'Items in your data belonging to a certain model are called nodes. Create a new post node and provide values for the "imageUrl" and "description" fields.', // tslint:disable-line
         }, {
           step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE2',
-          title: `Awesome! Let's create another post node.`,
-          description: 'You can also use your keyboard to navigate between fields (Tab or Shift+Tab) and submit (Enter).', // tslint:disable-line
+          title: `Awesome! Let's create one more.`,
+          description: 'Please put "#graphcool" in the description. Hint: You can also use your keyboard to navigate between fields (Tab or Shift+Tab) and submit (Enter).', // tslint:disable-line
         }]}
         offsetX={15}
         offsetY={5}
-        width={260}
+        width={351}
         horizontal='right'
       >
         <div

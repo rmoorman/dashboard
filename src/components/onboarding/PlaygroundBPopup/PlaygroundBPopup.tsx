@@ -68,8 +68,8 @@ class PlaygroundBPopup extends React.Component<Props, State> {
             </div>
               <div className='fw2 f-16 mh-96 mv-25 lh-1-4'>
                 Our GraphQL API includes a powerful filtering system.
-                Queries can be modified with filters to only return particular nodes
-                and are automatically generated based on a model's fields.
+                Queries can be modified with filters to only return particular nodes.
+                Fitlers are automatically generated based on a model's fields.
               </div>
               <div>
                 <img src={require('../../../assets/gifs/playground2.gif')} />
@@ -83,11 +83,11 @@ class PlaygroundBPopup extends React.Component<Props, State> {
               <div className='flex justify-center items-center'>
                 <div className='mw6 bg-accent br-2 tl shadow-2'>
                   <div className='w-100 pa-16 white fw8' style={{ backgroundColor: '#00A854' }}>
-                    Query all posts that contain the #coolgraph hashtag in their description.
+                    Query all posts that contain the #graphcool hashtag in their description.
                 </div>
                   <div className='w-100 pa-16 black-50 lh-1-4'>
                     Use the built-in filter "description_contains".{' '}
-                    If you need more information look in the docs section or open up the chat!
+                    If you need more information, look in the docs section or open up the chat!
                 </div>
                 </div>
               </div>
