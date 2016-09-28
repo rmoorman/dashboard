@@ -117,7 +117,7 @@ class FieldPopup extends React.Component<Props, State> {
       <div className={classes.background}>
         <ScrollBox innerContainerClassName={classes.scrollBox}>
           <ClickOutside onClickOutside={() => this.close()}>
-            <div className={classes.container} onKeyUp={(e: any) => e.keyCode === 27 ? this.close() : null}>
+            <div className={classes.container}>
               <div className={classes.head}>
                 <div className={classes.title}>
                   {this.props.field ? 'Change field' : 'Create a new field'}
