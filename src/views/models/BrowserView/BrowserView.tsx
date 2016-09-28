@@ -6,7 +6,7 @@ import {withRouter} from 'react-router'
 import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
         toggleNewRow, hideNewRow, toggleFilter} from '../../../actions/databrowser/ui'
 import {resetDataAndUI} from '../../../actions/databrowser/shared'
-import {setItemCount, setFilter, setOrder, addNodeAsync, updateNodeAsync,
+import {setItemCount, setFilterAsync, setOrder, addNodeAsync, updateNodeAsync,
         reloadDataAsync, loadDataAsync} from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
 import calculateSize from 'calculate-size'
@@ -25,7 +25,6 @@ import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
 import {emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import {valueToString} from '../../../utils/valueparser'
-import {sideNavSyncer} from '../../../utils/sideNavSyncer'
 import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
 import ModelHeader from '../ModelHeader'
 import {showDonePopup, nextStep} from '../../../actions/gettingStarted'
@@ -75,11 +74,11 @@ interface Props {
   itemCount: number
   setItemCount: (itemCount: number) => any
   filter: Immutable.Map<string, TypedValue>
-  setFilter: (fieldName: string, value: TypedValue) => any
   orderBy: OrderBy
   setOrder: (orderBy: OrderBy) => any
   nodes: Immutable.List<Immutable.Map<string, any>>
   loaded: Immutable.List<boolean>
+  setFilterAsync: (fieldName: string, value: TypedValue, lokka: any, modelNamePlural: string, fields: Field[]) => any
   addNodeAsync: (lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }) => any
   updateNodeAsync: (lokka: any, model: Model, fields: Field[], value: TypedValue, field: Field, callback, nodeId: string, index: number) => any // tslint:disable-line
   reloadDataAsync: (lokka: any, modelNamePlural: string, fields: Field[], index?: number) => any
@@ -338,28 +337,29 @@ class BrowserView extends React.Component<Props, {}> {
   }
 
   private headerRenderer = ({columnIndex}): JSX.Element | string => {
+    const {model, fields, orderBy, selectedNodeIds, nodes, params} = this.props
     if (columnIndex === 0) {
       return (
         <CheckboxCell
           height={74}
           onChange={this.selectAllOnClick}
-          checked={this.props.selectedNodeIds.size === this.props.nodes.size && this.props.nodes.size > 0}
+          checked={selectedNodeIds.size === nodes.size && nodes.size > 0}
           backgroundColor={'transparent'}
         />
       )
-    } else if (columnIndex === this.props.fields.length + 1) {
-      return <AddFieldCell params={this.props.params} />
+    } else if (columnIndex === fields.length + 1) {
+      return <AddFieldCell params={params} />
     } else {
-      const field = this.props.fields[columnIndex - 1]
+      const field = fields[columnIndex - 1]
       return (
         <HeaderCell
           key={field.id}
           field={field}
-          sortOrder={this.props.orderBy.fieldName === field.name ? this.props.orderBy.order : null}
+          sortOrder={orderBy.fieldName === field.name ? orderBy.order : null}
           toggleSortOrder={() => this.setSortOrder(field)}
-          updateFilter={(value) => this.updateFilter(value, field)}
+          updateFilter={(value) => this.props.setFilterAsync(field.name, value, this.lokka, model.namePlural, fields)}
           filterVisible={this.props.filtersVisible}
-          params={this.props.params}
+          params={params}
         />
       )
     }
@@ -432,16 +432,6 @@ class BrowserView extends React.Component<Props, {}> {
 
   private reloadData = (index: number = 0) => {
     this.props.reloadDataAsync(this.lokka, this.props.model.namePlural, this.props.fields, index)
-      .then(() => sideNavSyncer.notifySideNav())
-  }
-
-  private updateFilter = (value: TypedValue, field: Field) => {
-    this.props.setFilter(field.name, value)
-    this.reloadData()
-    // TODO: select cut set of selected and filtered nodes
-    if (this.props.selectedNodeIds.size > 0) {
-      this.props.clearNodeSelection()
-    }
   }
 
   private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, index: number) => {
@@ -560,7 +550,7 @@ function mapDispatchToProps(dispatch) {
       incrementProgress,
       showNotification,
       setItemCount,
-      setFilter,
+      setFilterAsync,
       setOrder,
       addNodeAsync,
       updateNodeAsync,

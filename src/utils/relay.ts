@@ -134,7 +134,6 @@ export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[],
       : `${field.name} { id }`)
     .join(' ')
 
-  console.log(fields)
   const filterQuery = filters
     .filter((v) => v !== null)
     // TODO uncomment this when the count bug is fixed

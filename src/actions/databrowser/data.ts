@@ -5,10 +5,11 @@ import {StateTree} from '../../types/reducers'
 import Constants from '../../constants/databrowser/data'
 import * as Immutable from 'immutable'
 import {addNode as addRelayNode, queryNodes, updateNode as updateRelayNode} from '../../utils/relay'
-import {hideNewRow, setLoading} from './ui'
+import {hideNewRow, setLoading, clearNodeSelection} from './ui'
 import {showDonePopup, nextStep} from '../gettingStarted'
 import {showNotification} from '../notification'
 import {isNonScalarList} from '../../utils/graphql'
+import {sideNavSyncer} from '../../utils/sideNavSyncer'
 
 export function setItemCount(count: number) {
   return {
@@ -58,11 +59,27 @@ export function setLoaded(loaded: Immutable.List<boolean>) {
   }
 }
 
+export function setFilterAsync(fieldName: string,
+                               value: TypedValue,
+                               lokka: any,
+                               modelNamePlural: string,
+                               fields: Field[],
+                               index: number = 0): ReduxThunk {
+  return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
+    dispatch(setFilter(fieldName, value))
+    if (getState().databrowser.ui.selectedNodeIds.size > 0) {
+      dispatch(clearNodeSelection())
+    }
+    return dispatch(reloadDataAsync(lokka, modelNamePlural, fields, index))
+  }
+}
+
 export function reloadDataAsync(lokka: any, modelNamePlural: string, fields: Field[], index: number = 0): ReduxThunk {
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
     dispatch(setData(Immutable.List<Immutable.Map<string, any>>(), Immutable.List<boolean>()))
     return dispatch(loadDataAsync(lokka, modelNamePlural, fields, index, 50))
       .then(() => {
+        sideNavSyncer.notifySideNav()
         dispatch(setLoading(false))
       })
   }
