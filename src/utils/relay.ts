@@ -134,10 +134,16 @@ export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[],
       : `${field.name} { id }`)
     .join(' ')
 
+  console.log(fields)
   const filterQuery = filters
     .filter((v) => v !== null)
+    // TODO uncomment this when the count bug is fixed
+    // .map((value, fieldName) => fields.find(x => x.name === fieldName).typeIdentifier === 'String'
+    //   ? `${fieldName}_contains: ${value}`
+    //   : `${fieldName}: ${value}`)
     .map((value, fieldName) => `${fieldName}: ${value}`)
     .join(' ')
+
 
   const filter = filterQuery !== '' ? `filter: { ${filterQuery} }` : ''
   const orderByQuery = orderBy ? `orderBy: ${orderBy.fieldName}_${orderBy.order}` : ''
