@@ -144,7 +144,6 @@ export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[],
     .map((value, fieldName) => `${fieldName}: ${value}`)
     .join(' ')
 
-
   const filter = filterQuery !== '' ? `filter: { ${filterQuery} }` : ''
   const orderByQuery = orderBy ? `orderBy: ${orderBy.fieldName}_${orderBy.order}` : ''
   const query = `
