@@ -51,6 +51,7 @@ class Tether extends React.Component<Props, {}> {
         {step &&
         <div
           className={classnames(classes.tether,
+                                'br-2',
                                 isBottom ? classes.bottom : classes.top,
                                 isLeft ? classes.left : classes.right)}
           style={{width: this.props.width, zIndex: 9}}
