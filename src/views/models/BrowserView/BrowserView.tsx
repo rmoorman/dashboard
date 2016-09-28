@@ -1,12 +1,21 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
+import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
+        toggleNewRow, hideNewRow, toggleFilter} from '../../../actions/databrowser/ui'
+import {resetDataAndUI} from '../../../actions/databrowser/shared'
+import {setItemCount, setFilterAsync, setOrder, addNodeAsync, updateNodeAsync,
+        reloadDataAsync, loadDataAsync} from '../../../actions/databrowser/data'
+import {Popup} from '../../../types/popup'
 import calculateSize from 'calculate-size'
 import * as Immutable from 'immutable'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import Icon from '../../../components/Icon/Icon'
 import mapProps from '../../../components/MapProps/MapProps'
 import Loading from '../../../components/Loading/Loading'
+import {showNotification} from '../../../actions/notification'
 import {ShowNotificationCallback, TypedValue} from '../../../types/utils'
 import {getFieldTypeName, stringToValue} from '../../../utils/valueparser'
 import Tether from '../../../components/Tether/Tether'
@@ -16,22 +25,19 @@ import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
 import {emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import {valueToString} from '../../../utils/valueparser'
-import {isNonScalarList} from '../../../utils/graphql'
-import {sideNavSyncer} from '../../../utils/sideNavSyncer'
 import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
 import ModelHeader from '../ModelHeader'
-import {nextStep} from '../../../actions/gettingStarted'
+import {showDonePopup, nextStep} from '../../../actions/gettingStarted'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {showPopup, closePopup} from '../../../actions/popup'
 import InfiniteTable from '../../../components/InfiniteTable/InfiniteTable'
 import {AutoSizer} from 'react-virtualized'
 import Cell from './Cell'
 import LoadingCell from './LoadingCell'
-import {getLokka, addNode, addNodes, updateNode, deleteNode, queryNodes} from './../../../utils/relay'
+import {getLokka, addNodes, deleteNode} from './../../../utils/relay'
 import ProgressIndicator from '../../../components/ProgressIndicator/ProgressIndicator'
 import {startProgress, incrementProgress} from '../../../actions/progressIndicator'
+import {StateTree} from '../../../types/reducers'
 import cuid from 'cuid'
 const classes: any = require('./BrowserView.scss')
 
@@ -44,35 +50,42 @@ interface Props {
   project: Project
   model: Model
   gettingStartedState: GettingStartedState
+  showNotification: ShowNotificationCallback
   nextStep: () => void
   startProgress: () => any
   incrementProgress: () => any
-  showPopup: (content: JSX.Element, id: string) => any
+  showPopup: (popup: Popup) => any
   closePopup: (id: string) => any
-}
-
-interface State {
-  nodes: Immutable.List<Immutable.Map<string, any>>
-  loading: boolean
-  orderBy: OrderBy
-  filter: Immutable.Map<string, any>
-  filtersVisible: boolean
+  showDonePopup: () => any
   newRowVisible: boolean
+  toggleNewRow: () => any
+  hideNewRow: () => any
+  toggleFilter: () => any
+  setScrollTop: (scrollTop: number) => any
+  setLoading: (loading: boolean) => any
+  resetDataAndUI: () => any
+  clearNodeSelection: () => any
+  setNodeSelection: (ids: Immutable.List<string>) => any
+  toggleNodeSelection: (id: string) => any
+  filtersVisible: boolean
   selectedNodeIds: Immutable.List<string>
-  itemCount: number
-  loaded: Immutable.List<boolean>
+  loading: boolean
   scrollTop: number
+  itemCount: number
+  setItemCount: (itemCount: number) => any
+  filter: Immutable.Map<string, TypedValue>
+  orderBy: OrderBy
+  setOrder: (orderBy: OrderBy) => any
+  nodes: Immutable.List<Immutable.Map<string, any>>
+  loaded: Immutable.List<boolean>
+  setFilterAsync: (fieldName: string, value: TypedValue, lokka: any, modelNamePlural: string, fields: Field[]) => any
+  addNodeAsync: (lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }) => any
+  updateNodeAsync: (lokka: any, model: Model, fields: Field[], value: TypedValue, field: Field, callback, nodeId: string, index: number) => any // tslint:disable-line
+  reloadDataAsync: (lokka: any, modelNamePlural: string, fields: Field[], index?: number) => any
+  loadDataAsync: (lokka: any, modelNamePlural: string, field: Field[], first: number, skip: number) => any
 }
 
-class BrowserView extends React.Component<Props, State> {
-
-  static contextTypes = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
+class BrowserView extends React.Component<Props, {}> {
 
   shouldComponentUpdate: any
 
@@ -80,29 +93,12 @@ class BrowserView extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props)
-
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
-
     this.lokka = getLokka(this.props.project.id)
-
-    this.state = {
-      nodes: Immutable.List<Immutable.Map<string, any>>(),
-      loading: true,
-      orderBy: {
-        fieldName: 'id',
-        order: 'DESC',
-      },
-      filter: Immutable.Map<string, any>(),
-      filtersVisible: false,
-      newRowVisible: false,
-      selectedNodeIds: Immutable.List<string>(),
-      itemCount: this.props.model.itemCount,
-      loaded: Immutable.List<boolean>(),
-      scrollTop: 0,
-    }
   }
 
   componentWillMount = () => {
+    this.props.setItemCount(this.props.model.itemCount)
     this.reloadData()
   }
 
@@ -112,16 +108,27 @@ class BrowserView extends React.Component<Props, State> {
     })
 
     this.props.router.setRouteLeaveHook(this.props.route, () => {
-      if (this.state.newRowVisible) {
+      if (this.props.newRowVisible) {
         // TODO with custom dialogs use "return false" and display custom dialog
-        return 'Are you sure you want to discard unsaved changes?'
+        if (confirm('Are you sure you want to discard unsaved changes?')) {
+          this.props.resetDataAndUI()
+          return true
+        } else {
+          return false
+        }
+      } else {
+        this.props.resetDataAndUI()
       }
     })
   }
 
+  componentWillUnmount = () => {
+    this.props.resetDataAndUI()
+  }
+
   render() {
     return (
-      <div className={`${classes.root} ${this.state.filtersVisible ? classes.filtersVisible : ''}`}>
+      <div className={`${classes.root} ${this.props.filtersVisible ? classes.filtersVisible : ''}`}>
         <ModelHeader
           params={this.props.params}
           model={this.props.model}
@@ -130,22 +137,22 @@ class BrowserView extends React.Component<Props, State> {
         >
           <input type='file' onChange={this.handleImport} id='fileselector' className='dn' />
           <label htmlFor='fileselector' className={classes.button}>
-            Import
+            Import JSON
           </label>
           {this.renderTether()}
-          {this.state.selectedNodeIds.size > 0 &&
+          {this.props.selectedNodeIds.size > 0 &&
           <div className={`${classes.button} ${classes.red}`} onClick={this.deleteSelectedNodes}>
             <Icon
               width={16}
               height={16}
               src={require('assets/icons/delete.svg')}
             />
-            <span>Delete Selected ({this.state.selectedNodeIds.size})</span>
+            <span>Delete Selected ({this.props.selectedNodeIds.size})</span>
           </div>
           }
           <div
-            className={`${classes.button} ${this.state.filtersVisible ? classes.blue : ''}`}
-            onClick={() => this.setState({ filtersVisible: !this.state.filtersVisible } as State)}
+            className={`${classes.button} ${this.props.filtersVisible ? classes.blue : ''}`}
+            onClick={this.props.toggleFilter}
           >
             <Icon
               width={16}
@@ -153,7 +160,7 @@ class BrowserView extends React.Component<Props, State> {
               src={require('assets/icons/search.svg')}
             />
           </div>
-          <div className={classes.button} onClick={() => this.reloadData(Math.floor(this.state.scrollTop / 47))}>
+          <div className={classes.button} onClick={() => this.reloadData(Math.floor(this.props.scrollTop / 47))}>
             <Icon
               width={16}
               height={16}
@@ -161,36 +168,31 @@ class BrowserView extends React.Component<Props, State> {
             />
           </div>
         </ModelHeader>
-        {this.state.loading &&
-        <div className={classes.loadingOverlay}>
-          <Loading color='#B9B9C8'/>
-        </div>
-        }
-        <div className={`${classes.table} ${this.state.loading ? classes.loading : ''}`}>
+        <div className={`${classes.table} ${this.props.loading ? classes.loading : ''}`}>
           <div className={classes.tableContainer} style={{ width: '100%' }}>
             <AutoSizer>
               {({width, height}) => {
                 const fieldColumnWidths = this.calculateFieldColumnWidths(width)
-                if (this.state.loading) {
+                if (this.props.loading) {
                   return
                 }
                 return (
                   <InfiniteTable
-                    loadedList={this.state.loaded}
+                    loadedList={this.props.loaded}
                     minimumBatchSize={50}
                     width={this.props.fields.reduce((sum, {name}) => sum + fieldColumnWidths[name], 0) + 34 + 250}
                     height={height}
-                    scrollTop={this.state.scrollTop}
+                    scrollTop={this.props.scrollTop}
                     columnCount={this.props.fields.length + 2}
                     columnWidth={(input) => this.getColumnWidth(fieldColumnWidths, input)}
                     loadMoreRows={(input) => this.loadData(input.startIndex)}
-                    addNew={this.state.newRowVisible}
-                    onScroll={(input) => this.setState({scrollTop: input.scrollTop} as State)}
+                    addNew={this.props.newRowVisible}
+                    onScroll={(input) => this.props.setScrollTop(input.scrollTop)}
 
                     headerHeight={74}
                     headerRenderer={this.headerRenderer}
 
-                    rowCount={this.state.itemCount}
+                    rowCount={this.props.itemCount}
                     rowHeight={47}
                     cellRenderer={this.cellRenderer}
                     loadingCellRenderer={this.loadingCellRenderer}
@@ -203,6 +205,11 @@ class BrowserView extends React.Component<Props, State> {
             </AutoSizer>
           </div>
         </div>
+        {this.props.loading &&
+        <div className={classes.loadingOverlay}>
+          <Loading color='#B9B9C8'/>
+        </div>
+        }
       </div>
     )
   }
@@ -210,24 +217,30 @@ class BrowserView extends React.Component<Props, State> {
   private renderTether = (): JSX.Element => {
     return (
       <Tether
-        steps={{
-          STEP6_ADD_DATA_ITEM_1: `Add your first Post node to the database.`,
-          STEP7_ADD_DATA_ITEM_2: `Well done. Let's add another one.`,
-        }}
-        offsetX={5}
+        steps={[{
+          step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE1',
+          title: 'Create a Node',
+          description: 'Items in your data belonging to a certain model are called nodes. Create a new post node and provide values for the "imageUrl" and "description" fields.', // tslint:disable-line
+        }, {
+          step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE2',
+          title: `Awesome! Let's create one more.`,
+          description: 'Please put "#graphcool" in the description. Hint: You can also use your keyboard to navigate between fields (Tab or Shift+Tab) and submit (Enter).', // tslint:disable-line
+        }]}
+        offsetX={15}
         offsetY={5}
-        width={260}
+        width={351}
+        horizontal='right'
       >
         <div
-          className={`${classes.button} ${this.state.newRowVisible ? '' : classes.green}`}
+          className={`${classes.button} ${this.props.newRowVisible ? '' : classes.green}`}
           onClick={this.handleAddNodeClick}
         >
           <Icon
             width={16}
             height={16}
-            src={require(`assets/icons/${this.state.newRowVisible ? 'close' : 'add'}.svg`)}
+            src={require(`assets/icons/${this.props.newRowVisible ? 'close' : 'add'}.svg`)}
           />
-          <span>{this.state.newRowVisible ? 'Cancel' : 'Add node'}</span>
+          <span>{this.props.newRowVisible ? 'Cancel' : 'Add node'}</span>
         </div>
       </Tether>
     )
@@ -252,7 +265,10 @@ class BrowserView extends React.Component<Props, State> {
     const chunk = 10
     const id = cuid()
     this.props.startProgress()
-    this.props.showPopup(<ProgressIndicator title='Importing' total={Math.floor(values.length / chunk)} />, id)
+    this.props.showPopup({
+      element: <ProgressIndicator title='Importing' total={Math.floor(values.length / chunk)} />,
+      id,
+    })
     for (let i = 0; i < Math.floor(values.length / chunk); i++) {
       promises.push(
         addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
@@ -264,7 +280,7 @@ class BrowserView extends React.Component<Props, State> {
 
   private handleAddNodeClick = () => {
     if (getFirstInputFieldIndex(this.props.fields) !== null) {
-      this.setState({ newRowVisible: !this.state.newRowVisible } as State)
+      this.props.toggleNewRow()
     } else {
       const fieldValues = this.props.model.fields.edges
         .map((edge) => edge.node)
@@ -287,7 +303,7 @@ class BrowserView extends React.Component<Props, State> {
         projectId={this.props.project.id}
         columnWidths={columnWidths}
         add={this.addNewNode}
-        cancel={() => this.setState({newRowVisible: false} as State)}
+        cancel={this.props.hideNewRow}
       />
     )
   }
@@ -321,35 +337,36 @@ class BrowserView extends React.Component<Props, State> {
   }
 
   private headerRenderer = ({columnIndex}): JSX.Element | string => {
+    const {model, fields, orderBy, selectedNodeIds, nodes, params} = this.props
     if (columnIndex === 0) {
       return (
         <CheckboxCell
           height={74}
           onChange={this.selectAllOnClick}
-          checked={this.state.selectedNodeIds.size === this.state.nodes.size && this.state.nodes.size > 0}
+          checked={selectedNodeIds.size === nodes.size && nodes.size > 0}
           backgroundColor={'transparent'}
         />
       )
-    } else if (columnIndex === this.props.fields.length + 1) {
-      return <AddFieldCell params={this.props.params} />
+    } else if (columnIndex === fields.length + 1) {
+      return <AddFieldCell params={params} />
     } else {
-      const field = this.props.fields[columnIndex - 1]
+      const field = fields[columnIndex - 1]
       return (
         <HeaderCell
           key={field.id}
           field={field}
-          sortOrder={this.state.orderBy.fieldName === field.name ? this.state.orderBy.order : null}
+          sortOrder={orderBy.fieldName === field.name ? orderBy.order : null}
           toggleSortOrder={() => this.setSortOrder(field)}
-          updateFilter={(value) => this.updateFilter(value, field)}
-          filterVisible={this.state.filtersVisible}
-          params={this.props.params}
+          updateFilter={(value) => this.props.setFilterAsync(field.name, value, this.lokka, model.namePlural, fields)}
+          filterVisible={this.props.filtersVisible}
+          params={params}
         />
       )
     }
   }
 
   private cellRenderer = ({rowIndex, columnIndex}): JSX.Element | string => {
-    const node = this.state.nodes.get(rowIndex)
+    const node = this.props.nodes.get(rowIndex)
     const nodeId = node.get('id')
     const field = this.props.fields[columnIndex - 1]
     const backgroundColor = rowIndex % 2 === 0 ? '#FCFDFE' : '#FFF'
@@ -357,7 +374,7 @@ class BrowserView extends React.Component<Props, State> {
       return (
         <CheckboxCell
           checked={this.isSelected(nodeId)}
-          onChange={() => this.onSelectRow(nodeId)}
+          onChange={() => this.props.toggleNodeSelection(nodeId)}
           height={47}
           backgroundColor={backgroundColor}
         />
@@ -373,7 +390,7 @@ class BrowserView extends React.Component<Props, State> {
       const value = node.get(field.name)
       return (
         <Cell
-          isSelected={this.state.selectedNodeIds.includes(nodeId)}
+          isSelected={this.isSelected(nodeId)}
           backgroundColor={backgroundColor}
           field={field}
           value={value}
@@ -401,116 +418,28 @@ class BrowserView extends React.Component<Props, State> {
   }
 
   private setSortOrder = (field: Field) => {
-    const order = this.state.orderBy.fieldName === field.name
-      ? (this.state.orderBy.order === 'ASC' ? 'DESC' : 'ASC')
+    const order: 'ASC' | 'DESC' = this.props.orderBy.fieldName === field.name
+      ? (this.props.orderBy.order === 'ASC' ? 'DESC' : 'ASC')
       : 'ASC'
 
-    this.setState(
-      {
-        orderBy: {
-          fieldName: field.name,
-          order,
-        },
-      } as State,
-      this.reloadData
-    )
+    this.props.setOrder({fieldName: field.name, order})
+    this.reloadData()
   }
 
-  private loadData = (skip: number, first: number = 50): Promise<Immutable.List<Immutable.Map<string, any>>> => {
-    return queryNodes(this.lokka, this.props.model.namePlural, this.props.fields,
-                      skip, first, this.state.filter, this.state.orderBy)
-      .then((results) => {
-        const newNodes = results.viewer[`all${this.props.model.namePlural}`]
-          .edges.map(({node}) => {
-            // Transforms the relay query into something that the valueparser understands
-            // Previously we used the simple API that's why this is necessary
-            this.props.fields.filter((field) => isNonScalarList(field))
-              .forEach(({name}) => node[name] = node[name].edges.map(({node}) => node))
-            return node
-        }).map(Immutable.Map)
-
-        let nodes = this.state.nodes
-        let loaded = this.state.loaded
-        for (let index = 0; index < newNodes.length; index++) {
-          nodes = nodes.set(skip + index, newNodes[index])
-          loaded = loaded.set(skip + index, true)
-        }
-
-        this.setState({
-          nodes: nodes,
-          loading: false,
-          loaded: loaded,
-          itemCount: results.viewer[`all${this.props.model.namePlural}`].count,
-        } as State)
-        return nodes
-      })
-      .catch((err) => {
-        throw err
-      })
+  private loadData = (skip: number, first: number = 50): any => {
+    return this.props.loadDataAsync(this.lokka, this.props.model.namePlural, this.props.fields, skip, first)
   }
 
   private reloadData = (index: number = 0) => {
-    this.setState({
-      nodes: Immutable.List<Immutable.Map<string, any>>(),
-      loaded: Immutable.List<boolean>(),
-    } as State)
-    return this.loadData(index)
-      .then((nodes) => {
-        // _update side nav model node count
-        // THIS IS A HACK
-        sideNavSyncer.notifySideNav()
-      })
-  }
-
-  private updateFilter = (value: TypedValue, field: Field) => {
-    this.setState({filter: this.state.filter.set(field.name, value)} as State, this.reloadData)
-
-    // TODO: select cut set of selected and filtered nodes
-    this.setState({selectedNodeIds: Immutable.List()} as State)
+    this.props.reloadDataAsync(this.lokka, this.props.model.namePlural, this.props.fields, index)
   }
 
   private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, index: number) => {
-    updateNode(this.lokka, this.props.params.modelName, value, field, nodeId)
-      .then(() => this.setState({loaded: this.state.loaded.set(index, false)} as State))
-      .then(() => this.loadData(index, 1))
-      .then(() => {
-        callback(true)
-        analytics.track('models/browser: updated node', {
-          project: this.props.params.projectName,
-          model: this.props.params.modelName,
-          field: field.name,
-        })
-      })
-      .catch((err) => {
-        callback(false)
-        err.rawError.forEach((error) => this.context.showNotification(error.message, 'error'))
-      })
+    this.props.updateNodeAsync(this.lokka, this.props.model, this.props.fields, value, field, callback, nodeId, index)
   }
 
-  private addNewNode = (fieldValues: { [key: string]: any }): Promise<any> => {
-    return addNode(this.lokka, this.props.params.modelName, fieldValues)
-      .then(() => this.reloadData(0))
-      .then(() => {
-        this.setState({
-          newRowVisible: false,
-        } as State)
-        analytics.track('models/browser: created node', {
-          project: this.props.params.projectName,
-          model: this.props.params.modelName,
-        })
-
-        // getting-started onboarding step
-        if (this.props.params.modelName === 'Post' && (
-            this.props.gettingStartedState.isCurrentStep('STEP6_ADD_DATA_ITEM_1') ||
-            this.props.gettingStartedState.isCurrentStep('STEP7_ADD_DATA_ITEM_2')
-          )) {
-          this.props.nextStep()
-        }
-      })
-      .catch((err) => {
-        err.rawError.forEach((error) => this.context.showNotification(error.message, 'error'))
-        this.setState({loading: false} as State)
-      })
+  private addNewNode = (fieldValues: { [key: string]: any }): any => {
+    return this.props.addNodeAsync(this.lokka, this.props.model, this.props.fields, fieldValues)
   }
 
   private calculateFieldColumnWidths = (width: number): any => {
@@ -527,11 +456,11 @@ class BrowserView extends React.Component<Props, State> {
     const widths = this.props.fields.mapToObject(
       (field) => field.name,
       (field) => {
-         const cellWidths = this.state.nodes
-          .filter((node) => !!node)
-          .map((node) => node.get(field.name))
-          .map((value) => valueToString(value, field, false))
-          .map((str) => calculateSize(str, cellFontOptions).width + 41)
+         const cellWidths = this.props.nodes
+          .filter(node => !!node)
+          .map(node => node.get(field.name))
+          .map(value => valueToString(value, field, false))
+          .map(str => calculateSize(str, cellFontOptions).width + 41)
           .toArray()
         const headerWidth = calculateSize(`${field.name} ${getFieldTypeName(field)}`, headerFontOptions).width + 90
 
@@ -546,68 +475,87 @@ class BrowserView extends React.Component<Props, State> {
     const totalWidth = this.props.fields.reduce((sum, {name}) => sum + widths[name], 0)
     const fieldWidth = width - 34 - 250
     if (totalWidth < fieldWidth) {
-      this.props.fields.forEach(({name}) => {
-        widths[name] = (widths[name] / totalWidth) * fieldWidth
-      })
+      this.props.fields.forEach(({name}) => widths[name] = (widths[name] / totalWidth) * fieldWidth)
     }
     return widths
   }
 
-  private onSelectRow = (nodeId: string) => {
-    if (this.state.selectedNodeIds.includes(nodeId)) {
-      this.setState({selectedNodeIds: this.state.selectedNodeIds.filter((id) => id !== nodeId)} as State)
-    } else {
-      this.setState({selectedNodeIds: this.state.selectedNodeIds.push(nodeId)} as State)
-    }
-  }
-
   private isSelected = (nodeId: string): boolean => {
-    return this.state.selectedNodeIds.indexOf(nodeId) > -1
+    return this.props.selectedNodeIds.indexOf(nodeId) > -1
   }
 
   private selectAllOnClick = (checked: boolean) => {
     if (checked) {
-      const selectedNodeIds = this.state.nodes.map((node) => node.get('id'))
-      this.setState({selectedNodeIds: selectedNodeIds} as State)
+      const selectedNodeIds = this.props.nodes.map(node => node.get('id')).toList()
+      this.props.setNodeSelection(selectedNodeIds)
     } else {
-      this.setState({selectedNodeIds: Immutable.List()} as State)
+      this.props.clearNodeSelection()
     }
   }
 
   private deleteSelectedNodes = () => {
-    if (confirm(`Do you really want to delete ${this.state.selectedNodeIds.size} node(s)?`)) {
+    if (confirm(`Do you really want to delete ${this.props.selectedNodeIds.size} node(s)?`)) {
       // only reload once after all the deletions
 
-      Promise.all(this.state.selectedNodeIds.toArray()
+      this.props.setLoading(true)
+      Promise.all(this.props.selectedNodeIds.toArray()
         .map((nodeId) => deleteNode(this.lokka, this.props.params.modelName, nodeId)))
         .then(analytics.track('models/browser: deleted node', {
           project: this.props.params.projectName,
           model: this.props.params.modelName,
         }))
+        .then(() => this.props.setLoading(false))
         .then(() => this.reloadData())
         .catch((err) => {
-          err.rawError.forEach((error) => this.context.showNotification(error.message, 'error'))
+          err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
         })
-
-      this.setState({selectedNodeIds: Immutable.List()} as State)
+      this.props.clearNodeSelection()
     }
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: StateTree) => {
   return {
     gettingStartedState: state.gettingStarted.gettingStartedState,
+    newRowVisible: state.databrowser.ui.newRowVisible,
+    filtersVisible: state.databrowser.ui.filtersVisible,
+    selectedNodeIds: state.databrowser.ui.selectedNodeIds,
+    scrollTop: state.databrowser.ui.scrollTop,
+    loading: state.databrowser.ui.loading,
+    itemCount: state.databrowser.data.itemCount,
+    filter: state.databrowser.data.filter,
+    orderBy: state.databrowser.data.orderBy,
+    nodes: state.databrowser.data.nodes,
+    loaded: state.databrowser.data.loaded,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
+      toggleNewRow,
+      hideNewRow,
+      toggleFilter,
+      setNodeSelection,
+      clearNodeSelection,
+      toggleNodeSelection,
+      setScrollTop,
+      setLoading,
+      resetDataAndUI,
+      showDonePopup,
       nextStep,
       showPopup,
       closePopup,
       startProgress,
       incrementProgress,
+      showNotification,
+      setItemCount,
+      setFilterAsync,
+      setOrder,
+      addNodeAsync,
+      updateNodeAsync,
+      reloadDataAsync,
+      loadDataAsync,
     },
     dispatch)
 }
@@ -622,7 +570,6 @@ const MappedBrowserView = mapProps({
   fields: (props) => (
     props.viewer.model.fields.edges
       .map((edge) => edge.node)
-      // .sort(compareFields) // TODO remove this once field ordering is implemented
   ),
   model: (props) => props.viewer.model,
   project: (props) => props.viewer.project,

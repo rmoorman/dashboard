@@ -1,9 +1,13 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
+import {withRouter} from 'react-router'
 import Header from '../../components/Header/Header'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import {Viewer, Project} from '../../types/types'
 import {ShowNotificationCallback} from '../../types/utils'
+import {connect} from 'react-redux'
+import {showNotification} from '../../actions/notification'
+import {bindActionCreators} from 'redux'
 import ResetProjectDataMutation from '../../mutations/ResetProjectDataMutation'
 import ResetProjectSchemaMutation from '../../mutations/ResetProjectSchemaMutation'
 import DeleteProjectMutation from '../../mutations/DeleteProjectMutation'
@@ -18,6 +22,8 @@ const classes = require('./ProjectSettingsView.scss')
 interface Props {
   viewer: Viewer & { project: Project }
   params: any
+  showNotification: ShowNotificationCallback
+  router: any
 }
 
 interface State {
@@ -27,16 +33,6 @@ interface State {
 }
 
 class ProjectSettingsView extends React.Component<Props, State> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    router: React.PropTypes.object.isRequired,
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    router: any,
-    showNotification: ShowNotificationCallback
-  }
 
   refs: {
     [key: string]: any
@@ -155,7 +151,7 @@ class ProjectSettingsView extends React.Component<Props, State> {
         }),
         {
           onSuccess: () => {
-            this.context.router.replace(`/${this.props.params.projectName}/playground`)
+            this.props.router.replace(`/${this.props.params.projectName}/playground`)
           },
         })
     }
@@ -169,7 +165,7 @@ class ProjectSettingsView extends React.Component<Props, State> {
         }),
         {
           onSuccess: () => {
-            this.context.router.replace(`/${this.props.params.projectName}/playground`)
+            this.props.router.replace(`/${this.props.params.projectName}/playground`)
           },
         })
     }
@@ -177,12 +173,15 @@ class ProjectSettingsView extends React.Component<Props, State> {
 
   private onClickDeleteProject = (): void => {
     if (this.props.viewer.user.projects.edges.length === 1) {
-      this.context.showNotification(`Sorry. You can't delete your last project. This one is a keeper 😉.`, 'error')
+      this.props.showNotification({
+        message: `Sorry. You can't delete your last project. This one is a keeper 😉.`,
+        level: 'error',
+      })
     } else if (window.confirm('Do you really want to delete this project?')) {
       Relay.Store.commitUpdate(
         new DeleteProjectMutation({
           projectId: this.props.viewer.project.id,
-          userId: this.props.viewer.user.id,
+          customerId: this.props.viewer.user.id,
         }),
         {
           onSuccess: () => {
@@ -204,10 +203,10 @@ class ProjectSettingsView extends React.Component<Props, State> {
         }),
       {
         onSuccess: () => {
-          this.context.router.replace(`/${this.state.projectName}/`)
+          this.props.router.replace(`/${this.state.projectName}/`)
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
         },
       })
   }
@@ -232,7 +231,13 @@ class ProjectSettingsView extends React.Component<Props, State> {
 
 }
 
-export default Relay.createContainer(ProjectSettingsView, {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedProjectSettingsView = connect(null, mapDispatchToProps)(withRouter(ProjectSettingsView))
+
+export default Relay.createContainer(MappedProjectSettingsView, {
   initialVariables: {
     projectName: null, // injected from router
   },

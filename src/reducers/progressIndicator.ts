@@ -1,15 +1,12 @@
 import {ReduxAction} from '../types/reducers'
 import Constants from '../constants/progressIndicator'
+import {ProgressIndicatorState} from '../types/progressIndicator'
 
-interface State {
-    progress: number
-}
-
-const initialState: State = {
+const initialState: ProgressIndicatorState = {
   progress: 0,
 }
 
-export function reduceProgress (state: State = initialState, action: ReduxAction): State {
+export function reduceProgress (state: ProgressIndicatorState = initialState, action: ReduxAction): ProgressIndicatorState { // tslint:disable-line
   switch (action.type) {
     case Constants.START_PROGRESS:
       return Object.assign({}, initialState)

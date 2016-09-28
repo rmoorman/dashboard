@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
+import {withRouter} from 'react-router'
 import Popup from '../../components/Popup/Popup'
 import RelationSelector from './RelationSelector'
 import RelationExplanation from '../../components/RelationExplanation/RelationExplanation'
@@ -9,6 +10,9 @@ import {validateModelName, validateFieldName} from '../../utils/nameValidator'
 import {classnames} from '../../utils/classnames'
 import UpdateRelationMutation from '../../mutations/UpdateRelationMutation'
 import {ShowNotificationCallback} from '../../types/utils'
+import {connect} from 'react-redux'
+import {showNotification} from '../../actions/notification'
+import {bindActionCreators} from 'redux'
 import {onFailureShowNotification} from '../../utils/relay'
 import {getModelName, getModelNamePlural} from '../../utils/namegetter'
 import Help from '../../components/Help/Help'
@@ -20,6 +24,8 @@ interface Props {
   location: any
   viewer: any
   relay: any
+  router: any
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -37,16 +43,6 @@ interface State {
 }
 
 class RelationPopup extends React.Component<Props, State> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    router: React.PropTypes.object.isRequired,
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-    router: any
-  }
 
   refs: {
     [key: string]: any;
@@ -250,7 +246,7 @@ class RelationPopup extends React.Component<Props, State> {
   }
 
   private close = () => {
-    this.context.router.goBack()
+    this.props.router.goBack()
   }
 
   private getNewRelationState = (): State => {
@@ -337,7 +333,7 @@ class RelationPopup extends React.Component<Props, State> {
         onSuccess: () => {
           this.close()
         },
-        onFailure: (transaction: Transaction) => onFailureShowNotification(transaction, this.context.showNotification),
+        onFailure: (transaction: Transaction) => onFailureShowNotification(transaction, this.props.showNotification),
       }
     )
   }
@@ -369,13 +365,19 @@ class RelationPopup extends React.Component<Props, State> {
           this.props.relay.forceFetch()
           this.close()
         },
-        onFailure: (transaction: Transaction) => onFailureShowNotification(transaction, this.context.showNotification),
+        onFailure: (transaction: Transaction) => onFailureShowNotification(transaction, this.props.showNotification),
       }
     )
   }
 }
 
-export default Relay.createContainer(RelationPopup, {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedRelationPopup = connect(null, mapDispatchToProps)(withRouter(RelationPopup))
+
+export default Relay.createContainer(MappedRelationPopup, {
   initialVariables: {
     projectName: null, // injected from router
     relationName: null, // injected from router

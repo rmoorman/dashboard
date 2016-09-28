@@ -2,7 +2,7 @@ import * as Relay from 'react-relay'
 
 interface Props {
   projectName: string
-  userId: string
+  customerId: string
 }
 
 export default class AddProjectMutation extends Relay.Mutation<Props, {}> {
@@ -24,7 +24,7 @@ export default class AddProjectMutation extends Relay.Mutation<Props, {}> {
     return [{
       type: 'RANGE_ADD',
       parentName: 'user',
-      parentID: this.props.userId,
+      parentID: this.props.customerId,
       connectionName: 'projects',
       edgeName: 'projectEdge',
       rangeBehaviors: {

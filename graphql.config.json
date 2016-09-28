@@ -1,8 +1,9 @@
 {
   "schema": {
     "request": {
-      "url" : "http://localhost:60000/system/schema.json",
-      "method" : "GET"
+      "url" : "http://localhost:60000/system",
+      "method" : "POST",
+      "postIntrospectionQuery" : true
     }
   }
 }

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as Relay from 'react-relay'
-import {Link} from 'react-router'
+import {withRouter, Link} from 'react-router'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -13,9 +13,13 @@ import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
 import {onFailureShowNotification} from '../../utils/relay'
-import {nextStep, skip} from '../../actions/gettingStarted'
+import {nextStep, showDonePopup} from '../../actions/gettingStarted'
+import {showPopup} from '../../actions/popup'
 import {Project, Viewer, Model} from '../../types/types'
 import {ShowNotificationCallback} from '../../types/utils'
+import {showNotification} from '../../actions/notification'
+import {Popup} from '../../types/popup'
+import {GettingStartedState} from '../../types/gettingStarted'
 import {classnames} from '../../utils/classnames'
 
 const classes: any = require('./SideNav.scss')
@@ -27,9 +31,13 @@ interface Props {
   viewer: Viewer
   relay: any
   models: Model[]
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   nextStep: () => Promise<any>
   skip: () => Promise<any>
+  showNotification: ShowNotificationCallback
+  router: any
+  showDonePopup: () => void
+  showPopup: (popup: Popup) => void
 }
 
 interface State {
@@ -40,16 +48,6 @@ interface State {
 }
 
 export class SideNav extends React.Component<Props, State> {
-
-  static contextTypes = {
-    router: React.PropTypes.object.isRequired,
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    router: any
-    showNotification: ShowNotificationCallback
-  }
 
   refs: {
     [key: string]: any;
@@ -81,15 +79,12 @@ export class SideNav extends React.Component<Props, State> {
 
   render() {
 
-    const gettingStartedIsActive = this.props.gettingStartedState.isActive()
-
     return (
       <div
         className={classes.root}
         onMouseLeave={() => this.setState({forceShowModels: false} as State)}>
         <div className={classes.container}>
           <ScrollBox>
-            {gettingStartedIsActive && this.renderGettingStarted()}
             {this.renderModels()}
             {this.renderRelations()}
             {this.renderActions()}
@@ -108,22 +103,39 @@ export class SideNav extends React.Component<Props, State> {
   }
 
   private renderPlayground = () => {
-    const playgroundPageActive = this.context.router.isActive(`/${this.props.params.projectName}/playground`)
+    const playgroundPageActive = this.props.router.isActive(`/${this.props.params.projectName}/playground`)
+    const showGettingStartedOnboardingPopup = () => {
+      if (this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_PLAYGROUND')) {
+        this.props.nextStep()
+      }
+    }
+
     return (
       <div className={`${classes.listBlock} ${playgroundPageActive ? classes.active : ''}`}>
-        <Link
-          to={`/${this.props.params.projectName}/playground`}
-          className={`${classes.head} ${playgroundPageActive ? classes.active : ''}`}
-        >
-          <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
-          <span>Playground</span>
-        </Link>
+          <Link
+            to={`/${this.props.params.projectName}/playground`}
+            className={`${classes.head} ${playgroundPageActive ? classes.active : ''}`}
+            onClick={showGettingStartedOnboardingPopup}
+          >
+            <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
+            <Tether
+              steps={[{
+                step: 'STEP4_CLICK_PLAYGROUND',
+                title: 'Open the Playground',
+                description: 'Now that we have defined our data model and added example data it\'s time to send some queries to our backend!', // tslint:disable-line
+              }]}
+              offsetY={this.state.addingNewModel ? -75 : -5}
+              width={280}
+            >
+              <span>Playground</span>
+            </Tether>
+          </Link>
       </div>
     )
   }
 
   private renderActions = () => {
-    const actionsPageActive = this.context.router.isActive(`/${this.props.params.projectName}/actions`)
+    const actionsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/actions`)
     return (
       <div className={`${classes.listBlock} ${actionsPageActive ? classes.active : ''}`}>
         <Link
@@ -138,7 +150,7 @@ export class SideNav extends React.Component<Props, State> {
   }
 
   private renderRelations = () => {
-    const relationsPageActive = this.context.router.isActive(`/${this.props.params.projectName}/relations`)
+    const relationsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/relations`)
     return (
       <div className={`${classes.listBlock} ${relationsPageActive ? classes.active : ''}`}>
         <Link
@@ -154,11 +166,11 @@ export class SideNav extends React.Component<Props, State> {
 
   private renderModels = () => {
     const modelActive = (model) => (
-      this.context.router.isActive(`/${this.props.params.projectName}/models/${model.name}/structure`) ||
-      this.context.router.isActive(`/${this.props.params.projectName}/models/${model.name}/browser`)
+      this.props.router.isActive(`/${this.props.params.projectName}/models/${model.name}/structure`) ||
+      this.props.router.isActive(`/${this.props.params.projectName}/models/${model.name}/browser`)
     )
 
-    const modelsPageActive = this.context.router.isActive(`/${this.props.params.projectName}/models`)
+    const modelsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/models`)
     const showsModels = modelsPageActive || this.state.forceShowModels
 
     return (
@@ -212,99 +224,16 @@ export class SideNav extends React.Component<Props, State> {
           onClick={this.toggleAddModelInput}
         >
           <Tether
-            steps={{
-              STEP2_CREATE_TODO_MODEL: 'First you need to create a new model called "Post"',
-            }}
+            steps={[{
+              step: 'STEP1_CREATE_POST_MODEL',
+              title: 'Create a "Post" Model',
+              description: 'Models represent a certain type of data. To manage our Instagram posts, the "Post" model will have an image URL and a description.', // tslint:disable-line
+            }]}
             offsetY={this.state.addingNewModel ? -75 : -5}
-            width={260}
+            width={350}
           >
             <div>+ Add model</div>
           </Tether>
-        </div>
-      </div>
-    )
-  }
-
-  private renderGettingStarted = () => {
-
-    const firstStepOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP1_OVERVIEW')) {
-        this.props.nextStep()
-      }
-    }
-
-    const secondStepOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP5_GOTO_DATA_TAB')) {
-        this.props.nextStep()
-      }
-    }
-
-    const thirdStepOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP8_GOTO_GETTING_STARTED')) {
-        this.props.nextStep()
-      }
-    }
-
-    const gettingStartedStepClass = (index) => {
-      if (this.props.gettingStartedState.progress === index) {
-        return classes.gettingStartedStepActive
-      } else if (this.props.gettingStartedState.progress > index) {
-        return classes.gettingStartedStepDone
-      } else {
-        return classes.gettingStartedStepDisabled
-      }
-    }
-
-    const showsGettingStarted = this.context.router.isActive(`/${this.props.params.projectName}/getting-started`)
-
-    return (
-      <div className={`${showsGettingStarted ? classes.active : ''}`}>
-        <div className={classes.gettingStarted}>
-          <Link
-            to={`/${this.props.params.projectName}/getting-started`}
-            className={classes.gettingStartedTitle}
-            onClick={thirdStepOnClick}
-          >
-            <Icon width={19} height={19} src={require('assets/icons/cake.svg')}/>
-            <span>Getting Started</span>
-          </Link>
-          <div className={classes.gettingStartedList}>
-            <div className={gettingStartedStepClass(1)}>
-              <Link
-                to={`/${this.props.params.projectName}/getting-started`}
-                onClick={firstStepOnClick}
-              >
-                1. Create Post model
-              </Link>
-            </div>
-            <div className={gettingStartedStepClass(2)}>
-              <Link
-                to={`/${this.props.params.projectName}/models/Post/browser`}
-                onClick={secondStepOnClick}
-              >
-                2. Add some data
-              </Link>
-            </div>
-            <div className={gettingStartedStepClass(3)}>
-              <Tether
-                steps={{
-                      STEP8_GOTO_GETTING_STARTED: 'You\'re almost done. Let\'s run an example app now...',
-                    }}
-                offsetY={-5}
-                width={260}
-              >
-                <Link
-                  to={`/${this.props.params.projectName}/getting-started`}
-                  onClick={thirdStepOnClick}
-                >
-                  3. Run example app
-                </Link>
-              </Tether>
-            </div>
-            <div onClick={this.skipGettingStarted} className={classes.gettingStartedSkip}>
-              Skip getting started
-            </div>
-          </div>
         </div>
       </div>
     )
@@ -347,7 +276,7 @@ export class SideNav extends React.Component<Props, State> {
 
   private addModel = () => {
     const redirect = () => {
-      this.context.router.push(`/${this.props.params.projectName}/models/${this.state.newModelName}`)
+      this.props.router.push(`/${this.props.params.projectName}/models/${this.state.newModelName}`)
       this.setState({
         addingNewModel: false,
         newModelIsValid: true,
@@ -368,27 +297,21 @@ export class SideNav extends React.Component<Props, State> {
               model: this.state.newModelName,
             })
             // getting-started onboarding step
-            if (this.state.newModelName === 'Post' &&
-              this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_TODO_MODEL')) {
+            if (
+              this.state.newModelName === 'Post' &&
+              this.props.gettingStartedState.isCurrentStep('STEP1_CREATE_POST_MODEL')
+            ) {
+              this.props.showDonePopup()
               this.props.nextStep().then(redirect)
             } else {
               redirect()
             }
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
-    }
-  }
-
-  private skipGettingStarted = () => {
-    if (window.confirm('Do you really want skip the getting started tour?')) {
-      this.props.skip()
-        .then(() => {
-          this.context.router.replace(`/${this.props.params.projectName}/models`)
-        })
     }
   }
 }
@@ -399,14 +322,14 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep, skip}, dispatch)
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({nextStep, showDonePopup, showNotification, showPopup}, dispatch)
 }
 
 const ReduxContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(SideNav)
+)(withRouter(SideNav))
 
 const MappedSideNav = mapProps({
   params: (props) => props.params,

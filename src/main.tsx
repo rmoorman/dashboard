@@ -15,14 +15,18 @@ import { reduceGettingStartedState } from './reducers/gettingStarted'
 import { fetchGettingStartedState } from './actions/gettingStarted'
 import { reducePopup } from './reducers/popup'
 import { reduceProgress } from './reducers/progressIndicator'
+import { reduceData as reduceDataBrowserData } from './reducers/databrowser/data'
+import { reduceUI as reduceDataBrowserUI } from './reducers/databrowser/ui'
+import { reduceNotification } from './reducers/notification'
+import { StateTree } from './types/reducers'
 
 import loadAnalytics from './utils/analytics'
 
 import './utils/polyfils'
 
-if (cookiestore.has('graphcool_auth_token')) {
+if (__HEARTBEAT_ADDR__ && cookiestore.has('graphcool_auth_token')) {
   drumstick.start({
-    endpoint: 'https://6apsb2qt0b.execute-api.eu-west-1.amazonaws.com/Prod',
+    endpoint: __HEARTBEAT_ADDR__,
     payload: {
       resource: 'dashboard',
       token: cookiestore.get('graphcool_auth_token'),
@@ -39,10 +43,15 @@ browserHistory.listen(() => {
   analytics.page()
 })
 
-const reducers = combineReducers({
+const reducers: StateTree = combineReducers({
   gettingStarted: reduceGettingStartedState,
   popup: reducePopup,
   progressIndicator: reduceProgress,
+  notification: reduceNotification,
+  databrowser: combineReducers({
+    data: reduceDataBrowserData,
+    ui: reduceDataBrowserUI,
+  }),
 })
 
 const store = createStore(reducers, compose(

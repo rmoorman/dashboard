@@ -30,7 +30,9 @@ export function onFailureShowNotification (
   const error = transaction.getError() as any
   // NOTE if error returns non-200 response, there is no `source` provided (probably because of fetch)
   if (error.source && error.source.errors) {
-    error.source.errors.forEach((error) => showNotification(error.message, 'error'))
+    return error.source.errors
+      .map(error => ({message: error.message, level: 'error'}))
+      .forEach(notification => showNotification(notification))
   } else {
     console.error(error)
   }
@@ -134,6 +136,10 @@ export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[],
 
   const filterQuery = filters
     .filter((v) => v !== null)
+    // TODO uncomment this when the count bug is fixed
+    // .map((value, fieldName) => fields.find(x => x.name === fieldName).typeIdentifier === 'String'
+    //   ? `${fieldName}_contains: ${value}`
+    //   : `${fieldName}: ${value}`)
     .map((value, fieldName) => `${fieldName}: ${value}`)
     .join(' ')
 

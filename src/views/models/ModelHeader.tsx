@@ -8,12 +8,13 @@ import ModelDescription from './ModelDescription'
 import Tether from '../../components/Tether/Tether'
 import Header from '../../components/Header/Header'
 import { Model, Viewer, Project } from '../../types/types'
+import {GettingStartedState} from '../../types/gettingStarted'
 const classes: any = require('./ModelHeader.scss')
 
 interface Props {
   children: Element
   params: any
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   model: Model
   nextStep: any
   viewer: Viewer
@@ -22,17 +23,9 @@ interface Props {
 
 class ModelHeader extends React.Component<Props, {}> {
 
-  static contextTypes = {
-    router: React.PropTypes.object.isRequired,
-  }
-
-  context: {
-    router: any
-  }
-
   render () {
     const dataViewOnClick = () => {
-      if (this.props.gettingStartedState.isCurrentStep('STEP5_GOTO_DATA_TAB')) {
+      if (this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_DATA_BROWSER')) {
         this.props.nextStep()
       }
     }
@@ -62,11 +55,13 @@ class ModelHeader extends React.Component<Props, {}> {
         <div className={classes.bottom}>
           <div className={classes.tabs}>
             <Tether
-              steps={{
-                  STEP5_GOTO_DATA_TAB: 'Nice, you\'re done setting up the structure. Let\'s add some data.',
-                }}
-              width={200}
-              offsetX={-5}
+              steps={[{
+                step: 'STEP3_CLICK_DATA_BROWSER',
+                title: 'Switch to the Data Browser',
+                description: 'In the Data Browser you can view and manage your data ("Post" nodes in our case).', // tslint:disable-line
+              }]}
+              width={280}
+              offsetX={-35}
               offsetY={5}
             >
               <Link
@@ -101,7 +96,7 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps (dispatch) {
+const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ nextStep }, dispatch)
 }
 

@@ -3,18 +3,23 @@ import {withRouter} from 'react-router'
 import * as Relay from 'react-relay'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import * as cookiestore from 'cookiestore'
+import {bindActionCreators} from 'redux'
 import {classnames} from '../../utils/classnames'
 import mapProps from '../../components/MapProps/MapProps'
+import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
+import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
+import PlaygroundCPopup from '../../components/onboarding/PlaygroundCPopup/PlaygroundCPopup'
 import {connect} from 'react-redux'
-import Smooch from 'smooch'
 import {validateProjectName} from '../../utils/nameValidator'
 import ProjectSelection from '../../components/ProjectSelection/ProjectSelection'
 import SideNav from '../../views/ProjectRootView/SideNav'
-import OnboardSideNav from '../../views/GettingStartedView/OnboardSideNav'
+import OnboardSideNav from './OnboardSideNav'
 import LoginView from '../../views/LoginView/LoginView'
 import AddProjectMutation from '../../mutations/AddProjectMutation'
 import {update} from '../../actions/gettingStarted'
-import {Viewer, Client, Project} from '../../types/types'
+import {Viewer, Customer, Project} from '../../types/types'
+import {PopupState} from '../../types/popup'
+import {GettingStartedState} from '../../types/gettingStarted'
 const classes: any = require('./ProjectRootView.scss')
 
 require('../../styles/core.scss')
@@ -24,15 +29,15 @@ interface Props {
   children: Element
   isLoggedin: boolean
   viewer: Viewer
-  user: Client & {gettingStartedState: string}
+  user: Customer & {gettingStartedState: string}
   project: Project
   allProjects: Project[]
   params: any
   relay: any
-  gettingStartedState: any
-  popup: any
-  checkStatus: boolean
-  update: (step: string, userId: string) => void
+  gettingStartedState: GettingStartedState
+  popup: PopupState
+  pollGettingStartedOnboarding: boolean
+  update: (step: string, skipped: boolean, customerId: string) => void
 }
 
 class ProjectRootView extends React.Component<Props, {}> {
@@ -54,16 +59,16 @@ class ProjectRootView extends React.Component<Props, {}> {
   componentWillMount() {
     if (this.props.isLoggedin) {
       analytics.identify(this.props.user.id, {
-        name: this.props.user.name,
-        email: this.props.user.email,
-        'Getting Started Status': this.props.user.gettingStartedStatus,
+        name: this.props.user.crm.information.name,
+        email: this.props.user.crm.information.email,
+        'Getting Started Status': this.props.user.crm.onboardingStatus.gettingStarted,
         'Product': 'Dashboard',
       })
 
       Smooch.init({
         appToken: __SMOOCH_TOKEN__,
-        givenName: this.props.user.name,
-        email: this.props.user.email,
+        givenName: this.props.user.crm.information.name,
+        email: this.props.user.crm.information.email,
         customText: {
           headerText: 'Can I help you? 🙌',
         },
@@ -79,25 +84,22 @@ class ProjectRootView extends React.Component<Props, {}> {
     clearInterval(this.refreshInterval)
   }
 
-  componentDidUpdate(prevProps) {
-    const newStatus = this.props.user.gettingStartedStatus
-    const prevStatus = prevProps.user.gettingStartedStatus
+  componentDidUpdate(prevProps: Props) {
+    const {gettingStarted, gettingStartedSkipped} = this.props.user.crm.onboardingStatus
+    const prevGettingStarted = prevProps.user.crm.onboardingStatus.gettingStarted
 
-    const newCheckStatus = this.props.checkStatus
-    const prevCheckStatus = prevProps.checkStatus
-
-    if (newStatus !== prevStatus) {
+    if (gettingStarted !== prevGettingStarted) {
       this.updateForceFetching()
 
-      if (newStatus === 'STEP11_SKIPPED') {
-        analytics.track(`getting-started: skipped at ${prevStatus}`)
+      if (gettingStartedSkipped) {
+        analytics.track(`getting-started: skipped at ${prevGettingStarted}`)
       } else {
-        analytics.track(`getting-started: finished ${prevStatus}`)
+        analytics.track(`getting-started: finished ${prevGettingStarted}`)
       }
       analytics.identify(this.props.user.id, {
-        'Getting Started Status': this.props.user.gettingStartedStatus,
+        'Getting Started Status': gettingStarted,
       })
-    } else if (newCheckStatus !== prevCheckStatus) {
+    } else if (this.props.pollGettingStartedOnboarding !== prevProps.pollGettingStartedOnboarding) {
       this.updateForceFetching()
     }
   }
@@ -108,57 +110,78 @@ class ProjectRootView extends React.Component<Props, {}> {
         <LoginView viewer={this.props.viewer}/>
       )
     }
+
+    const blurBackground = this.props.popup.popups.reduce((acc, p) => p.blurBackground || acc, false)
     return (
       <div className={classes.root}>
-        <div className={classes.sidebar}>
-          <div className={classes.projectSelection}>
-            <ProjectSelection
-              params={this.props.params}
-              projects={this.props.allProjects}
-              selectedProject={this.props.project}
-              add={this.addProject}
-            />
+        <div className={`${blurBackground ? classes.blur : ''} flex w-100`}>
+          <div className={classes.sidebar}>
+            <div className={classes.projectSelection}>
+              <ProjectSelection
+                params={this.props.params}
+                projects={this.props.allProjects}
+                selectedProject={this.props.project}
+                add={this.addProject}
+              />
+            </div>
+            <div className={classes.sidenav}>
+              <SideNav
+                params={this.props.params}
+                project={this.props.project}
+                viewer={this.props.viewer}
+                projectCount={this.props.allProjects.length}
+              />
+            </div>
           </div>
-          <div className={classes.sidenav}>
-            <SideNav
-              params={this.props.params}
-              project={this.props.project}
-              viewer={this.props.viewer}
-              projectCount={this.props.allProjects.length}
-            />
+          <div className={classnames(classes.content, 'flex')}>
+            <div
+              className='overflow-hidden'
+              style={{
+                flex: `0 0 calc(100%${this.props.gettingStartedState.isActive() ? ' - 266px' : ''})`,
+              }}>
+              {this.props.children}
+            </div>
+            {this.props.gettingStartedState.isActive() &&
+            <div className='flex bg-accent' style={{flex: '0 0 266px'}}>
+              <OnboardSideNav params={this.props.params}/>
+            </div>
+            }
           </div>
-        </div>
-        <div className={classnames(classes.content, 'flex')}>
-          <div
-            className='overflow-hidden'
-            style={{
-              width: `calc(100%${this.props.gettingStartedState.isActive() ? '- 200px' : ''})`,
-            }}>
-            {this.props.children}
-          </div>
-          {this.props.gettingStartedState.isActive() &&
-          <div className='fr' style={{width: 200}}>
-            <OnboardSideNav />
-          </div>
-          }
         </div>
         {this.props.popup.popups.map(popup =>
-          <div className='fixed left-0 right-0 top-0 bottom-0 z-999'>
+          <PopupWrapper key={popup.id}>
             {popup.element}
-          </div>
+          </PopupWrapper>
         )}
+        {this.props.gettingStartedState.isCurrentStep('STEP0_OVERVIEW') &&
+          <PopupWrapper>
+            <OnboardingPopup firstName={this.props.user.crm.information.name}/>
+          </PopupWrapper>
+        }
+        {(this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5') ||
+        this.props.gettingStartedState.isCurrentStep('STEP5_SELECT_EXAMPLE') ||
+        this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') ||
+        this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) &&
+          <PopupWrapper>
+            <PlaygroundCPopup projectId={this.props.project.id} />
+          </PopupWrapper>
+        }
       </div>
     )
   }
 
   private updateForceFetching() {
-    if (this.props.checkStatus) {
+    if (this.props.pollGettingStartedOnboarding) {
       if (!this.refreshInterval) {
         this.refreshInterval = setInterval(
           () => {
             // ideally we would handle this with a Redux thunk, but somehow Relay does not support raw force fetches...
             this.props.relay.forceFetch({}, () => {
-              this.props.update(this.props.user.gettingStartedStatus, this.props.user.id)
+              this.props.update(
+                this.props.user.crm.onboardingStatus.gettingStarted,
+                this.props.user.crm.onboardingStatus.gettingStartedSkipped,
+                this.props.user.id
+              )
             })
           },
           1500
@@ -179,7 +202,7 @@ class ProjectRootView extends React.Component<Props, {}> {
       Relay.Store.commitUpdate(
         new AddProjectMutation({
           projectName,
-          userId: this.props.viewer.user.id,
+          customerId: this.props.viewer.user.id,
         }),
         {
           onSuccess: () => {
@@ -197,17 +220,13 @@ class ProjectRootView extends React.Component<Props, {}> {
 const mapStateToProps = (state) => {
   return {
     gettingStartedState: state.gettingStarted.gettingStartedState,
-    checkStatus: state.gettingStarted.checkStatus,
+    pollGettingStartedOnboarding: state.gettingStarted.poll,
     popup: state.popup,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    update: (step, userId) => {
-      dispatch(update(step, userId))
-    },
-  }
+  return bindActionCreators({update}, dispatch)
 }
 
 const ReduxContainer = connect(
@@ -233,32 +252,39 @@ export default Relay.createContainer(MappedProjectRootView, {
   initialVariables: {
     projectName: null, // injected from router
   },
-    fragments: {
-        viewer: () => Relay.QL`
-            fragment on Viewer {
-                id
-                project: projectByName(projectName: $projectName) {
-                    id
-                    name
-                    ${SideNav.getFragment('project')}
-                }
-                user {
-                    id
-                    email
-                    name
-                    gettingStartedStatus
-                    projects(first: 100) {
-                        edges {
-                            node {
-                                id
-                                name
-                            }
-                        }
-                    }
-                }
-                ${LoginView.getFragment('viewer')}
-                ${SideNav.getFragment('viewer')}
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on Viewer {
+        id
+        project: projectByName(projectName: $projectName) {
+          id
+          name
+          ${SideNav.getFragment('project')}
+        }
+        user {
+          id
+          crm {
+            onboardingStatus {
+              gettingStarted
+              gettingStartedSkipped
             }
-        `,
-    },
+            information {
+              name
+              email
+            }
+          }
+          projects(first: 100) {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
+        }
+        ${LoginView.getFragment('viewer')}
+        ${SideNav.getFragment('viewer')}
+      }
+    `,
+  },
 })

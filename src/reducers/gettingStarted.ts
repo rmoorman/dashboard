@@ -1,23 +1,28 @@
-import { ReduxAction } from '../types/reducers'
+import {ReduxAction} from '../types/reducers'
 import Constants from '../constants/gettingStarted'
-import { GettingStartedState } from './../types/gettingStarted'
+import {GettingStartedState, GettingStartedReducerState} from './../types/gettingStarted'
 
-interface State {
-  checkStatus: boolean,
-  gettingStartedState?: GettingStartedState
+const initialState: GettingStartedReducerState = {
+  poll: false,
+  gettingStartedState: new GettingStartedState({
+    onboardingStatusId: '',
+    selectedExample: null,
+    skipped: true,
+    step: 'STEP6_CLOSED',
+  }),
 }
 
-const initialState: State = {checkStatus: false}
-
-export function reduceGettingStartedState (state: State = initialState, action: ReduxAction): State {
+export function reduceGettingStartedState(state: GettingStartedReducerState = initialState, action: ReduxAction): GettingStartedReducerState { // tslint:disable-line
   switch (action.type) {
     case Constants.UPDATE:
-      let gettingStartedState = action.payload.gettingStartedState
-
+      const gettingStartedState: GettingStartedState = action.payload.gettingStartedState
+      if (!gettingStartedState.selectedExample) {
+        gettingStartedState.selectedExample = state.gettingStartedState.selectedExample
+      }
       // TODO: use reselect for derived data
       return Object.assign({}, state, {
         gettingStartedState,
-        checkStatus: gettingStartedState.isCurrentStep('STEP9_WAITING_FOR_REQUESTS'),
+        poll: gettingStartedState.isCurrentStep('STEP5_WAITING'),
       })
     default:
       return state

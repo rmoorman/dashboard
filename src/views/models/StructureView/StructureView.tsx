@@ -9,7 +9,9 @@ import Tether from '../../../components/Tether/Tether'
 import ModelHeader from '../ModelHeader'
 import DeleteModelMutation from '../../../mutations/DeleteModelMutation'
 import {Field, Model, Viewer, Project} from '../../../types/types'
+import {GettingStartedState} from '../../../types/gettingStarted'
 import {ShowNotificationCallback} from '../../../types/utils'
+import {showNotification} from '../../../actions/notification'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -27,13 +29,14 @@ interface Props {
   allModels: Model[]
   project: Project
   model: Model
-  gettingStartedState: any
-  nextStep: any
+  gettingStartedState: GettingStartedState
+  nextStep: () => any
   router: any
   route: any
   children: Element
   viewer: Viewer
   relay: Relay.RelayProp
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -41,14 +44,6 @@ interface State {
 }
 
 class StructureView extends React.Component<Props, State> {
-
-  static contextTypes = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
 
   state = {
     menuDropdownVisible: false,
@@ -75,17 +70,22 @@ class StructureView extends React.Component<Props, State> {
           project={this.props.project}
         >
           <Tether
-            steps={{
-              STEP3_CREATE_TEXT_FIELD: 'Add a new field called "imageUrl" and select type "String".' +
-              ' Then click the "Create" button.',
-              STEP4_CREATE_COMPLETED_FIELD: 'Good job! Create another one called "description" with type "String"',
-            }}
+            steps={[{
+              step: 'STEP2_CLICK_CREATE_FIELD_IMAGEURL',
+              title: 'Create a field for the image URL',
+            }, {
+              step: 'STEP2_CREATE_FIELD_DESCRIPTION',
+              title: 'Good job! Create another field called "description" which is of type "String"',
+            }]}
             offsetX={5}
             offsetY={5}
             width={240}
+            horizontal='right'
+            zIndex={2}
           >
             <Link
               className={`${classes.button} ${classes.green}`}
+              onClick={this.handleCreateFieldClick}
               to={`${urlPrefix}/models/${this.props.params.modelName}/structure/create`}
             >
               <Icon
@@ -185,6 +185,12 @@ class StructureView extends React.Component<Props, State> {
     this.setState({menuDropdownVisible: !this.state.menuDropdownVisible} as State)
   }
 
+  private handleCreateFieldClick = (e: any) => {
+    if (this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CREATE_FIELD_IMAGEURL')) {
+      this.props.nextStep()
+    }
+  }
+
   private renameModel = () => {
     let modelName = window.prompt('Model name:')
     while (modelName != null && !validateModelName(modelName)) {
@@ -210,7 +216,7 @@ class StructureView extends React.Component<Props, State> {
             redirect()
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -236,7 +242,7 @@ class StructureView extends React.Component<Props, State> {
             })
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -260,13 +266,13 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep}, dispatch)
+  return bindActionCreators({nextStep, showNotification}, dispatch)
 }
 
 const ReduxContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(StructureView)
+)(withRouter(StructureView))
 
 const MappedStructureView = mapProps({
   relay: (props) => props.relay,
@@ -287,7 +293,7 @@ const MappedStructureView = mapProps({
   project: (props) => props.viewer.project,
 })(ReduxContainer)
 
-export default Relay.createContainer(withRouter(MappedStructureView), {
+export default Relay.createContainer(MappedStructureView, {
   initialVariables: {
     modelName: null, // injected from router
     projectName: null, // injected from router

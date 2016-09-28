@@ -1,22 +1,22 @@
 import * as Relay from 'react-relay'
+import {} from '../types/gettingStarted'
 
 interface Props {
-  userId: string
-  gettingStartedStatus?: string
+  customerInformationId: string
   name?: string
   email?: string
 }
 
-export default class UpdateCustomerMutation extends Relay.Mutation<Props, {}> {
+export default class UpdateCustomerInformationMutation extends Relay.Mutation<Props, {}> {
 
   getMutation () {
-    return Relay.QL`mutation{updateCustomer}`
+    return Relay.QL`mutation{updateCrmCustomerInformation}`
   }
 
   getFatQuery () {
     return Relay.QL`
-      fragment on UpdateCustomerPayload {
-        user
+      fragment on UpdateCrmCustomerInformationPayload {
+        customerInformation
       }
     `
   }
@@ -25,14 +25,13 @@ export default class UpdateCustomerMutation extends Relay.Mutation<Props, {}> {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
-        user: this.props.userId,
+        customerInformation: this.props.customerInformationId,
       },
     }]
   }
 
   getVariables () {
     return {
-      gettingStartedStatus: this.props.gettingStartedStatus,
       name: this.props.name,
       email: this.props.email,
     }
@@ -40,9 +39,8 @@ export default class UpdateCustomerMutation extends Relay.Mutation<Props, {}> {
 
   getOptimisticResponse () {
     return {
-      user: {
-        id: this.props.userId,
-        gettingStartedStatus: this.props.gettingStartedStatus,
+      customerInformation: {
+        id: this.props.customerInformationId,
         name: this.props.name,
         email: this.props.email,
       },

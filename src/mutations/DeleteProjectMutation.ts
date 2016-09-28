@@ -2,7 +2,7 @@ import * as Relay from 'react-relay'
 
 interface Props {
   projectId: string,
-  userId: string
+  customerId: string
 }
 
 export default class DeleteProjectMutation extends Relay.Mutation<Props, {}> {
@@ -24,7 +24,7 @@ export default class DeleteProjectMutation extends Relay.Mutation<Props, {}> {
     return [{
       type: 'NODE_DELETE',
       parentName: 'user',
-      parentID: this.props.userId,
+      parentID: this.props.customerId,
       connectionName: 'projects',
       deletedIDFieldName: 'deletedId',
     }]

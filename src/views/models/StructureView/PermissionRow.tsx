@@ -10,6 +10,9 @@ import UpdatePermissionMutation from '../../../mutations/UpdatePermissionMutatio
 import DeletePermissionMutation from '../../../mutations/DeletePermissionMutation'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {ShowNotificationCallback} from '../../../types/utils'
+import {connect} from 'react-redux'
+import {showNotification} from '../../../actions/notification'
+import {bindActionCreators} from 'redux'
 import Icon from '../../../components/Icon/Icon'
 const classes: any = require('./PermissionRow.scss')
 
@@ -22,6 +25,7 @@ interface Props {
   hide?: () => void
   possibleRelatedPermissionPaths: Field[][]
   availableUserRoles: string[]
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -41,14 +45,6 @@ interface State {
 }
 
 class PermissionRow extends React.Component<Props, State> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
 
   constructor (props: Props) {
     super(props)
@@ -224,7 +220,7 @@ class PermissionRow extends React.Component<Props, State> {
           this.props.hide()
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
 
           this.setState({
             editing: false,
@@ -256,7 +252,7 @@ class PermissionRow extends React.Component<Props, State> {
           } as State)
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
 
           this.setState({
             editing: false,
@@ -305,7 +301,7 @@ class PermissionRow extends React.Component<Props, State> {
             analytics.track('models/fields: deleted permission')
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
@@ -377,7 +373,13 @@ class PermissionRow extends React.Component<Props, State> {
   }
 }
 
-export default Relay.createContainer(withRouter(PermissionRow), {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedPermissionRow = connect(null, mapDispatchToProps)(withRouter(PermissionRow))
+
+export default Relay.createContainer(MappedPermissionRow, {
   fragments: {
     permission: () => Relay.QL`
       fragment on Permission {

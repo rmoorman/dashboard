@@ -5,26 +5,13 @@ import {Link} from 'react-router'
 import {getFieldTypeName} from '../../../utils/valueparser'
 import {isScalar} from '../../../utils/graphql'
 import {Field} from '../../../types/types'
+import {debounce} from '../../../utils/utils'
 const classes: any = require('./HeaderCell.scss')
-
-function debounce(func, wait) {
-  let timeout
-  return (...args) => {
-    const context = this
-    const later = () => {
-      timeout = null
-      func.apply(context, args)
-    }
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
 
 interface Props {
   field: Field
   sortOrder?: string
   toggleSortOrder: () => void
-  filter?: string
   updateFilter: (value: string) => void
   filterVisible: boolean
   params: any
@@ -130,7 +117,6 @@ class HeaderCell extends React.Component<Props, {}> {
           <input
             type='number'
             placeholder={`Filter by ${this.props.field.name}`}
-            defaultValue={this.props.filter}
             onChange={(e: any) => this.onFilterChangeNumber(e.target.value)}
           />
         )
@@ -140,7 +126,6 @@ class HeaderCell extends React.Component<Props, {}> {
             type='number'
             step='any'
             placeholder={`Filter by ${this.props.field.name}`}
-            defaultValue={this.props.filter}
             onChange={(e: any) => this.onFilterChangeNumber(e.target.value)}
           />
         )
@@ -169,7 +154,6 @@ class HeaderCell extends React.Component<Props, {}> {
           <input
             type='text'
             placeholder={`Filter by ${this.props.field.name}`}
-            defaultValue={this.props.filter}
             onChange={(e: any) => this.onFilterChangeString(e.target.value)}
           />
         )

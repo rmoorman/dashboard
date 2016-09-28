@@ -1,17 +1,13 @@
 import * as React from 'react'
-import { PropTypes } from 'react'
 import * as Relay from 'react-relay'
 import mapProps from 'map-props'
-import { Link } from 'react-router'
-import { findDOMNode } from 'react-dom'
+import {withRouter, Link} from 'react-router'
+import {findDOMNode} from 'react-dom'
 import Loading from '../../components/Loading/Loading'
-import { Follow } from 'react-twitter-widgets'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { showPopup } from '../../actions/popup'
-import OnboardingView from './OnboardingView'
-import { GettingStartedState } from '../../types/gettingStarted'
-import { Client } from '../../types/types'
+import {Follow} from 'react-twitter-widgets'
+import {connect} from 'react-redux'
+import {GettingStartedState} from '../../types/gettingStarted'
+import {Customer} from '../../types/types'
 
 const classes: any = require('./GettingStartedView.scss')
 
@@ -20,9 +16,6 @@ interface ScriptProps {
 }
 
 class Script extends React.Component<ScriptProps, {}> {
-  static propTypes = {
-    url: PropTypes.string.isRequired,
-  }
 
   componentDidMount () {
     const element = findDOMNode((this.refs as any).element)
@@ -65,11 +58,11 @@ interface Example {
 }
 
 interface ViewProps {
-  params: any,
-  projectId: string,
-  user: Client,
-  gettingStartedState: GettingStartedState,
-  showPopup: any,
+  params: any
+  projectId: string
+  user: Customer
+  gettingStartedState: GettingStartedState
+  router: any
 }
 
 interface ViewState {
@@ -77,14 +70,6 @@ interface ViewState {
 }
 
 class GettingStartedView extends React.Component<ViewProps, ViewState> {
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired,
-  }
-
-  context: {
-    router?: any
-  }
 
   constructor (props: ViewProps) {
     super(props)
@@ -95,7 +80,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
 
   componentWillMount (): void {
     if (!this.props.gettingStartedState.isActive()) {
-      this.context.router.replace(`/${this.props.params.projectName}/models`)
+      this.props.router.replace(`/${this.props.params.projectName}/models`)
     }
   }
 
@@ -104,13 +89,10 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
       project: this.props.params.projectName,
       step: this.props.gettingStartedState.step,
     })
-    if (this.props.gettingStartedState.progress === 0) {
-      this.props.showPopup(<OnboardingView firstName={this.props.user.name.split(' ')[0]}/>)
-    }
   }
 
   componentDidUpdate (): void {
-    if (this.props.gettingStartedState.progress === 4) {
+    if (this.props.gettingStartedState.progress.index === 4) {
       const snd = new Audio(require('assets/success.mp3') as string)
       snd.volume = 0.5
       snd.play()
@@ -119,20 +101,20 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
 
   render () {
     const { progress } = this.props.gettingStartedState
-    const overlayActive = progress === 0 || progress === 4
+    const overlayActive = progress.index === 0 || progress.index === 4
     const downloadUrl = (example) => `${__BACKEND_ADDR__}/resources/getting-started-example?repository=${example.path}&project_id=${this.props.projectId}` // tslint:disable-line
     const guideUrl = 'https://docs.graph.cool/guides/setting-up-a-graphql-backend-in-5-minutes#2-defining-relations-between-your-models' // tslint:disable-line
 
     return (
       <div className={classes.root}>
-        {progress === 4 &&
+        {progress.index === 4 &&
           <div className={classes.overlay}>
             <div className={classes.emoji}>🎉</div>
             <div>
               <h2><strong>Congratulations</strong>, you did it!</h2>
               <p>
                 We hope you like how easy it is to setup your own GraphQL backend.<br />
-                If you need any help please join our Slack community. We’d love to talk to you!
+                If you need any help please join our Slack community. We'd love to talk to you!
               </p>
             </div>
             <div className={classes.social}>
@@ -162,7 +144,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             </div>
           </div>
         }
-        {progress <= 1 &&
+        {progress.index <= 1 &&
           <div className={`${classes.step} ${overlayActive ? classes.blurred : ''}`}>
             <div className={classes.text}>
               <h2>1. Create <strong>Post</strong> model</h2>
@@ -178,16 +160,16 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             </div>
           </div>
         }
-        {progress === 2 &&
+        {progress.index === 2 &&
           <div className={`${classes.step} ${overlayActive ? classes.blurred : ''}`}>
             <div className={classes.text}>
               <h2>2. Add some data</h2>
               <p>
                 In this step you will add some data to the <strong>Post</strong> model you just created.
-                It doesn’t matter what you add, it’s just about populating the database.
+                It doesn't matter what you add, it's just about populating the database.
               </p>
               <p>
-                It’s also possible to import existing data.
+                It's also possible to import existing data.
               </p>
             </div>
             <div className={classes.image}>
@@ -195,15 +177,15 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
             </div>
           </div>
         }
-        {progress >= 3 &&
+        {progress.index >= 3 &&
           <div className={`${classes.step} ${overlayActive ? classes.blurred : ''}`}>
             <div className={classes.text}>
               <h2>3. Run example app</h2>
               <p>
-                Awesome. You’re done setting up the backend.
+                Awesome. You're done setting up the backend.
               </p>
               <p>
-                Now it’s time to test the backend from an actual app. Choose your own example below!
+                Now it's time to test the backend from an actual app. Choose your own example below!
               </p>
             </div>
             <div className={classes.image}>
@@ -249,7 +231,7 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
                 <h3>
                   <a href='http://localhost:3000' target='_blank'>3. Open the example app</a>
                 </h3>
-                {progress === 3 &&
+                {progress.index === 3 &&
                   <div className={classes.status}>
                     <Loading color='#8989B1' />
                     &nbsp;&nbsp;Checking status...
@@ -260,9 +242,9 @@ class GettingStartedView extends React.Component<ViewProps, ViewState> {
           </div>
         }
         <div className={classes.pagination}>
-          <span className={progress <= 1 ? classes.active : ''} />
-          <span className={progress === 2 ? classes.active : ''} />
-          <span className={progress >= 3 ? classes.active : ''} />
+          <span className={progress.index <= 1 ? classes.active : ''} />
+          <span className={progress.index === 2 ? classes.active : ''} />
+          <span className={progress.index >= 3 ? classes.active : ''} />
         </div>
       </div>
     )
@@ -287,14 +269,9 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ showPopup }, dispatch)
-}
-
 const ReduxContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GettingStartedView)
+  mapStateToProps
+)(withRouter(GettingStartedView))
 
 const MappedGettingStartedView = mapProps({
   params: (props) => props.params,

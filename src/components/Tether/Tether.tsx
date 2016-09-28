@@ -1,16 +1,26 @@
 import * as React from 'react'
 import TetherComponent from 'react-tether'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
+import {Step,GettingStartedState} from '../../types/gettingStarted'
+import {classnames} from '../../utils/classnames'
 const classes: any = require('./Tether.scss')
 
+interface TetherStep {
+  step: Step
+  title: string
+  description?: string
+}
+
 interface Props {
-  steps: { [key: string]: string }
+  steps: TetherStep[]
   children: Element
-  gettingStartedState: any
+  gettingStartedState: GettingStartedState
   offsetX?: number
   offsetY?: number
   width?: number
   side?: string
+  horizontal?: string
+  zIndex?: number
 }
 
 class Tether extends React.Component<Props, {}> {
@@ -20,26 +30,41 @@ class Tether extends React.Component<Props, {}> {
     offsetY: 0,
     width: 220,
     side: 'bottom',
+    horizontal: 'left',
   }
 
-  render () {
-    const step = this.props.steps[this.props.gettingStartedState.step]
+  render() {
+    const step = this.props.steps.find((s) => s.step === this.props.gettingStartedState.step)
     const isBottom = this.props.side === 'bottom'
+    const isLeft = this.props.horizontal === 'left'
 
     return (
       <TetherComponent
+        style={{
+          zIndex: this.props.zIndex ? this.props.zIndex : 999,
+        }}
         offset={`${this.props.offsetY}px ${this.props.offsetX}px`}
-        attachment={`${isBottom ? 'top' : 'bottom'} left`}
-        targetAttachment={`${isBottom ? 'bottom' : 'top'} left`}
+        attachment={`${isBottom ? 'top' : 'bottom'} ${this.props.horizontal}`}
+        targetAttachment={`${isBottom ? 'bottom' : 'top'} ${this.props.horizontal}`}
       >
         {this.props.children}
         {step &&
-          <div
-            className={`${classes.tether} ${isBottom ? classes.bottom : classes.top}`}
-            style={{width: this.props.width, zIndex: 9}}
-          >
-            {step}
+        <div
+          className={classnames(classes.tether,
+                                'br-2',
+                                isBottom ? classes.bottom : classes.top,
+                                isLeft ? classes.left : classes.right)}
+          style={{width: this.props.width, zIndex: 9}}
+        >
+          <div className={classes.title}>
+            {step.title}
           </div>
+          {step.description &&
+          <div className={`${classes.description} lh-1-4`}>
+            {step.description}
+          </div>
+          }
+        </div>
         }
       </TetherComponent>
     )

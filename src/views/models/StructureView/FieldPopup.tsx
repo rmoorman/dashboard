@@ -1,12 +1,13 @@
 import * as React from 'react'
-import mapProps from 'map-props'
 import * as Relay from 'react-relay'
+import {withRouter} from 'react-router'
+import mapProps from 'map-props'
 import ClickOutside from 'react-click-outside'
 import TypeSelection from './TypeSelection'
+import Tether from '../../../components/Tether/Tether'
 import ScrollBox from '../../../components/ScrollBox/ScrollBox'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {valueToString, stringToValue} from '../../../utils/valueparser'
-import {ShowNotificationCallback} from '../../../types/utils'
 import TagsInput from 'react-tagsinput'
 import Help from '../../../components/Help/Help'
 import Datepicker from '../../../components/Datepicker/Datepicker'
@@ -16,9 +17,12 @@ import {ToggleSide} from '../../../components/ToggleButton/ToggleButton'
 import AddFieldMutation from '../../../mutations/AddFieldMutation'
 import UpdateFieldMutation from '../../../mutations/UpdateFieldMutation'
 import {Field, Model} from '../../../types/types'
+import {ShowNotificationCallback} from '../../../types/utils'
+import {GettingStartedState} from '../../../types/gettingStarted'
 import {emptyDefault} from '../utils'
+import {showNotification} from '../../../actions/notification'
 import {connect} from 'react-redux'
-import {nextStep} from '../../../actions/gettingStarted'
+import {nextStep, showDonePopup} from '../../../actions/gettingStarted'
 import {bindActionCreators} from 'redux'
 const classes: any = require('./FieldPopup.scss')
 
@@ -29,8 +33,11 @@ interface Props {
   model: Model
   params: any
   allModels: Model[]
-  gettingStartedState: any,
-  nextStep: any,
+  router: any
+  gettingStartedState: GettingStartedState
+  nextStep: any
+  showNotification: ShowNotificationCallback
+  showDonePopup: () => void
 }
 
 interface State {
@@ -48,16 +55,6 @@ interface State {
 }
 
 class FieldPopup extends React.Component<Props, State> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    router: React.PropTypes.object.isRequired,
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    router: any
-    showNotification: ShowNotificationCallback
-  }
 
   constructor(props: Props) {
     super(props)
@@ -80,6 +77,18 @@ class FieldPopup extends React.Component<Props, State> {
       reverseRelationField: field ? field.reverseRelationField : null,
       useMigrationValue: false,
       migrationValue: emptyDefault({typeIdentifier, isList, enumValues: []} as Field),
+    }
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state.name === 'imageUrl' &&
+        this.props.gettingStartedState.isCurrentStep('STEP2_ENTER_FIELD_NAME_IMAGEURL')) {
+      this.props.nextStep()
+    }
+
+    if (this.state.typeIdentifier === 'String' &&
+        this.props.gettingStartedState.isCurrentStep('STEP2_SELECT_TYPE_IMAGEURL')) {
+      this.props.nextStep()
     }
   }
 
@@ -124,14 +133,25 @@ class FieldPopup extends React.Component<Props, State> {
                     <Help text='Fieldnames must be camelCase like "firstName" or "dateOfBirth".'/>
                   </div>
                   <div className={classes.right}>
-                    <input
-                      autoFocus={!this.props.field}
-                      type='text'
-                      placeholder='Fieldname'
-                      defaultValue={this.state.name}
-                      onChange={(e: any) => this.setState({ name: (e.target as HTMLInputElement).value } as State)}
-                      onKeyUp={(e: any) => e.keyCode === 13 ? this.submit() : null}
-                    />
+                    <Tether
+                      steps={[{
+                        step: 'STEP2_ENTER_FIELD_NAME_IMAGEURL',
+                        title: 'Call the field "imageUrl"',
+                        description: 'Field names always start lower case.',
+                      }]}
+                      offsetX={5}
+                      offsetY={5}
+                      width={240}
+                    >
+                      <input
+                        autoFocus={!this.props.field}
+                        type='text'
+                        placeholder='Fieldname'
+                        defaultValue={this.state.name}
+                        onChange={(e: any) => this.setState({ name: (e.target as HTMLInputElement).value } as State)}
+                        onKeyUp={(e: any) => e.keyCode === 13 ? this.submit() : null}
+                      />
+                    </Tether>
                   </div>
                 </div>
                 <div className={classes.row}>
@@ -141,10 +161,21 @@ class FieldPopup extends React.Component<Props, State> {
                     or setup relations between existing models.`}/>
                   </div>
                   <div className={classes.right}>
-                    <TypeSelection
-                      selected={this.state.typeIdentifier}
-                      select={(typeIdentifier) => this.updateTypeIdentifier(typeIdentifier)}
-                    />
+                    <Tether
+                      steps={[{
+                        step: 'STEP2_SELECT_TYPE_IMAGEURL',
+                        title: 'Select the type "String"',
+                      }]}
+                      offsetX={5}
+                      offsetY={5}
+                      width={240}
+                      side={'top'}
+                    >
+                      <TypeSelection
+                        selected={this.state.typeIdentifier}
+                        select={(typeIdentifier) => this.updateTypeIdentifier(typeIdentifier)}
+                      />
+                    </Tether>
                   </div>
                 </div>
                 {this.state.typeIdentifier === 'Enum' &&
@@ -266,12 +297,22 @@ class FieldPopup extends React.Component<Props, State> {
                 <div className={classes.button} onClick={() => this.close()}>
                   Cancel
                 </div>
-                <button
-                  className={`${classes.button} ${this.isValid() ? classes.green : classes.disabled}`}
-                  onClick={() => this.submit()}
+                <Tether
+                  steps={[{
+                    step: 'STEP2_CLICK_CONFIRM_IMAGEURL',
+                    title: `That's it, click create!`,
+                  }]}
+                  offsetX={5}
+                  offsetY={5}
+                  width={240}
                 >
-                  {this.props.field ? 'Save' : 'Create'}
-                </button>
+                  <button
+                    className={`${classes.button} ${this.isValid() ? classes.green : classes.disabled}`}
+                    onClick={this.submit}
+                  >
+                    {this.props.field ? 'Save' : 'Create'}
+                  </button>
+                </Tether>
               </div>
             </div>
           </ClickOutside>
@@ -288,11 +329,11 @@ class FieldPopup extends React.Component<Props, State> {
     }
   }
 
-  private close() {
-    this.context.router.goBack()
+  private close = () => {
+    this.props.router.goBack()
   }
 
-  private submit() {
+  private submit = () => {
     if (this.props.field) {
       this.update()
     } else {
@@ -300,9 +341,34 @@ class FieldPopup extends React.Component<Props, State> {
     }
   }
 
-  private create() {
+  private create = () => {
     if (!this.isValid()) {
       return
+    }
+
+    if (this.props.gettingStartedState.isCurrentStep('STEP2_CLICK_CONFIRM_IMAGEURL')) {
+      if (this.state.name === 'imageUrl' && this.state.typeIdentifier === 'String') {
+        this.props.showDonePopup()
+        this.props.nextStep()
+      } else {
+        this.props.showNotification({
+          level: 'warning',
+          message: 'Make sure that the name is "imageUrl" and the type is "String".',
+        })
+        return
+      }
+    }
+    if (this.props.gettingStartedState.isCurrentStep('STEP2_CREATE_FIELD_DESCRIPTION')) {
+      if (this.state.name === 'description' && this.state.typeIdentifier === 'String') {
+        this.props.showDonePopup()
+        this.props.nextStep()
+      } else {
+        this.props.showNotification({
+          level: 'warning',
+          message: 'Make sure that the name is "description" and the type is "String".',
+        })
+        return
+      }
     }
 
     this.setState({loading: true} as State)
@@ -343,29 +409,17 @@ class FieldPopup extends React.Component<Props, State> {
             model: this.props.params.modelName,
             field: name,
           })
-
           this.close()
-
-          // getting-started onboarding steps
-          const isStep3 = this.props.gettingStartedState.isActive('STEP3_CREATE_TEXT_FIELD')
-          if (isStep3 && name === 'imageUrl' && typeIdentifier === 'String') {
-            this.props.nextStep()
-          }
-
-          const isStep4 = this.props.gettingStartedState.isActive('STEP4_CREATE_COMPLETED_FIELD')
-          if (isStep4 && name === 'description' && typeIdentifier === 'String') {
-            this.props.nextStep()
-          }
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({loading: false} as State)
         },
       }
     )
   }
 
-  private update() {
+  private update = () => {
     if (!this.isValid()) {
       return
     }
@@ -412,14 +466,14 @@ class FieldPopup extends React.Component<Props, State> {
           this.close()
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
           this.setState({loading: false} as State)
         },
       }
     )
   }
 
-  private isValid(): boolean {
+  private isValid = (): boolean => {
     if (this.state.name === '') {
       return false
     }
@@ -435,7 +489,7 @@ class FieldPopup extends React.Component<Props, State> {
     return true
   }
 
-  private needsMigrationValue(): boolean {
+  private needsMigrationValue = (): boolean => {
     if (this.props.model.itemCount === 0) {
       return false
     }
@@ -592,14 +646,14 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({nextStep}, dispatch)
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({nextStep, showDonePopup, showNotification}, dispatch)
 }
 
 const ReduxContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(FieldPopup)
+)(withRouter(FieldPopup))
 
 const MappedFieldPopup = mapProps({
   params: (props) => props.params,
@@ -618,50 +672,50 @@ export default Relay.createContainer(MappedFieldPopup, {
   prepareVariables: (prevVariables: any) => (Object.assign({}, prevVariables, {
     fieldExists: !!prevVariables.fieldName,
   })),
-    fragments: {
-        viewer: () => Relay.QL`
-            fragment on Viewer {
-                model: modelByName(projectName: $projectName, modelName: $modelName) {
+  fragments: {
+    viewer: () => Relay.QL`
+      fragment on Viewer {
+        model: modelByName(projectName: $projectName, modelName: $modelName) {
+          id
+          itemCount
+        }
+        field: fieldByName(
+        projectName: $projectName
+        modelName: $modelName
+        fieldName: $fieldName
+        ) @include(if: $fieldExists) {
+          id
+          name
+          typeIdentifier
+          isRequired
+          isList
+          enumValues
+          defaultValue
+          relation {
+            id
+          }
+          reverseRelationField {
+            name
+          }
+        }
+        project: projectByName(projectName: $projectName) {
+          models(first: 100) {
+            edges {
+              node {
+                id
+                name
+                unconnectedReverseRelationFieldsFrom(relatedModelName: $modelName) {
+                  id
+                  name
+                  relation {
                     id
-                    itemCount
+                  }
                 }
-                field: fieldByName(
-                projectName: $projectName
-                modelName: $modelName
-                fieldName: $fieldName
-                ) @include(if: $fieldExists) {
-                    id
-                    name
-                    typeIdentifier
-                    isRequired
-                    isList
-                    enumValues
-                    defaultValue
-                    relation {
-                        id
-                    }
-                    reverseRelationField {
-                        name
-                    }
-                }
-                project: projectByName(projectName: $projectName) {
-                    models(first: 100) {
-                        edges {
-                            node {
-                                id
-                                name
-                                unconnectedReverseRelationFieldsFrom(relatedModelName: $modelName) {
-                                    id
-                                    name
-                                    relation {
-                                        id
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+              }
             }
-        `,
-    },
+          }
+        }
+      }
+    `,
+  },
 })

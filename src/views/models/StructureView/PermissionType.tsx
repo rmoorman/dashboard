@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { UserType, Field } from '../../../types/types'
+import {withRouter} from 'react-router'
+import {UserType, Field} from '../../../types/types'
 import Icon from '../../../components/Icon/Icon'
 import calculateSize from 'calculate-size'
 const classes: any = require('./PermissionType.scss')
@@ -21,17 +22,14 @@ interface Props {
   availableUserRoles: string[]
   possibleRelatedPermissionPaths: Field[][]
   isValid: boolean
+  router: any
 }
 
 const emptyRoleToken = '____EMPTY_ROLE_TOKEN'
 const addRoleToken = '____ADD_ROLE_TOKEN'
 const emptyStepToken = '____EMPTY_STEP_TOKEN'
 
-export default class PermissionType extends React.Component<Props, {}> {
-
-  static contextTypes: React.ValidationMap<any> = {
-    router: React.PropTypes.object.isRequired,
-  }
+class PermissionType extends React.Component<Props, {}> {
 
   _onChangeUserType (userType: UserType) {
     this.props.dataCallback({
@@ -42,7 +40,7 @@ export default class PermissionType extends React.Component<Props, {}> {
 
   _onChangeUserRole (userRole: string) {
     if (userRole === addRoleToken) {
-      (this.context as any).router.push(`/${this.props.params.projectName}/models/User/structure/edit/roles`)
+      this.props.router.push(`/${this.props.params.projectName}/models/User/structure/edit/roles`)
 
       return
     }
@@ -219,3 +217,5 @@ export default class PermissionType extends React.Component<Props, {}> {
     )
   }
 }
+
+export default withRouter(PermissionType)

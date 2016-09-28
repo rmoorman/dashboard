@@ -1,15 +1,19 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
-import { Viewer } from '../../../types/types'
-import UpdateCustomerMutation from '../../../mutations/UpdateCustomerMutation'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {Viewer} from '../../../types/types'
+import UpdateCustomerInformationMutation from '../../../mutations/UpdateCustomerInformationMutation'
 import UpdatePasswordMutation from '../../../mutations/UpdatePasswordMutation'
-import { onFailureShowNotification } from '../../../utils/relay'
-import { ShowNotificationCallback } from '../../../types/utils'
+import {onFailureShowNotification} from '../../../utils/relay'
+import {ShowNotificationCallback} from '../../../types/utils'
+import {showNotification} from '../../../actions/notification'
 const classes: any = require('./SettingsTab.scss')
 
 interface Props {
   params: any
   viewer: Viewer
+  showNotification: ShowNotificationCallback
 }
 
 interface State {
@@ -22,20 +26,12 @@ interface State {
 
 class SettingsTab extends React.Component<Props, State> {
 
-  static contextTypes: React.ValidationMap<any> = {
-    showNotification: React.PropTypes.func.isRequired,
-  }
-
-  context: {
-    showNotification: ShowNotificationCallback
-  }
-
   constructor (props) {
     super(props)
 
     this.state = {
-      email: this.props.viewer.user.email,
-      name: this.props.viewer.user.name,
+      email: this.props.viewer.user.crm.information.email,
+      name: this.props.viewer.user.crm.information.name,
       oldPassword: '',
       newPasswordOne: '',
       newPasswordTwo: '',
@@ -103,12 +99,12 @@ class SettingsTab extends React.Component<Props, State> {
   }
 
   private saveChanges = () => {
-    const nameWasChanged = this.props.viewer.user.name !== this.state.name
-    const emailWasChanged = this.props.viewer.user.email !== this.state.email
+    const nameWasChanged = this.props.viewer.user.crm.information.name !== this.state.name
+    const emailWasChanged = this.props.viewer.user.crm.information.email !== this.state.email
     const passwordWasChanged = this.state.newPasswordOne !== '' && this.state.newPasswordTwo !== ''
 
     if (!nameWasChanged && !emailWasChanged && !passwordWasChanged) {
-      this.context.showNotification('No changes to save...', 'info')
+      this.props.showNotification({message: 'No changes to save...', level: 'info'})
     }
 
     if (nameWasChanged || emailWasChanged) {
@@ -122,17 +118,17 @@ class SettingsTab extends React.Component<Props, State> {
 
   private handleCustomerChange () {
     Relay.Store.commitUpdate(
-      new UpdateCustomerMutation({
-        userId: this.props.viewer.user.id,
+      new UpdateCustomerInformationMutation({
+        customerInformationId: this.props.viewer.user.crm.information.id,
         email: this.state.email,
         name: this.state.name,
       }),
       {
         onSuccess: () => {
-          this.context.showNotification('Changes to email and name were saved.', 'success')
+          this.props.showNotification({message: 'Changes to email and name were saved.', level: 'success'})
         },
         onFailure: (transaction) => {
-          onFailureShowNotification(transaction, this.context.showNotification)
+          onFailureShowNotification(transaction, this.props.showNotification)
         },
       }
     )
@@ -142,13 +138,13 @@ class SettingsTab extends React.Component<Props, State> {
     if (this.state.newPasswordOne !== '' && this.state.newPasswordOne === this.state.newPasswordTwo) {
       Relay.Store.commitUpdate(
         new UpdatePasswordMutation({
-          userId: this.props.viewer.user.id,
+          customerId: this.props.viewer.user.id,
           oldPassword: this.state.oldPassword,
           newPassword: this.state.newPasswordOne,
         }),
         {
           onSuccess: () => {
-            this.context.showNotification('Changes to password successful.', 'success')
+            this.props.showNotification({message: 'Changes to password successful.', level: 'success'})
             this.setState({
               oldPassword: '',
               newPasswordOne: '',
@@ -156,24 +152,35 @@ class SettingsTab extends React.Component<Props, State> {
             } as State)
           },
           onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.context.showNotification)
+            onFailureShowNotification(transaction, this.props.showNotification)
           },
         }
       )
     } else {
-      this.context.showNotification('Please enter the same new password twice.', 'error')
+      this.props.showNotification({message: 'Please enter the same new password twice.', level: 'error'})
     }
   }
 }
 
-export default Relay.createContainer(SettingsTab, {
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({showNotification}, dispatch)
+}
+
+const MappedSettingsTab = connect(null, mapDispatchToProps)(SettingsTab)
+
+export default Relay.createContainer(MappedSettingsTab, {
   fragments: {
     viewer: () => Relay.QL`
       fragment on Viewer {
         user {
           id
-          name
-          email
+          crm {
+            information {
+              id
+              name
+              email
+            }
+          }
         }
       }
     `,

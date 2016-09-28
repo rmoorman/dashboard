@@ -4,6 +4,7 @@ import { Route, IndexRoute, IndexRedirect } from 'react-router'
 import Loading from './components/Loading/Loading'
 import RedirectOnMount from './components/RedirectOnMount/RedirectOnMount'
 import RootView from './views/RootView/RootView'
+import SignUpView from './views/SignUpView/SignUpView'
 import ProjectRootView from './views/ProjectRootView/ProjectRootView'
 import RootRedirectView from './views/ProjectRootView/RootRedirectView'
 import TokenRedirectView from './views/ProjectRootView/TokenRedirectView'
@@ -12,7 +13,7 @@ import FieldPopup from './views/models/StructureView/FieldPopup'
 import BrowserView from './views/models/BrowserView/BrowserView'
 import ModelRedirectView from './views/models/ModelRedirectView'
 import PlaygroundView from './views/playground/PlaygroundView/PlaygroundView'
-import GettingStartedView from './views/GettingStartedView/GettingStartedView'
+// import GettingStartedView from './views/GettingStartedView/GettingStartedView'
 import AccountView from './views/account/AccountView/AccountView'
 import SettingsTab from './views/account/AccountView/SettingsTab'
 import ResetPasswordView from './views/account/ResetPasswordView/ResetPasswordView'
@@ -82,6 +83,7 @@ export default (
     <Route path='token' component={TokenRedirectView} />
     <Route path='login' component={LoginView} queries={ViewerQuery} render={render} />
     <Route path='reset-password' component={ResetPasswordView} />
+    <Route path='signup' component={SignUpView} />
     <Route path=':projectName' component={ProjectRootView} queries={ViewerQuery} render={render}>
       <Route path='account' component={AccountView} queries={ViewerQuery} render={render}>
         <Route path='settings' component={SettingsTab} queries={ViewerQuery} render={render} />
@@ -102,7 +104,6 @@ export default (
       </Route>
       <Route path='actions' component={ActionsView} queries={ViewerQuery} render={render} />
       <Route path='playground' component={PlaygroundView} queries={ViewerQuery} render={render} />
-      <Route path='getting-started' component={GettingStartedView} queries={ViewerQuery} render={render} />
       <Route path='settings' component={ProjectSettingsView} queries={ViewerQuery} render={render} />
       <IndexRedirect to='models' />
     </Route>
