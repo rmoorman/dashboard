@@ -78,9 +78,6 @@ module.exports = {
       test: /graphics\/.*\.svg$/,
       loader: 'file',
     }, {
-      test: /graphics\/.*\.png$/,
-      loader: 'file',
-    }, {
       test: /(graphics|gifs)\/.*\.(png|gif)$/,
       loader: 'file',
     }],
