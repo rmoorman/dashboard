@@ -6,7 +6,7 @@ import {withRouter} from 'react-router'
 import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
         toggleNewRow, hideNewRow, toggleFilter} from '../../../actions/databrowser/ui'
 import {resetDataAndUI} from '../../../actions/databrowser/shared'
-import {setItemCount, setFilter} from '../../../actions/databrowser/data'
+import {setItemCount, setFilter, setOrder} from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
 import calculateSize from 'calculate-size'
 import * as Immutable from 'immutable'
@@ -75,11 +75,12 @@ interface Props {
   setItemCount: (itemCount: number) => any
   filter: Immutable.Map<string, TypedValue>
   setFilter: (fieldName: string, value: TypedValue) => any
+  orderBy: OrderBy
+  setOrder: (orderBy: OrderBy) => any
 }
 
 interface State {
   nodes: Immutable.List<Immutable.Map<string, any>>
-  orderBy: OrderBy
   loaded: Immutable.List<boolean>
 }
 
@@ -98,10 +99,6 @@ class BrowserView extends React.Component<Props, State> {
 
     this.state = {
       nodes: Immutable.List<Immutable.Map<string, any>>(),
-      orderBy: {
-        fieldName: 'id',
-        order: 'DESC',
-      },
       loaded: Immutable.List<boolean>(),
     }
   }
@@ -356,7 +353,7 @@ class BrowserView extends React.Component<Props, State> {
         <HeaderCell
           key={field.id}
           field={field}
-          sortOrder={this.state.orderBy.fieldName === field.name ? this.state.orderBy.order : null}
+          sortOrder={this.props.orderBy.fieldName === field.name ? this.props.orderBy.order : null}
           toggleSortOrder={() => this.setSortOrder(field)}
           updateFilter={(value) => this.updateFilter(value, field)}
           filterVisible={this.props.filtersVisible}
@@ -419,24 +416,17 @@ class BrowserView extends React.Component<Props, State> {
   }
 
   private setSortOrder = (field: Field) => {
-    const order = this.state.orderBy.fieldName === field.name
-      ? (this.state.orderBy.order === 'ASC' ? 'DESC' : 'ASC')
+    const order = this.props.orderBy.fieldName === field.name
+      ? (this.props.orderBy.order === 'ASC' ? 'DESC' : 'ASC')
       : 'ASC'
 
-    this.setState(
-      {
-        orderBy: {
-          fieldName: field.name,
-          order,
-        },
-      } as State,
-      this.reloadData
-    )
+    this.props.setOrder({fieldName: field.name, order})
+    this.reloadData()
   }
 
   private loadData = (skip: number, first: number = 50): Promise<Immutable.List<Immutable.Map<string, any>>> => {
     return queryNodes(this.lokka, this.props.model.namePlural, this.props.fields,
-                      skip, first, this.props.filter, this.state.orderBy)
+                      skip, first, this.props.filter, this.props.orderBy)
       .then(results => {
         const newNodes = results.viewer[`all${this.props.model.namePlural}`]
           .edges.map(({node}) => {
@@ -615,6 +605,7 @@ const mapStateToProps = (state) => {
     loading: state.databrowser.ui.loading,
     itemCount: state.databrowser.data.itemCount,
     filter: state.databrowser.data.filter,
+    orderBy: state.databrowser.data.orderBy,
   }
 }
 
@@ -639,6 +630,7 @@ function mapDispatchToProps(dispatch) {
       showNotification,
       setItemCount,
       setFilter,
+      setOrder,
     },
     dispatch)
 }

@@ -25,6 +25,8 @@ const initialState: State =  {
 
 export function reduceData(state: State = initialState, action: ReduxAction): State {
   switch (action.type) {
+    case Constants.SET_ORDER:
+      return Object.assign({}, state, { orderBy: action.payload })
     case Constants.SET_FILTER:
       const {fieldName, value} = action.payload
       return Object.assign({}, state, { filter: state.filter.set(fieldName, value) })

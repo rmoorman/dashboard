@@ -1,6 +1,6 @@
 import {ReduxAction, ReduxThunk, Dispatch} from '../../types/reducers'
 import {TypedValue} from '../../types/utils'
-import {Field} from '../../types/types'
+import {Field, OrderBy} from '../../types/types'
 import Constants from '../../constants/databrowser/data'
 import {queryNodes} from '../../utils/relay'
 
@@ -8,6 +8,13 @@ export function setItemCount(count: number) {
   return {
     type: Constants.SET_ITEMCOUNT,
     payload: count,
+  }
+}
+
+export function setOrder(orderBy: OrderBy) {
+  return {
+    type: Constants.SET_ORDER,
+    payload: orderBy,
   }
 }
 
