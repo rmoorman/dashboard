@@ -4,7 +4,9 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
 import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
-        toggleNewRow, hideNewRow, toggleFilter, resetUI} from '../../../actions/databrowser/ui'
+        toggleNewRow, hideNewRow, toggleFilter} from '../../../actions/databrowser/ui'
+import {resetDataAndUI} from '../../../actions/databrowser/shared'
+import {setItemCount, setFilter} from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
 import calculateSize from 'calculate-size'
 import * as Immutable from 'immutable'
@@ -61,7 +63,7 @@ interface Props {
   toggleFilter: () => any
   setScrollTop: (scrollTop: number) => any
   setLoading: (loading: boolean) => any
-  resetUI: () => any
+  resetDataAndUI: () => any
   clearNodeSelection: () => any
   setNodeSelection: (ids: Immutable.List<string>) => any
   toggleNodeSelection: (id: string) => any
@@ -69,13 +71,15 @@ interface Props {
   selectedNodeIds: Immutable.List<string>
   loading: boolean
   scrollTop: number
+  itemCount: number
+  setItemCount: (itemCount: number) => any
+  filter: Immutable.Map<string, TypedValue>
+  setFilter: (fieldName: string, value: TypedValue) => any
 }
 
 interface State {
   nodes: Immutable.List<Immutable.Map<string, any>>
   orderBy: OrderBy
-  filter: Immutable.Map<string, any>
-  itemCount: number
   loaded: Immutable.List<boolean>
 }
 
@@ -98,13 +102,12 @@ class BrowserView extends React.Component<Props, State> {
         fieldName: 'id',
         order: 'DESC',
       },
-      filter: Immutable.Map<string, any>(),
-      itemCount: this.props.model.itemCount,
       loaded: Immutable.List<boolean>(),
     }
   }
 
   componentWillMount = () => {
+    this.props.setItemCount(this.props.model.itemCount)
     this.reloadData()
   }
 
@@ -122,7 +125,7 @@ class BrowserView extends React.Component<Props, State> {
   }
 
   componentWillUnmount = () => {
-    this.props.resetUI()
+    this.props.resetDataAndUI()
   }
 
   render() {
@@ -191,7 +194,7 @@ class BrowserView extends React.Component<Props, State> {
                     headerHeight={74}
                     headerRenderer={this.headerRenderer}
 
-                    rowCount={this.state.itemCount}
+                    rowCount={this.props.itemCount}
                     rowHeight={47}
                     cellRenderer={this.cellRenderer}
                     loadingCellRenderer={this.loadingCellRenderer}
@@ -433,7 +436,7 @@ class BrowserView extends React.Component<Props, State> {
 
   private loadData = (skip: number, first: number = 50): Promise<Immutable.List<Immutable.Map<string, any>>> => {
     return queryNodes(this.lokka, this.props.model.namePlural, this.props.fields,
-                      skip, first, this.state.filter, this.state.orderBy)
+                      skip, first, this.props.filter, this.state.orderBy)
       .then(results => {
         const newNodes = results.viewer[`all${this.props.model.namePlural}`]
           .edges.map(({node}) => {
@@ -455,8 +458,8 @@ class BrowserView extends React.Component<Props, State> {
         this.setState({
           nodes: nodes,
           loaded: loaded,
-          itemCount: results.viewer[`all${this.props.model.namePlural}`].count,
         } as State)
+        this.props.setItemCount(results.viewer[`all${this.props.model.namePlural}`].count)
         return nodes
       })
       .catch((err) => {
@@ -479,10 +482,12 @@ class BrowserView extends React.Component<Props, State> {
   }
 
   private updateFilter = (value: TypedValue, field: Field) => {
-    this.setState({filter: this.state.filter.set(field.name, value)} as State, this.reloadData)
-
+    this.props.setFilter(field.name, value)
+    this.reloadData()
     // TODO: select cut set of selected and filtered nodes
-    this.props.clearNodeSelection()
+    if (this.props.selectedNodeIds.size > 0) {
+      this.props.clearNodeSelection()
+    }
   }
 
   private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, index: number) => {
@@ -608,6 +613,8 @@ const mapStateToProps = (state) => {
     selectedNodeIds: state.databrowser.ui.selectedNodeIds,
     scrollTop: state.databrowser.ui.scrollTop,
     loading: state.databrowser.ui.loading,
+    itemCount: state.databrowser.data.itemCount,
+    filter: state.databrowser.data.filter,
   }
 }
 
@@ -622,7 +629,7 @@ function mapDispatchToProps(dispatch) {
       toggleNodeSelection,
       setScrollTop,
       setLoading,
-      resetUI,
+      resetDataAndUI,
       showDonePopup,
       nextStep,
       showPopup,
@@ -630,6 +637,8 @@ function mapDispatchToProps(dispatch) {
       startProgress,
       incrementProgress,
       showNotification,
+      setItemCount,
+      setFilter,
     },
     dispatch)
 }

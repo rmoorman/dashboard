@@ -24,7 +24,6 @@ interface Props {
   field: Field
   sortOrder?: string
   toggleSortOrder: () => void
-  filter?: string
   updateFilter: (value: string) => void
   filterVisible: boolean
   params: any
@@ -130,7 +129,6 @@ class HeaderCell extends React.Component<Props, {}> {
           <input
             type='number'
             placeholder={`Filter by ${this.props.field.name}`}
-            defaultValue={this.props.filter}
             onChange={(e: any) => this.onFilterChangeNumber(e.target.value)}
           />
         )
@@ -140,7 +138,6 @@ class HeaderCell extends React.Component<Props, {}> {
             type='number'
             step='any'
             placeholder={`Filter by ${this.props.field.name}`}
-            defaultValue={this.props.filter}
             onChange={(e: any) => this.onFilterChangeNumber(e.target.value)}
           />
         )
@@ -169,7 +166,6 @@ class HeaderCell extends React.Component<Props, {}> {
           <input
             type='text'
             placeholder={`Filter by ${this.props.field.name}`}
-            defaultValue={this.props.filter}
             onChange={(e: any) => this.onFilterChangeString(e.target.value)}
           />
         )

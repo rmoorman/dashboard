@@ -14,12 +14,6 @@ export function toggleNewRow(): ReduxAction {
   }
 }
 
-export function resetUI(): ReduxAction {
-  return {
-    type: Constants.RESET_UI,
-  }
-}
-
 export function setNodeSelection(ids: Immutable.List<string>): ReduxAction {
   return {
     type: Constants.SET_NODE_SELECTION,

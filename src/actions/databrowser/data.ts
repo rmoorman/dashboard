@@ -1,11 +1,29 @@
-import {ReduxAction} from '../../types/reducers'
+import {ReduxAction, ReduxThunk, Dispatch} from '../../types/reducers'
 import {TypedValue} from '../../types/utils'
 import {Field} from '../../types/types'
 import Constants from '../../constants/databrowser/data'
+import {queryNodes} from '../../utils/relay'
 
-export function loadData(): ReduxAction {
+export function setItemCount(count: number) {
   return {
-    type: Constants.QUERY,
+    type: Constants.SET_ITEMCOUNT,
+    payload: count,
+  }
+}
+
+export function setFilter(fieldName: string, value: TypedValue) {
+  return {
+    type: Constants.SET_FILTER,
+    payload: {
+      fieldName,
+      value,
+    },
+  }
+}
+
+export function loadData(lokka: any, modelNamePlural: string, fields: Field[]): ReduxThunk {
+  return (dispatch: Dispatch): Promise<{}> => {
+    return queryNodes(lokka, modelNamePlural, fields, )
   }
 }
 

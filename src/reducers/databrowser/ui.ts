@@ -1,5 +1,6 @@
 import {ReduxAction} from '../../types/reducers'
 import Constants from '../../constants/databrowser/ui'
+import SharedConstants from '../../constants/databrowser/shared'
 import * as Immutable from 'immutable'
 
 interface State {
@@ -40,7 +41,7 @@ export function reduceUI(state: State = initialState, action: ReduxAction) {
       return Object.assign({}, state, { scrollTop: action.payload })
     case Constants.SET_LOADING:
       return Object.assign({}, state, { loading: action.payload })
-    case Constants.RESET_UI:
+    case SharedConstants.RESET:
       return initialState
   }
   return state
