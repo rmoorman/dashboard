@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as Relay from 'react-relay'
 
 interface Props {
 }
