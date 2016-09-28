@@ -80,6 +80,9 @@ module.exports = {
     }, {
       test: /graphics\/.*\.png$/,
       loader: 'file',
+    }, {
+      test: /(graphics|gifs)\/.*\.(png|gif)$/,
+      loader: 'file',
     }],
   },
   plugins: [
