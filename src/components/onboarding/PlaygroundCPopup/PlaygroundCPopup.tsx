@@ -10,97 +10,105 @@ import {Example} from '../../../types/types'
 const classes: any = require('./PlaygroundCPopup.scss')
 
 interface Tutorial {
-  title: string
-  description: string
-  image: string
-  link: string
+title: string
+description: string
+image: string
+link: string
 }
 
 /* tslint:disable */
 const guides: Tutorial[] = [{
-  title: 'Learnrelay.org',
-  description: 'A comprehensive, interactive introduction to Relay',
-  link: 'https://learnrelay.org/',
-  image: require('../../../assets/graphics/relay.png'),
+title: 'Learnrelay.org',
+description: 'A comprehensive, interactive introduction to Relay',
+link: 'https://learnrelay.org/',
+image: require('../../../assets/graphics/relay.png'),
 }, {
-  title: 'GraphQL and the amazing Apollo Client',
-  description: 'Explore an Application built using React and Angular 2',
-  link: 'https://medium.com/google-developer-experts/graphql-and-the-amazing-apollo-client-fe57e162a70c',
-  image: require('../../../assets/graphics/apollo.png'),
+title: 'GraphQL and the amazing Apollo Client',
+description: 'Explore an Application built using React and Angular 2',
+link: 'https://medium.com/google-developer-experts/graphql-and-the-amazing-apollo-client-fe57e162a70c',
+image: require('../../../assets/graphics/apollo.png'),
 }, {
-  title: 'Introducing Lokka',
-  description: 'A Simple JavaScript Client for GraphQL',
-  link: 'https://voice.kadira.io/introducing-lokka-a-simple-javascript-client-for-graphql-e0802695648c',
-  image: require('../../../assets/graphics/lokka.png'),
+title: 'Introducing Lokka',
+description: 'A Simple JavaScript Client for GraphQL',
+link: 'https://voice.kadira.io/introducing-lokka-a-simple-javascript-client-for-graphql-e0802695648c',
+image: require('../../../assets/graphics/lokka.png'),
 }]
 /* tslint:enable */
 
 const examples = {
-  ReactRelay: {
-    path: 'react-relay-instagram-example',
-    description: 'React + Relay',
-  },
-  ReactApollo: {
-    path: 'react-apollo-instagram-example',
-    description: 'React + Apollo',
-  },
-  AngularApollo: {
-    path: 'angular-apollo-instagram-example',
-    description: 'Angular + Apollo',
-  },
+ReactRelay: {
+  path: 'react-relay-instagram-example',
+  description: 'React + Relay',
+},
+ReactApollo: {
+  path: 'react-apollo-instagram-example',
+  description: 'React + Apollo',
+},
+AngularApollo: {
+  path: 'angular-apollo-instagram-example',
+  description: 'Angular + Apollo',
+},
 }
 
 interface Props {
-  id: string
-  projectId: string
-  nextStep: () => Promise<void>
-  selectExample: (selectedExample: Example) => any
-  gettingStartedState: GettingStartedState
+id: string
+projectId: string
+nextStep: () => Promise<void>
+selectExample: (selectedExample: Example) => any
+gettingStartedState: GettingStartedState
 }
 
 interface State {
-  mouseOver: boolean
+mouseOver: boolean
 }
 
 class PlaygroundCPopup extends React.Component<Props, State> {
 
-  state = {
-    mouseOver: false,
+state = {
+  mouseOver: false,
+}
+
+refs: {
+  [key: string]: any
+  exampleAnchor: HTMLDivElement
+  congratsAnchor: HTMLDivElement
+  scroller: HTMLDivElement
+}
+
+componentDidUpdate(prevProps: Props, prevState: State) {
+  if (prevProps.gettingStartedState.selectedExample !== this.props.gettingStartedState.selectedExample) {
+    this.refs.scroller.scrollTop += this.refs.exampleAnchor.getBoundingClientRect().top
   }
 
-  refs: {
-    [key: string]: any
-    exampleAnchor: HTMLDivElement
-    congratsAnchor: HTMLDivElement
-    scroller: HTMLDivElement
+  if (prevProps.gettingStartedState.isCurrentStep('STEP5_WAITING')
+      && this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) {
+    this.refs.scroller.scrollTop += this.refs.congratsAnchor.getBoundingClientRect().top
+
+    const snd = new Audio(require('../../../assets/success.mp3') as string)
+    snd.volume = 0.5
+    snd.play()
   }
+}
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    if (prevProps.gettingStartedState.selectedExample !== this.props.gettingStartedState.selectedExample) {
-      this.refs.scroller.scrollTop += this.refs.exampleAnchor.getBoundingClientRect().top
-    }
-
-    if (prevProps.gettingStartedState.isCurrentStep('STEP5_WAITING')
-        && this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) {
-      this.refs.scroller.scrollTop += this.refs.congratsAnchor.getBoundingClientRect().top
-
-      const snd = new Audio(require('../../../assets/success.mp3') as string)
-      snd.volume = 0.5
-      snd.play()
-    }
-  }
-
-  render() {
-    const {mouseOver} = this.state
-    const {selectedExample} = this.props.gettingStartedState
-    const hovering = !this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5')
-    const downloadUrl = (example) => `${__BACKEND_ADDR__}/resources/getting-started-example?repository=${examples[example].path}&project_id=${this.props.projectId}` // tslint:disable-line
-    return (
+render() {
+  const {mouseOver} = this.state
+  const {selectedExample} = this.props.gettingStartedState
+  const hovering = !this.props.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5')
+  const downloadUrl = (example) => `${__BACKEND_ADDR__}/resources/getting-started-example?repository=${examples[example].path}&project_id=${this.props.projectId}` // tslint:disable-line
+  return (
+    <div
+      className='w-100 h-100'
+      style={{
+        paddingRight: 266,
+        paddingLeft: 300,
+      }}
+    >
       <div
         className='flex justify-center items-start w-100 h-100'
         style={{
           transition: 'background-color 0.3s ease',
-          backgroundColor: hovering ? 'rgba(255,255,255,0.5)' : 'transparent',
+          backgroundColor: hovering ? 'rgba(255,255,255,0.7)' : 'transparent',
+
           pointerEvents: 'none',
           overflow: 'hidden',
         }}
@@ -302,6 +310,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
           }
           </div>
         </div>
+      </div>
       </div>
     )
   }
