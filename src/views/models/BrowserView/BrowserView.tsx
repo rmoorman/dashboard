@@ -416,7 +416,7 @@ class BrowserView extends React.Component<Props, State> {
   }
 
   private setSortOrder = (field: Field) => {
-    const order = this.props.orderBy.fieldName === field.name
+    const order: 'ASC' | 'DESC' = this.props.orderBy.fieldName === field.name
       ? (this.props.orderBy.order === 'ASC' ? 'DESC' : 'ASC')
       : 'ASC'
 
