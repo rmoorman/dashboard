@@ -1,6 +1,6 @@
 import {ReduxAction} from '../types/reducers'
 import Constants from '../constants/popup'
-import {Popup,PopupState} from '../types/popup'
+import {Popup, PopupState} from '../types/popup'
 import * as Immutable from 'immutable'
 
 const initialState: PopupState = {

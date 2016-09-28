@@ -15,3 +15,16 @@ export function isValidDateTime (dateTime: string): boolean {
 export function isValidEnum (value: string): boolean {
   return /^[_a-zA-Z][_a-zA-Z0-9]*$/.test(value)
 }
+
+export function debounce(func, wait) {
+  let timeout
+  return (...args) => {
+    const context = this
+    const later = () => {
+      timeout = null
+      func.apply(context, args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+  }
+}

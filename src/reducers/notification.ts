@@ -1,18 +1,13 @@
 import { ReduxAction } from '../types/reducers'
 import Constants from '../constants/notification'
-import { NotificationLevel } from '../types/utils'
+import { NotificationState } from '../types/notification'
 
-interface State {
-  message: string
-  level: NotificationLevel
-}
-
-const initialState: State = {
+const initialState: NotificationState = {
   message: null,
   level: null,
 }
 
-export function reduceNotification(state: State = initialState, action: ReduxAction): State {
+export function reduceNotification(state: NotificationState = initialState, action: ReduxAction): NotificationState {
   switch (action.type) {
     case Constants.SHOW_NOTIFICATION:
       return {

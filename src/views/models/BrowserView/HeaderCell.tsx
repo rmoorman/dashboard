@@ -5,20 +5,8 @@ import {Link} from 'react-router'
 import {getFieldTypeName} from '../../../utils/valueparser'
 import {isScalar} from '../../../utils/graphql'
 import {Field} from '../../../types/types'
+import {debounce} from '../../../utils/utils'
 const classes: any = require('./HeaderCell.scss')
-
-function debounce(func, wait) {
-  let timeout
-  return (...args) => {
-    const context = this
-    const later = () => {
-      timeout = null
-      func.apply(context, args)
-    }
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
 
 interface Props {
   field: Field

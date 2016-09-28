@@ -2,16 +2,9 @@ import {ReduxAction} from '../../types/reducers'
 import Constants from '../../constants/databrowser/ui'
 import SharedConstants from '../../constants/databrowser/shared'
 import * as Immutable from 'immutable'
+import {DataBrowserUIState} from '../../types/databrowser/ui'
 
-interface State {
-  filtersVisible: boolean
-  newRowVisible: boolean
-  selectedNodeIds: Immutable.List<string>
-  scrollTop: number
-  loading: boolean
-}
-
-const initialState: State = {
+const initialState: DataBrowserUIState = {
   filtersVisible: false,
   newRowVisible: false,
   selectedNodeIds: Immutable.List<string>(),
@@ -19,7 +12,7 @@ const initialState: State = {
   loading: true,
 }
 
-export function reduceUI(state: State = initialState, action: ReduxAction) {
+export function reduceUI(state: DataBrowserUIState = initialState, action: ReduxAction): DataBrowserUIState {
   switch (action.type) {
     case Constants.HIDE_NEW_ROW:
       return Object.assign({}, state, { newRowVisible: false })

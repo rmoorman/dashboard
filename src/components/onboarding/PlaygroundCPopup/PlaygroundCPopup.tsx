@@ -9,29 +9,29 @@ import {GettingStartedState} from '../../../types/gettingStarted'
 import {Example} from '../../../types/types'
 const classes: any = require('./PlaygroundCPopup.scss')
 
-interface Guide {
+interface Tutorial {
   title: string
   description: string
   image: string
-  route: string
+  link: string
 }
 
 /* tslint:disable */
-const guides: Guide[] = [{
-  title: 'Setting up a GraphQL backend in 5 minutes',
-  description: 'In this guide you will learn how to setup the GraphQL backend for an Instagram clone in less than 5 minutes - without writing any server code. At the end of this guide you will have a good understanding of how to configure a GraphQL server and query it from your application.',
-  route: 'setting-up-a-graphql-backend-in-5-minutes',
-  image: require('../../../assets/graphics/building-instagram-in-5-minutes-preview.png'),
+const guides: Tutorial[] = [{
+  title: 'Learnrelay.org',
+  description: 'A comprehensive, interactive introduction to Relay',
+  link: 'https://learnrelay.org/',
+  image: require('../../../assets/graphics/relay.png'),
 }, {
-  title: 'Implementing Business Logic using Actions',
-  description: 'Work in progress.',
-  route: 'implementing-business-logic-using-actions',
-  image: require('../../../assets/graphics/implementing-business-logic-using-actions-preview.png'),
+  title: 'GraphQL and the amazing Apollo Client',
+  description: 'Explore an Application built using React and Angular 2',
+  link: 'https://medium.com/google-developer-experts/graphql-and-the-amazing-apollo-client-fe57e162a70c',
+  image: require('../../../assets/graphics/apollo.png'),
 }, {
-  title: 'Thinking in terms of graphs',
-  description: 'In this guide we will explore how thinking in graphs can help you structuring your data. The concept of graphs helps a lot with building a mental model of the data schema used in your application.',
-  route: 'thinking-in-terms-of-graphs',
-  image: require('../../../assets/graphics/thinking-in-terms-of-graphs-preview.png'),
+  title: 'Introducing Lokka',
+  description: 'A Simple JavaScript Client for GraphQL',
+  link: 'https://voice.kadira.io/introducing-lokka-a-simple-javascript-client-for-graphql-e0802695648c',
+  image: require('../../../assets/graphics/lokka.png'),
 }]
 /* tslint:enable */
 
@@ -83,6 +83,10 @@ class PlaygroundCPopup extends React.Component<Props, State> {
     if (prevProps.gettingStartedState.isCurrentStep('STEP5_WAITING')
         && this.props.gettingStartedState.isCurrentStep('STEP5_DONE')) {
       this.refs.scroller.scrollTop += this.refs.congratsAnchor.getBoundingClientRect().top
+
+      const snd = new Audio(require('../../../assets/success.mp3') as string)
+      snd.volume = 0.5
+      snd.play()
     }
   }
 
@@ -117,7 +121,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
             className='bg-white br-2 shadow-2 mv-96'
             style={{
               minWidth: 600,
-              maxWidth: 900,
+              maxWidth: 800,
               pointerEvents: 'all',
             }}
             onMouseLeave={() => this.setState({ mouseOver: false })}
@@ -130,7 +134,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
           >
             <div className='ma-16 tc pb-25'>
               <div className='fw3 ma-38 f-38'>
-                You did it! Time to put our backend to work
+                You did it! Time to run an example.
               </div>
               <div className='fw2 f-16 mh-96 lh-1-4'>
                 You have successfully set up your own Instagram backend.{' '}
@@ -221,7 +225,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                   # You can now open the app on localhost:3000
                 </div>
                 <div className='black-50'>
-                  # Please come back to this page once you're done, we're waiting here 💤
+                  # Please come back to this page once you're done. We're waiting here. 💤
                 </div>
               </div>
               {this.props.gettingStartedState.isCurrentStep('STEP5_WAITING') &&
@@ -234,7 +238,7 @@ class PlaygroundCPopup extends React.Component<Props, State> {
           }
         {this.props.gettingStartedState.isCurrentStep('STEP5_DONE') &&
           <div className='w-100 mb-96' ref='congratsAnchor'>
-            <div className='flex items-center flex-column mv-38 fw1'>
+            <div className='flex items-center flex-column pv-60 fw1'>
               <div className='f-96'>
                 🎉
               </div>
@@ -248,35 +252,47 @@ class PlaygroundCPopup extends React.Component<Props, State> {
                 Now go out there and build amazing things!
               </div>
             </div>
-            <div className='flex justify-between pa-16'>
+            <div className='flex justify-between ph-25 pv-16'>
               <div className='w-50 pr-16'>
-                <div className='ttu f-25 fw1'>
-                  Continue on your own with these guides
+                <div className='ttu ls-2 f-16 fw1 lh-1-4'>
+                  Get started on your own<br />with those excellent tutorials
                 </div>
                 <div className='mv-38'>
                   {guides.map(guide => this.renderBox(guide))}
                 </div>
               </div>
               <div className='w-50 pl-16'>
-                <div className='ttu f-25 fw1'>
-                  Get more out of Graphcool with our tutorials
+                <div className='ttu ls-2 f-16 fw1 lh-1-4'>
+                  Get more out of Graphcool<br />with our guides
                 </div>
-                <div className={`h-100 justify-start flex flex-column pv4 pv0-l pl3-l mv-38 ${classes.guides}`}>
-                  <div className={classes.one}>
-                    Setting up a GraphQL backend
-                  </div>
-                  <div className={classes.two}>
+                <div className={`h-100 justify-start flex flex-column mv-38 ${classes.guides}`}>
+                  <a
+                    href='https://docs.graph.cool/guides/declaring-relations-between-your-models'
+                    className={`${classes.one} fw4 black db flex items-center mb-25`}
+                    target='_blank'
+                  >
+                    Declaring Relations
+                  </a>
+                  <a
+                    href='https://docs.graph.cool/guides/implementing-business-logic-using-actions'
+                    className={`${classes.two} fw4 black db flex items-center mb-25`}
+                    target='_blank'
+                  >
                     Implementing Business Logic
-                  </div>
-                  <div className={classes.three}>
+                  </a>
+                  <a
+                    href='https://docs.graph.cool/guides/thinking-in-terms-of-graphs'
+                    target='_blank'
+                    className={`${classes.three} fw4 black db flex items-center mb-25`}
+                  >
                     Thinking in terms of graphs
-                  </div>
+                  </a>
                 </div>
               </div>
             </div>
             <div className='flex w-100 justify-center'>
               <div
-                className='mv-16 pa-16 ttu pointer bg-accent white dim'
+                className='f-25 mv-16 pv-16 ph-60 ls-1 ttu pointer bg-accent white dim'
                 onClick={this.props.nextStep}
               >
                 Finish Onboarding
@@ -290,29 +306,23 @@ class PlaygroundCPopup extends React.Component<Props, State> {
     )
   }
 
-  private renderBox = (guide: Guide) => {
+  private renderBox = (tutorial: Tutorial) => {
     return (
-      <a href={`/guides/${guide.route}`} key={guide.title}>
-        <div className='flex pa-16 mb-38' style={{background: 'rgba(0,0,0,0.03)'}}>
-          <div
-            style={{
-              minWidth: 75,
-              height: 75,
-              backgroundImage: `url(${guide.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
+      <div key={tutorial.title} className='pa-16 mb-16 lh-1-4' style={{background: 'rgba(0,0,0,0.03)'}}>
+        <a className='flex items-center' href={tutorial.link} target='_blank'>
+          <div className='flex items-center justify-center' style={{ flex: '0 0 60px', height: 60 }}>
+            <img src={tutorial.image}/>
+          </div>
           <div className='flex flex-column space-between ml-38'>
-            <div className='mb-25 dark-gray' style={{fontSize: 24}}>
-              {guide.title}
+            <div className='mb-6 dark-gray f-16'>
+              {tutorial.title}
             </div>
-            <div className='fw1 mid-gray' style={{fontSize: 16}}>
-              {guide.description}
+            <div className='fw1 mid-gray'>
+              {tutorial.description}
             </div>
           </div>
-        </div>
-      </a>
+        </a>
+      </div>
     )
   }
 

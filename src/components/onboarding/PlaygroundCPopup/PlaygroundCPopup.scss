@@ -26,12 +26,7 @@
 }
 
 .guides {
-  div {
-    display: flex;
-    align-items: center;
-    font-weight: 100;
-    padding-bottom: 16px;
-
+  a {
     &:before {
       display: flex;
       justify-content: center;
@@ -45,7 +40,6 @@
       width: 29px;
       border: 1px solid gray;
       border-radius: 29px;
-      background: rgba(74,74,74,0.04);
     }
   }
 }
