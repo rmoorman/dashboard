@@ -1,20 +1,18 @@
 import {ReduxAction} from '../types/reducers'
 import Constants from '../constants/gettingStarted'
-import {GettingStartedState} from './../types/gettingStarted'
+import {GettingStartedState, GettingStartedReducerState} from './../types/gettingStarted'
 
-interface State {
-  poll: boolean,
-  gettingStartedState?: GettingStartedState
+const initialState: GettingStartedReducerState = {
+  poll: false,
+  gettingStartedState: new GettingStartedState({
+    onboardingStatusId: '',
+    selectedExample: null,
+    skipped: true,
+    step: 'STEP6_CLOSED',
+  }),
 }
 
-const initialState: State = {poll: false, gettingStartedState: new GettingStartedState({
-  onboardingStatusId: '',
-  selectedExample: null,
-  skipped: true,
-  step: 'STEP6_CLOSED',
-})}
-
-export function reduceGettingStartedState(state: State = initialState, action: ReduxAction): State {
+export function reduceGettingStartedState(state: GettingStartedReducerState = initialState, action: ReduxAction): GettingStartedReducerState { // tslint:disable-line
   switch (action.type) {
     case Constants.UPDATE:
       const gettingStartedState: GettingStartedState = action.payload.gettingStartedState

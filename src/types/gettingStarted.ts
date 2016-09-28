@@ -121,3 +121,8 @@ export class GettingStartedState {
     }[step]()
   }
 }
+
+export interface GettingStartedReducerState {
+  poll: boolean,
+  gettingStartedState?: GettingStartedState
+}

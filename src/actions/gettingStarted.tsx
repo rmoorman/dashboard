@@ -1,7 +1,7 @@
 import * as React from 'react' // tslint:disable-line
 import * as Relay from 'react-relay'
 import {Example} from '../types/types'
-import {ReduxAction} from '../types/reducers'
+import {Dispatch, StateTree, ReduxThunk, ReduxAction} from '../types/reducers'
 import {GettingStartedState, Step} from './../types/gettingStarted'
 import UpdateCustomerOnboardingStatusMutation from '../mutations/UpdateCustomerOnboardingStatusMutation'
 import Constants from '../constants/gettingStarted'
@@ -55,8 +55,8 @@ function updateReduxAndRelay(dispatch: (action: ReduxAction) => any,
   })
 }
 
-export function nextStep(): (dispatch: (action: ReduxAction) => any, getState: any) => Promise<{}> { // tslint:disable-line
-  return (dispatch: (action: ReduxAction) => any, getState): Promise<{}> => {
+export function nextStep(): ReduxThunk { // tslint:disable-line
+  return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
     const {step, skipped, onboardingStatusId, selectedExample} = getState().gettingStarted.gettingStartedState
     const currentStepIndex = GettingStartedState.steps.indexOf(step)
     const nextStep = GettingStartedState.steps[currentStepIndex + 1]

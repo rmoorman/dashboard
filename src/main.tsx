@@ -18,6 +18,7 @@ import { reduceProgress } from './reducers/progressIndicator'
 import { reduceData as reduceDataBrowserData } from './reducers/databrowser/data'
 import { reduceUI as reduceDataBrowserUI } from './reducers/databrowser/ui'
 import { reduceNotification } from './reducers/notification'
+import { StateTree } from './types/reducers'
 
 import loadAnalytics from './utils/analytics'
 
@@ -42,7 +43,7 @@ browserHistory.listen(() => {
   analytics.page()
 })
 
-const reducers = combineReducers({
+const reducers: StateTree = combineReducers({
   gettingStarted: reduceGettingStartedState,
   popup: reducePopup,
   progressIndicator: reduceProgress,
