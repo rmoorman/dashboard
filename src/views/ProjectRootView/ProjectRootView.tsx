@@ -25,7 +25,7 @@ const classes: any = require('./ProjectRootView.scss')
 require('../../styles/core.scss')
 
 interface Props {
-  router: any
+  router: ReactRouter.InjectedRouter
   children: Element
   isLoggedin: boolean
   viewer: Viewer

@@ -23,7 +23,7 @@ interface Props {
   viewer: Viewer & { project: Project }
   params: any
   showNotification: ShowNotificationCallback
-  router: any
+  router: ReactRouter.InjectedRouter
 }
 
 interface State {

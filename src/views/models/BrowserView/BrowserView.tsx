@@ -43,7 +43,7 @@ const classes: any = require('./BrowserView.scss')
 
 interface Props {
   viewer: Viewer
-  router: any
+  router: ReactRouter.InjectedRouter
   route: any
   params: any
   fields: Field[]

@@ -11,7 +11,7 @@ const classes: any = require('./RootRedirectView.scss')
 interface Props {
   viewer: Viewer,
   projectName: string,
-  router: any
+  router: ReactRouter.InjectedRouter
 }
 
 class RootRedirectView extends React.Component<Props, {}> {
@@ -63,7 +63,7 @@ class RootRedirectView extends React.Component<Props, {}> {
             analytics.track('global: created project', {
               project: projectName,
             })
-            this.props.router.relpace(`/${projectName}`)
+            this.props.router.replace(`/${projectName}`)
           },
         })
     }

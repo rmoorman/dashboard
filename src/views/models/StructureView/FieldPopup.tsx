@@ -33,7 +33,7 @@ interface Props {
   model: Model
   params: any
   allModels: Model[]
-  router: any
+  router: ReactRouter.InjectedRouter
   gettingStartedState: GettingStartedState
   nextStep: any
   showNotification: ShowNotificationCallback

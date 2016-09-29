@@ -14,7 +14,7 @@ interface Props {
   viewer: Viewer & { project: Project }
   params: any
   relay: any
-  router: any
+  router: ReactRouter.InjectedRouter
   route: any
 }
 

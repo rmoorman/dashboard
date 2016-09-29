@@ -18,7 +18,7 @@ const classes: any = require('./PermissionRow.scss')
 
 interface Props {
   params: any
-  router: any
+  router: ReactRouter.InjectedRouter
   route: any
   fieldId: string
   permission?: Permission

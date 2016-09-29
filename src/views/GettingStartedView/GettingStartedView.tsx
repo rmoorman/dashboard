@@ -62,7 +62,7 @@ interface ViewProps {
   projectId: string
   user: Customer
   gettingStartedState: GettingStartedState
-  router: any
+  router: ReactRouter.InjectedRouter
 }
 
 interface ViewState {

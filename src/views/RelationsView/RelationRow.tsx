@@ -14,7 +14,7 @@ import {bindActionCreators} from 'redux'
 const classes: any = require('./RelationRow.scss')
 
 interface Props {
-  router: any
+  router: ReactRouter.InjectedRouter
   relation: Relation
   project: Project
   onRelationDeleted: () => void

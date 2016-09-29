@@ -91,6 +91,10 @@ class ActionBoxes extends React.Component<Props, State> {
     })
   }
 
+  componentWillMount () {
+    this.props.relay.forceFetch()
+  }
+
   componentWillReceiveProps (props: Props) {
     const { schema, valid } = extractSchema({
       schemaString: props.project.actionSchema,
