@@ -121,9 +121,11 @@ export default class TypeSelection extends React.Component<Props, State> {
         e.stopPropagation()
         return this.close()
       case 40:
+      case 74: // j
         selectedIndex++
         break
       case 38:
+      case 75: // k 
         selectedIndex--
         break
     }

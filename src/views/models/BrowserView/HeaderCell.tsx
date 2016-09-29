@@ -49,7 +49,7 @@ class HeaderCell extends React.Component<Props, {}> {
           <div className={classes.fieldName}>
             {field.name}
             <span className={classes.type}>{type}</span>
-            {isScalar(field.typeIdentifier) &&
+            {isScalar(field.typeIdentifier) && !field.isSystem &&
             <Link to={editUrl} className={classes.edit}>
               <Icon
                 width={16}
@@ -170,6 +170,7 @@ export default Relay.createContainer(HeaderCell, {
                 name
                 isList
                 typeIdentifier
+                isSystem
                 isRequired
                 enumValues
                 relatedModel {

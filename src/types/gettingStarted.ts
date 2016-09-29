@@ -10,6 +10,8 @@ export type Step =
   'STEP2_CREATE_FIELD_DESCRIPTION' |
   'STEP3_CLICK_DATA_BROWSER' |
   'STEP3_CLICK_ADD_NODE1' |
+  'STEP3_CLICK_ENTER_IMAGEURL' |
+  'STEP3_CLICK_ENTER_DESCRIPTION' |
   'STEP3_CLICK_ADD_NODE2' |
   'STEP4_CLICK_PLAYGROUND' |
   'STEP4_CLICK_BEGIN_PART1' | // GraphiQL intro
@@ -48,6 +50,8 @@ export class GettingStartedState {
     'STEP2_CREATE_FIELD_DESCRIPTION',
     'STEP3_CLICK_DATA_BROWSER',
     'STEP3_CLICK_ADD_NODE1',
+    'STEP3_CLICK_ENTER_IMAGEURL',
+    'STEP3_CLICK_ENTER_DESCRIPTION',
     'STEP3_CLICK_ADD_NODE2',
     'STEP4_CLICK_PLAYGROUND',
     'STEP4_CLICK_BEGIN_PART1',
@@ -106,6 +110,8 @@ export class GettingStartedState {
       'STEP2_CREATE_FIELD_DESCRIPTION': () => ({ index: 2, total: 2, done: 1 }),
       'STEP3_CLICK_DATA_BROWSER': () => ({ index: 3, total: 2, done: 0 }),
       'STEP3_CLICK_ADD_NODE1': () => ({ index: 3, total: 2, done: 0 }),
+      'STEP3_CLICK_ENTER_IMAGEURL': () => ({ index: 3, total: 2, done: 0 }),
+      'STEP3_CLICK_ENTER_DESCRIPTION': () => ({ index: 3, total: 2, done: 0 }),
       'STEP3_CLICK_ADD_NODE2': () => ({ index: 3, total: 2, done: 1 }),
       'STEP4_CLICK_PLAYGROUND': () => ({ index: 4, total: 2, done: 0 }),
       'STEP4_CLICK_BEGIN_PART1': () => ({ index: 4, total: 2, done: 0 }),

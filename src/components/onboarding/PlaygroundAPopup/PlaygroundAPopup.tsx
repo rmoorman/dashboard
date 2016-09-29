@@ -9,7 +9,7 @@ interface Props {
   id: string
   nextStep: () => Promise<void>
   params: any
-  router: any
+  router: ReactRouter.InjectedRouter
 }
 
 class PlaygroundAPopup extends React.Component<Props, {}> {

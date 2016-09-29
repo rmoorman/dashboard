@@ -23,8 +23,8 @@ const classes: any = require('./RelationPopup.scss')
 interface Props {
   location: any
   viewer: any
-  relay: any
-  router: any
+  relay: Relay.RelayProp
+  router: ReactRouter.InjectedRouter
   showNotification: ShowNotificationCallback
 }
 

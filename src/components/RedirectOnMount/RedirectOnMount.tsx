@@ -3,7 +3,7 @@ import {withRouter} from 'react-router'
 
 interface Props {
   to: string
-  router: any
+  router: ReactRouter.InjectedRouter
 }
 
 class RedirectOnMount extends React.Component<Props, {}> {

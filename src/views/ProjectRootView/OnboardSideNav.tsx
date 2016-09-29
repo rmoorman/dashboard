@@ -9,7 +9,7 @@ import Icon from '../../components/Icon/Icon'
 
 interface Props {
   params: any
-  router: any
+  router: ReactRouter.InjectedRouter
   gettingStartedState: GettingStartedState
   nextStep: () => Promise<any>
   previousStep: () => Promise<any>

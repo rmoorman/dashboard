@@ -31,7 +31,7 @@ interface Props {
   model: Model
   gettingStartedState: GettingStartedState
   nextStep: () => any
-  router: any
+  router: ReactRouter.InjectedRouter
   route: any
   children: Element
   viewer: Viewer

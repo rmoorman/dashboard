@@ -339,7 +339,7 @@ render() {
     switch (example) {
       case 'ReactRelay': return '_dj9Os2ev4M'
       case 'ReactApollo': return '_dj9Os2ev4M'
-      case 'AngularApollo': return 'RDrfE9I8_hs'
+      case 'AngularApollo': return '_dj9Os2ev4M'
     }
   }
 }

@@ -145,5 +145,6 @@ declare module 'react-relay' {
   interface RelayProp {
     variables: any
     setVariables(variables: Object)
+    forceFetch()
   }
 }

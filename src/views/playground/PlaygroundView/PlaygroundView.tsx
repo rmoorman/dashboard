@@ -37,8 +37,17 @@ const DEFAULT_QUERY = `{
   }
 }`
 
-const ONBOARDING_QUERY = `{
+const ONBOARDING_QUERY_PART1 = `{
   allPosts {
+    imageUrl
+    description
+  }
+}`
+
+const ONBOARDING_QUERY_PART2 = `{
+  allPosts(filter: {
+    description_contains: "#graphcool"
+  }) {
     imageUrl
     description
   }
@@ -84,7 +93,7 @@ class PlaygroundView extends React.Component<Props, State> {
     this.state = {
       users: [DASHBOARD_ADMIN],
       historyVisible: false,
-      query: isOnboarding ? ONBOARDING_QUERY : usedPlayground ? undefined : DEFAULT_QUERY,
+      query: isOnboarding ? ONBOARDING_QUERY_PART1 : usedPlayground ? undefined : DEFAULT_QUERY,
       variables: undefined,
       selectedEndpoint: (window.localStorage.getItem('SELECTED_ENDPOINT') || 'SIMPLE') as Endpoint,
       selectedUserId: DASHBOARD_ADMIN.id,
@@ -95,9 +104,15 @@ class PlaygroundView extends React.Component<Props, State> {
 
   componentDidUpdate (nextProps: Props) {
     if (this.props.gettingStartedState.step !== nextProps.gettingStartedState.step) {
-      if (nextProps.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')) {
+      if (nextProps.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')  ||
+          nextProps.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_PART2')) {
         this.setState({
-          query: ONBOARDING_QUERY,
+          query: ONBOARDING_QUERY_PART1,
+        } as State)
+      }
+      if (nextProps.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_STEP5')) {
+        this.setState({
+          query: ONBOARDING_QUERY_PART2,
         } as State)
       }
     }

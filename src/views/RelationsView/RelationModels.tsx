@@ -11,7 +11,7 @@ interface Props {
   rightModel: Model
   rightModelIsList: boolean
   projectName: string
-  router: any
+  router: ReactRouter.InjectedRouter
 }
 
 class RelationModels extends React.Component<Props,{}> {

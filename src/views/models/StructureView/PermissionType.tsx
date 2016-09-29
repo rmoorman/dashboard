@@ -22,7 +22,7 @@ interface Props {
   availableUserRoles: string[]
   possibleRelatedPermissionPaths: Field[][]
   isValid: boolean
-  router: any
+  router: ReactRouter.InjectedRouter
 }
 
 const emptyRoleToken = '____EMPTY_ROLE_TOKEN'

@@ -29,13 +29,13 @@ interface Props {
   project: Project
   projectCount: number
   viewer: Viewer
-  relay: any
+  relay: Relay.RelayProp
   models: Model[]
   gettingStartedState: GettingStartedState
   nextStep: () => Promise<any>
   skip: () => Promise<any>
   showNotification: ShowNotificationCallback
-  router: any
+  router: ReactRouter.InjectedRouter
   showDonePopup: () => void
   showPopup: (popup: Popup) => void
 }
