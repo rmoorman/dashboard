@@ -39,7 +39,7 @@ class Tether extends React.Component<Props, {}> {
   }
 
   render() {
-    const step = this.props.steps.find((s) => s.step === this.props.gettingStartedState.step)
+    const step = this.props.steps.find((s) => this.props.gettingStartedState.isCurrentStep(s.step))
     const isBottom = this.props.side === 'bottom'
     const isLeft = this.props.horizontal === 'left'
 

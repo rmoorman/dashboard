@@ -28,6 +28,7 @@
     ]
   },
   "dependencies": {
+    "@types/cuid": "0.0.30",
     "@types/node": "^6.0.31",
     "@types/react": "^0.14.34",
     "@types/react-addons-pure-render-mixin": "^0.14.13",

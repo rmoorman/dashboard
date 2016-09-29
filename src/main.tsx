@@ -56,7 +56,7 @@ const reducers: StateTree = combineReducers({
 
 const store = createStore(reducers, compose(
   applyMiddleware(thunk.default),
-  (window as any).devToolsExtension ? (window as any).devToolsExtension() : f => f
+  window.devToolsExtension ? window.devToolsExtension() : f => f
 ))
 store.dispatch(fetchGettingStartedState())
 
