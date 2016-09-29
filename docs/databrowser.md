@@ -11,7 +11,7 @@
 - Tabbing in add row should be cycle through the add row while in normal rows it should go to next row
 - When tabbing in the last row, it should continue in the first row again
 - When tabbing into row that you can't see, we need to scroll to that field.
-- Because scrollListeners are expensive it might not be the best idea to use a scroll listener to achieve horizontal scrolling for the fixed header.
+- Because scrollListeners are expensive it might not be the best idea to use a scroll listener to achieve horizontal scrolling for the fixed header. maybe we should use `requestAnimationFrame` (Ask Tim or Google. I have no idea what it is.)
 - The alignment bug occurs because react-virtualized is not forced to rerender everything. Maybe a custom way to change the width of the field could be the solution.
 - There should be a simple and easy way to incorporate nullable cells. Currently, we replicate the child element and remove the blurring function. A problem arises when we want to create presses 'Tab' which also runs through the focus method. Then something like in this image below happens.
 ![image](./nullablecell.png)
