@@ -38,6 +38,7 @@ declare var __SEGMENT_TOKEN__: any
 
 declare interface Window {
   analytics: any
+  devToolsExtension?: () => any
 }
 
 declare module 'react-relay' {
