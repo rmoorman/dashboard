@@ -26,8 +26,6 @@ declare module 'graphiql/dist/components/QueryEditor'
 declare module 'react-notification-system'
 declare module 'react-toggle-button'
 declare module 'react-virtualized'
-declare module 'cuid'
-
 declare var Smooch: any
 declare var analytics: any
 declare var __BACKEND_ADDR__: any
@@ -40,6 +38,11 @@ declare interface Window {
   analytics: any
   devToolsExtension?: () => any
 }
+
+declare module 'cuid' {
+  export default function cuid(): string
+}
+
 
 declare module 'react-relay' {
 

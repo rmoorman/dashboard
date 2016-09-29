@@ -13,6 +13,8 @@
 - When tabbing into row that you can't see, we need to scroll to that field.
 - Because scrollListeners are expensive it might not be the best idea to use a scroll listener to achieve horizontal scrolling for the fixed header.
 - The alignment bug occurs because react-virtualized is not forced to rerender everything. Maybe a custom way to change the width of the field could be the solution.
+- There should be a simple and easy way to incorporate nullable cells. Currently, we replicate the child element and remove the blurring function. A problem arises when we want to create presses 'Tab' which also runs through the focus method. Then something like in this image below happens.
+![image](./nullablecell.png)
 
 ## Things we have learned by transitioning from Row-based layout to Grid-based layout:
 We did it to first adapt our architecture to React-virtualized which would only render the visible grids. The problem is that it didn't work out, since otherwise the horizontal scrolling is very laggy.
@@ -31,7 +33,6 @@ Since we won't be working with disabled input fields rercreate the focus next fu
 The row also has a focused field that determines whether or not the row should be in focus. This is used for tab cycling. In also defines a onLastCellBlur method that can vary depending on if the row is a standard row or an "add" row.
 
 Standard Row would just change the current rows focus to false and reset the nextFocus field to 0. Then the next row will be focused and implicitly the Cell as well.
-
 In "add" row this behavior is different. When the user presses tab while editing the last Cell, it will just jump back to the first Cell. This couldn't be achieved with standard tabindexes because they don't support a way of cycling through fields.
 
 ## Row Architectures:
