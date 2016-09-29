@@ -99,7 +99,7 @@ export default class AuthProviderPopup extends React.Component<Props, {}> {
                     backgroundColor: '#484848',
                   }}
                 >
-                  <div className='w-50 pr2'>
+                  <div className='w-50 pr2 flex flex-column'>
                     <div
                       className='b mb3'
                       style={{
@@ -108,16 +108,18 @@ export default class AuthProviderPopup extends React.Component<Props, {}> {
                     >
                       Generated Fields
                     </div>
-                    <div
-                      className='pa1 mb3'
-                      style={{
-                        backgroundColor: '#636363',
-                      }}
-                    >
-                      digitsID
+                    <div>
+                      <span
+                        className='pa1 mb3 dib'
+                        style={{
+                          backgroundColor: '#636363',
+                        }}
+                      >
+                        digitsID
+                      </span>
                     </div>
                   </div>
-                  <div className='w-50 pl2'>
+                  <div className='w-50 pl2 flex flex-column'>
                     <div
                       className='b mb3'
                       style={{
@@ -126,21 +128,25 @@ export default class AuthProviderPopup extends React.Component<Props, {}> {
                     >
                       Generated Mutations
                     </div>
-                    <div
-                      className='pa1 mb3'
-                      style={{
-                        backgroundColor: '#636363',
-                      }}
-                    >
-                      signInWithDigits
+                    <div>
+                      <span
+                        className='pa1 mb3 dib'
+                        style={{
+                          backgroundColor: '#636363',
+                        }}
+                      >
+                        signInWithDigits
+                      </span>
                     </div>
-                    <div
-                      className='pa1 mb3'
-                      style={{
-                        backgroundColor: '#636363',
-                      }}
-                    >
-                      signInWithDigits
+                    <div>
+                      <span
+                        className='pa1 mb3 dib'
+                        style={{
+                          backgroundColor: '#636363',
+                        }}
+                      >
+                        signInWithDigits
+                      </span>
                     </div>
                   </div>
                 </div>

@@ -74,7 +74,7 @@ class Cell extends React.Component<Props, State> {
     if (this.state.editing) {
       return
     }
-    if (this.props.field.name !== 'id') {
+    if (this.props.field.isReadOnly) {
       this.setState({editing: true} as State)
     }
   }
@@ -126,9 +126,9 @@ class Cell extends React.Component<Props, State> {
 
   private renderNew = (): JSX.Element => {
     const invalidStyle = classnames([classes.value, classes.id])
-    if (this.props.field.name === 'id') {
+    if (this.props.field.isReadOnly) {
       return (
-        <span className={invalidStyle}>Id will be generated</span>
+        <span className={invalidStyle}>{this.props.field.name} will be generated</span>
       )
     }
 
@@ -165,7 +165,7 @@ class Cell extends React.Component<Props, State> {
         onChange={() => null}
         onFocus={() => this.startEditing()}
         autoFocus={this.props.needsFocus}
-        style={{pointerEvents: this.props.field.name === 'id' ? '' : 'none'}}
+        style={{pointerEvents: this.props.field.isReadOnly ? '' : 'none'}}
       />
     )
   }
