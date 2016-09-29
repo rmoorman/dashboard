@@ -73,19 +73,75 @@ export default class AuthProviderPopup extends React.Component<Props, {}> {
             </div>
             <div className='flex flex-column justify-between'>
               <div className='w-100 flex flex-column'>
-                <div className='w-100 white bg-dark-gray pa4 fw1'>
-                  <div className='f3'>
+                <div
+                  className='w-100 white pa4 fw1'
+                  style={{
+                    backgroundColor: '#404040',
+                  }}
+                >
+                  <div className='f3 b'>
                     Digits - Two-Step Phone Authentication
                   </div>
                   <div className='f5 mv3'>
                     Digits offers two-step authentification via a phone number and a code
                     <br/>
-                    that is send to respective number. {/* tslint:disable-line */}
+                    that is send to respective number.
                   </div>
                   <div className='f5'>
                     <a href='www.digits.com' className='white underline'>
                       www.digits.com
                     </a>
+                  </div>
+                </div>
+                <div
+                  className='flex w-100 justify-between white pa4'
+                  style={{
+                    backgroundColor: '#484848',
+                  }}
+                >
+                  <div className='w-50 pr2'>
+                    <div
+                      className='b mb3'
+                      style={{
+                        color: '#A3A3A3',
+                      }}
+                    >
+                      Generated Fields
+                    </div>
+                    <div
+                      className='pa1 mb3'
+                      style={{
+                        backgroundColor: '#636363',
+                      }}
+                    >
+                      digitsID
+                    </div>
+                  </div>
+                  <div className='w-50 pl2'>
+                    <div
+                      className='b mb3'
+                      style={{
+                        color: '#A3A3A3',
+                      }}
+                    >
+                      Generated Mutations
+                    </div>
+                    <div
+                      className='pa1 mb3'
+                      style={{
+                        backgroundColor: '#636363',
+                      }}
+                    >
+                      signInWithDigits
+                    </div>
+                    <div
+                      className='pa1 mb3'
+                      style={{
+                        backgroundColor: '#636363',
+                      }}
+                    >
+                      signInWithDigits
+                    </div>
                   </div>
                 </div>
                 <div className='pa4 flex flex-column'>
