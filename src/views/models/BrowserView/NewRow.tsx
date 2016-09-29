@@ -1,7 +1,13 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import {nextStep} from '../../../actions/gettingStarted'
+import {GettingStartedState} from '../../../types/gettingStarted'
+import {StateTree} from '../../../types/reducers'
 import Cell from './Cell'
-import {Model} from '../../../types/types'
+import {TypedValue} from '../../../types/utils'
+import {Model, Field} from '../../../types/types'
 import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 const classes: any = require('./NewRow.scss')
 
@@ -11,6 +17,8 @@ interface Props {
   columnWidths: {[key: string]: number}
   add: (fieldValues: { [key: string]: any }) => void
   cancel: () => void
+  gettingStarted: GettingStartedState
+  nextStep: () => any
 }
 
 interface State {
@@ -83,7 +91,12 @@ class NewRow extends React.Component<Props, State> {
     }
   }
 
-  private update = (value, field, callback) => {
+  private update = (value: TypedValue, field: Field, callback) => {
+    if (this.props.gettingStarted.isCurrentStep('STEP3_CLICK_ENTER_IMAGEURL') &&
+        field.name === 'imageUrl') {
+      this.props.nextStep()
+    }
+
     const {fieldValues} = this.state
     fieldValues[field.name].value = value
     this.setState({fieldValues, shouldFocus: false} as State)
@@ -92,7 +105,17 @@ class NewRow extends React.Component<Props, State> {
 
 }
 
-export default Relay.createContainer(NewRow, {
+const mapStateToProps = (state: StateTree) => {
+  return { gettingStarted: state.gettingStarted.gettingStartedState }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({ nextStep }, dispatch)
+}
+
+const MappedNewRow = connect(mapStateToProps, mapDispatchToProps)(NewRow)
+
+export default Relay.createContainer(MappedNewRow, {
   fragments: {
     model: () => Relay.QL`
       fragment on Model {

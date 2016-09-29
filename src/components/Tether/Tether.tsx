@@ -3,12 +3,15 @@ import TetherComponent from 'react-tether'
 import {connect} from 'react-redux'
 import {Step,GettingStartedState} from '../../types/gettingStarted'
 import {classnames} from '../../utils/classnames'
+import CopyToClipboard from 'react-copy-to-clipboard'
 const classes: any = require('./Tether.scss')
 
 interface TetherStep {
   step: Step
   title: string
   description?: string
+  buttonText?: string
+  copyText?: string
 }
 
 interface Props {
@@ -21,6 +24,8 @@ interface Props {
   side?: string
   horizontal?: string
   zIndex?: number
+  onMouseEnter: () => any
+  onMouseLeave: () => any
 }
 
 class Tether extends React.Component<Props, {}> {
@@ -55,6 +60,8 @@ class Tether extends React.Component<Props, {}> {
                                 isBottom ? classes.bottom : classes.top,
                                 isLeft ? classes.left : classes.right)}
           style={{width: this.props.width, zIndex: 9}}
+          onMouseEnter={this.props.onMouseEnter}
+          onMouseLeave={this.props.onMouseLeave}
         >
           <div className={classes.title}>
             {step.title}
@@ -63,6 +70,19 @@ class Tether extends React.Component<Props, {}> {
           <div className={`${classes.description} lh-1-4`}>
             {step.description}
           </div>
+          }
+          {step.buttonText &&
+            <CopyToClipboard
+              text={step.copyText}
+            >
+            <div className='flex justify-center mb3 mt2'>
+              <div
+                className='pa2 br2 bg-transparent tc ba b--white white pointer dim'
+              >
+                {step.buttonText}
+              </div>
+            </div>
+            </CopyToClipboard>
           }
         </div>
         }
