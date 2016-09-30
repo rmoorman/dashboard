@@ -47,6 +47,7 @@ export interface Project {
   relations: RelayConnection<Relation>
   actions: RelayConnection<Action>
   permanentAuthTokens: RelayConnection<PermanentAuthToken>
+  authProviders: RelayConnection<AuthProvider>
   actionSchema: string
 }
 
@@ -161,20 +162,19 @@ export interface PermanentAuthToken {
 }
 
 export interface AuthProvider {
+  id: string
   type: AuthProviderType
+  isEnabled: boolean
   digits: AuthProviderDigits | null
   auth0: AuthProviderAuth0 | null
 }
 
-export type AuthProviderType = 'Digits' | 'EmailPassword' | 'Auth0'
+export type AuthProviderType = 'AUTH_PROVIDER_EMAIL' | 'AUTH_PROVIDER_DIGITS' | 'AUTH_PROVIDER_AUTH0'
 
 export interface AuthProviderAuth0 {
   domain: string
   clientId: string
   clientSecret: string
-  methodFacebook: boolean
-  methodTwitter: boolean
-  methodGoogle: boolean
 }
 
 export interface AuthProviderDigits {

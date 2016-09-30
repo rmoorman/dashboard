@@ -167,10 +167,10 @@ class ProjectRootView extends React.Component<Props, {}> {
             <PlaygroundCPopup projectId={this.props.project.id} />
           </PopupWrapper>
         }
-        {<PopupWrapper>
-          <AuthProviderPopup />
+        {/*<PopupWrapper>
+          <AuthProviderPopup project={this.props.project}/>
         </PopupWrapper>
-        }
+          */}
       </div>
     )
   }
@@ -264,6 +264,7 @@ export default Relay.createContainer(MappedProjectRootView, {
         project: projectByName(projectName: $projectName) {
           id
           name
+          ${AuthProviderPopup.getFragment('project')}
           ${SideNav.getFragment('project')}
         }
         user {

@@ -201,6 +201,7 @@ export default Relay.createContainer(MappedCell, {
         name
         isList
         isRequired
+        isReadOnly
         typeIdentifier
         enumValues
         relatedModel {
