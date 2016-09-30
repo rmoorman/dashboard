@@ -201,7 +201,6 @@ export default Relay.createContainer(MappedCell, {
         name
         isList
         isRequired
-        ${/*isReadOnly*/ ''}
         typeIdentifier
         enumValues
         relatedModel {
@@ -209,6 +208,6 @@ export default Relay.createContainer(MappedCell, {
         }
         ${RelationsPopup.getFragment('originField')}
       }
-    `,
+    `, // Add isReadOnly back to the schema when backend implemented
   },
 })
