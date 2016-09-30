@@ -61,7 +61,7 @@ export interface Field {
   isList: boolean
   isUnique: boolean
   isSystem: boolean
-  isReadOnly: boolean
+  // isReadOnly: boolean
   typeIdentifier: FieldType
   defaultValue?: string
   enumValues: string[]
