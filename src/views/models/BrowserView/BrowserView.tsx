@@ -3,11 +3,15 @@ import * as Relay from 'react-relay'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
-import {toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
-        toggleNewRow, hideNewRow, toggleFilter} from '../../../actions/databrowser/ui'
+import {
+  toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
+  toggleNewRow, hideNewRow, toggleFilter,
+} from '../../../actions/databrowser/ui'
 import {resetDataAndUI} from '../../../actions/databrowser/shared'
-import {setItemCount, setFilterAsync, setOrder, addNodeAsync, updateNodeAsync,
-        reloadDataAsync, loadDataAsync} from '../../../actions/databrowser/data'
+import {
+  setItemCount, setFilterAsync, setOrder, addNodeAsync, updateNodeAsync,
+  reloadDataAsync, loadDataAsync,
+} from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
 import calculateSize from 'calculate-size'
 import * as Immutable from 'immutable'
@@ -135,7 +139,7 @@ class BrowserView extends React.Component<Props, {}> {
           viewer={this.props.viewer}
           project={this.props.project}
         >
-          <input type='file' onChange={this.handleImport} id='fileselector' className='dn' />
+          <input type='file' onChange={this.handleImport} id='fileselector' className='dn'/>
           <label htmlFor='fileselector' className={classes.button}>
             Import JSON
           </label>
@@ -263,13 +267,14 @@ class BrowserView extends React.Component<Props, {}> {
     })
     const promises = []
     const chunk = 10
+    const total = Math.max(1, Math.floor(values.length / chunk))
     const id = cuid()
     this.props.startProgress()
     this.props.showPopup({
-      element: <ProgressIndicator title='Importing' total={Math.floor(values.length / chunk)} />,
+      element: <ProgressIndicator title='Importing' total={total}/>,
       id,
     })
-    for (let i = 0; i < Math.floor(values.length / chunk); i++) {
+    for (let i = 0; i < total; i++) {
       promises.push(
         addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
           .then(() => this.props.incrementProgress())
@@ -351,7 +356,7 @@ class BrowserView extends React.Component<Props, {}> {
         />
       )
     } else if (columnIndex === fields.length + 1) {
-      return <AddFieldCell params={params} />
+      return <AddFieldCell params={params}/>
     } else {
       const field = fields[columnIndex - 1]
       return (
@@ -407,9 +412,9 @@ class BrowserView extends React.Component<Props, {}> {
   }
 
   private getColumnWidth = (fieldColumnWidths, {index}): number => {
-    if (index === 0)  { // Checkbox
+    if (index === 0) { // Checkbox
       return 34
-    }  else if (index === this.props.fields.length + 1) { // AddColumn
+    } else if (index === this.props.fields.length + 1) { // AddColumn
       return 250
     } else {
       return fieldColumnWidths[this.getFieldName(index - 1)]
@@ -459,7 +464,7 @@ class BrowserView extends React.Component<Props, {}> {
     const widths = this.props.fields.mapToObject(
       (field) => field.name,
       (field) => {
-         const cellWidths = this.props.nodes
+        const cellWidths = this.props.nodes
           .filter(node => !!node)
           .map(node => node.get(field.name))
           .map(value => valueToString(value, field, false))
