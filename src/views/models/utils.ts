@@ -108,7 +108,10 @@ export function getDefaultFieldValues(fields: Field[]): { [key: string]: any } {
     )
 }
 
-export function calculateFieldColumnWidths (width: number, fields: Field[], nodes: Immutable.List<Immutable.Map<string, any>>): any {
+export function calculateFieldColumnWidths (width: number,
+                                            fields: Field[],
+                                            nodes: Immutable.List<Immutable.Map<string, any>>
+                                           ): any {
   const cellFontOptions = {
     font: 'Open Sans',
     fontSize: '12px',
@@ -121,7 +124,7 @@ export function calculateFieldColumnWidths (width: number, fields: Field[], node
 
   const widths = fields.mapToObject(
     (field) => field.name,
-      (field) => {
+    (field) => {
       const cellWidths = nodes
       .filter(node => !!node)
       .map(node => node.get(field.name))
