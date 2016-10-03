@@ -1,7 +1,9 @@
 import {isScalar} from '../../utils/graphql'
 import {Field} from '../../types/types'
 import {TypedValue, NonScalarValue, ScalarValue} from '../../types/utils'
-import {stringToValue} from '../../utils/valueparser'
+import {stringToValue, valueToString, getFieldTypeName} from '../../utils/valueparser'
+import calculateSize from 'calculate-size'
+import * as Immutable from 'immutable'
 import {isNonScalarList} from '../../utils/graphql'
 
 export function emptyDefault(field: Field): TypedValue {
@@ -104,4 +106,42 @@ export function getDefaultFieldValues(fields: Field[]): { [key: string]: any } {
         field: field,
       })
     )
+}
+
+export function calculateFieldColumnWidths (width: number, fields: Field[], nodes: Immutable.List<Immutable.Map<string, any>>): any {
+  const cellFontOptions = {
+    font: 'Open Sans',
+    fontSize: '12px',
+  }
+
+  const headerFontOptions = {
+    font: 'Open Sans',
+    fontSize: '12px',
+  }
+
+  const widths = fields.mapToObject(
+    (field) => field.name,
+      (field) => {
+      const cellWidths = nodes
+      .filter(node => !!node)
+      .map(node => node.get(field.name))
+      .map(value => valueToString(value, field, false))
+      .map(str => calculateSize(str, cellFontOptions).width + 41)
+      .toArray()
+      const headerWidth = calculateSize(`${field.name} ${getFieldTypeName(field)}`, headerFontOptions).width + 90
+
+      const maxWidth = Math.max(...cellWidths, headerWidth)
+      const lowerLimit = 150
+      const upperLimit = 400
+
+      return maxWidth > upperLimit ? upperLimit : (maxWidth < lowerLimit ? lowerLimit : maxWidth)
+    }
+  )
+
+  const totalWidth = fields.reduce((sum, {name}) => sum + widths[name], 0)
+  const fieldWidth = width - 34 - 250
+  if (totalWidth < fieldWidth) {
+    fields.forEach(({name}) => widths[name] = (widths[name] / totalWidth) * fieldWidth)
+  }
+  return widths
 }
