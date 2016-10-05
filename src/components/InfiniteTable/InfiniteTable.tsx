@@ -1,6 +1,8 @@
 import * as React from 'react'
 import * as Immutable from 'immutable'
 import {InfiniteLoader, Grid} from 'react-virtualized'
+import {Model, Project} from '../../types/types'
+import DataActionRow from '../../views/models/BrowserView/DataActionRow'
 
 interface Props {
   minimumBatchSize?: number
@@ -13,6 +15,8 @@ interface Props {
   loadMoreRows: (input: any) => Promise<any>
   addNew: boolean
   onScroll?: (input: any) => void
+  model: Model
+  project: Project
 
   loadedList: Immutable.List<boolean>
 
@@ -23,14 +27,18 @@ interface Props {
 
   headerHeight: number
   headerRenderer: (input: any) => JSX.Element | string
+  fieldColumnWidths: number
 
   addRowHeight: number
-  addCellRenderer: (input: any) => JSX.Element | string
+
+  hideNewRow: () => any
+  addNewNode: () => any,
 }
 
 export default class InfiniteTable extends React.Component<Props, {}> {
 
   render() {
+    console.log(this.props.columnWidth)
     return (
       <div style={{height: '100%', position: 'relative'}}>
         <InfiniteLoader
@@ -53,36 +61,27 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                 style={{overflowX: 'visible', overflowY: 'visible', width: 'auto', position: 'relative'}}
                 width={this.props.width}
               />
-              {this.props.addNew &&
-              <Grid
-                ref={registerChild}
+              <DataActionRow
                 width={this.props.width}
-                height={this.props.addRowHeight}
-                style={{
-                  overflow: 'visible',
-                  position: 'absolute',
-                  left: 0,
-                  width: 'auto',
-                  top: this.props.headerHeight,
-                }}
-                cellStyle={{position: 'absolute'}}
-                rowHeight={this.props.addRowHeight}
-                columnCount={1}
-                columnWidth={this.props.width}
-                rowCount={1}
-                cellRenderer={this.props.addCellRenderer}
+                height={this.props.height}
+                headerHeight={this.props.headerHeight}
+                model={this.props.model}
+                project={this.props.project}
+                addNewNode={this.props.addNewNode}
+                hideNewRow={this.props.hideNewRow}
+                fieldColumnWidths={this.props.fieldColumnWidths}
+                ref={registerChild}
               />
-              }
               <Grid
                 ref={registerChild}
                 width={this.props.width}
-                height={this.props.height - this.props.headerHeight - (this.props.addNew ? this.props.addRowHeight : 0)}
+                height={this.props.height - this.props.headerHeight - this.props.addRowHeight}
                 style={{
                   overflow: 'scroll',
                   position: 'absolute',
                   width: 'auto',
                   left: 0,
-                  top: this.props.headerHeight + (this.props.addNew ? this.props.addRowHeight : 0),
+                  top: this.props.headerHeight + this.props.addRowHeight,
                 }}
                 scrollTop={this.props.scrollTop ? this.props.scrollTop : null}
                 onScroll={this.props.onScroll}

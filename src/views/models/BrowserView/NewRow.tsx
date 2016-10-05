@@ -45,7 +45,7 @@ class NewRow extends React.Component<Props, State> {
     return (
       <div className={classes.root}>
         <div className={classes.empty}/>
-        {fields.map((field, index) => {
+        {fields.map(function(field, index)  {
           return (
           <div
             key={field.id}
@@ -65,7 +65,7 @@ class NewRow extends React.Component<Props, State> {
               />
             </div>
           )
-        })}
+        }.bind(this))}
         <div className={classes.buttons}>
           <button onClick={this.add}>Add</button>
           <button onClick={this.props.cancel}>Cancel</button>

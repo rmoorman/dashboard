@@ -92,11 +92,13 @@ class BrowserView extends React.Component<Props, {}> {
   shouldComponentUpdate: any
 
   private lokka: any
+  private fieldColumnWidths: any
 
   constructor(props: Props) {
     super(props)
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
     this.lokka = getLokka(this.props.project.id)
+    this.fieldColumnWidths = calculateFieldColumnWidths(window.innerWidth - 300, this.props.fields, this.props.nodes)
   }
 
   componentWillMount = () => {
@@ -174,7 +176,6 @@ class BrowserView extends React.Component<Props, {}> {
           <div className={classes.tableContainer} style={{ width: '100%' }}>
             <AutoSizer>
               {({width, height}) => {
-                const fieldColumnWidths = calculateFieldColumnWidths(width, this.props.fields, this.props.nodes)
                 if (this.props.loading) {
                   return
                 }
@@ -182,17 +183,24 @@ class BrowserView extends React.Component<Props, {}> {
                   <InfiniteTable
                     loadedList={this.props.loaded}
                     minimumBatchSize={50}
-                    width={this.props.fields.reduce((sum, {name}) => sum + fieldColumnWidths[name], 0) + 34 + 250}
+                    width={this.props.fields.reduce((sum, {name}) => sum + this.fieldColumnWidths[name], 0) + 34 + 250}
                     height={height}
                     scrollTop={this.props.scrollTop}
                     columnCount={this.props.fields.length + 2}
-                    columnWidth={(input) => this.getColumnWidth(fieldColumnWidths, input)}
+                    columnWidth={(input) => this.getColumnWidth(this.fieldColumnWidths, input)}
                     loadMoreRows={(input) => this.loadData(input.startIndex)}
                     addNew={this.props.newRowVisible}
                     onScroll={(input) => this.props.setScrollTop(input.scrollTop)}
 
+                    hideNewRow={this.props.hideNewRow.bind(this)}
+                    addNewNode={this.addNewNode.bind(this)}
+
+                    project={this.props.project}
+                    model={this.props.model}
+
                     headerHeight={74}
                     headerRenderer={this.headerRenderer}
+                    fieldColumnWidths={this.fieldColumnWidths}
 
                     rowCount={this.props.itemCount}
                     rowHeight={47}
@@ -200,7 +208,6 @@ class BrowserView extends React.Component<Props, {}> {
                     loadingCellRenderer={this.loadingCellRenderer}
 
                     addRowHeight={47}
-                    addCellRenderer={() => this.addCellRenderer(fieldColumnWidths)}
                   />
                 )
               }}
@@ -300,18 +307,6 @@ class BrowserView extends React.Component<Props, {}> {
         )
       this.addNewNode(fieldValues)
     }
-  }
-
-  private addCellRenderer = (columnWidths) => {
-    return (
-      <NewRow
-        model={this.props.model}
-        projectId={this.props.project.id}
-        columnWidths={columnWidths}
-        add={this.addNewNode}
-        cancel={this.props.hideNewRow}
-      />
-    )
   }
 
   private loadingCellRenderer = ({rowIndex, columnIndex}) => {
