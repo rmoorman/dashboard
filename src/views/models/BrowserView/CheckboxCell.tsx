@@ -6,7 +6,6 @@ interface Props {
   onChange: (checked: boolean) => void
   checked: boolean
   height: number
-  backgroundColor: string
   disabled?: boolean
   id: string
 }

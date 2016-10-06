@@ -33,6 +33,7 @@ class NewNodeRow extends React.Component<Props, State> {
             columnWidths={this.props.fieldColumnWidths}
             add={this.props.addNewNode}
             cancel={this.props.hideNewRow}
+            width={this.props.width}
           />
         )
     }
@@ -48,7 +49,7 @@ class NewNodeRow extends React.Component<Props, State> {
   render() {
     return (
       <Grid
-        width={this.props.width - 250}
+        width={this.props.width}
         height={this.props.height}
         style={{
                   overflow: 'visible',
@@ -60,7 +61,7 @@ class NewNodeRow extends React.Component<Props, State> {
         cellStyle={{position: 'absolute'}}
         rowHeight={this.props.height}
         columnCount={1}
-        columnWidth={this.props.width - 250 - 40}
+        columnWidth={this.props.width}
         rowCount={1}
         cellRenderer={this.renderAddCell}
       />

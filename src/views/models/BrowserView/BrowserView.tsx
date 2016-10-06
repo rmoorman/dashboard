@@ -144,16 +144,6 @@ class BrowserView extends React.Component<Props, {}> {
             Import JSON
           </label>
           {this.renderTether()}
-          {this.props.selectedNodeIds.size > 0 &&
-          <div className={`${classes.button} ${classes.red}`} onClick={this.deleteSelectedNodes}>
-            <Icon
-              width={16}
-              height={16}
-              src={require('assets/icons/delete.svg')}
-            />
-            <span>Delete Selected ({this.props.selectedNodeIds.size})</span>
-          </div>
-          }
           <div
             className={`${classes.button} ${this.props.filtersVisible ? classes.blue : ''}`}
             onClick={this.props.toggleFilter}
@@ -191,6 +181,7 @@ class BrowserView extends React.Component<Props, {}> {
                     loadMoreRows={(input) => this.loadData(input.startIndex)}
                     addNew={this.props.newRowActive}
                     onScroll={(input) => this.props.setScrollTop(input.scrollTop)}
+                    newRowActive={this.props.newRowActive}
 
                     hideNewRow={this.props.hideNewRow.bind(this)}
                     addNewNode={this.addNewNode.bind(this)}
@@ -241,17 +232,7 @@ class BrowserView extends React.Component<Props, {}> {
         width={351}
         horizontal='right'
       >
-        <div
-          className={`${classes.button} ${this.props.newRowActive ? '' : classes.green}`}
-          onClick={this.handleAddNodeClick}
-        >
-          <Icon
-            width={16}
-            height={16}
-            src={require(`assets/icons/${this.props.newRowActive ? 'close' : 'add'}.svg`)}
-          />
-          <span>{this.props.newRowActive ? 'Cancel' : 'Add node'}</span>
-        </div>
+        <div></div>
       </Tether>
     )
   }
@@ -315,7 +296,6 @@ class BrowserView extends React.Component<Props, {}> {
     if (columnIndex === 0) {
       return (
         <CheckboxCell
-          backgroundColor={backgroundColor}
           onChange={undefined}
           disabled={true}
           checked={false}
@@ -326,14 +306,13 @@ class BrowserView extends React.Component<Props, {}> {
     } else if (columnIndex === this.props.fields.length + 1) { // AddColumn
       return (
         <LoadingCell
-          backgroundColor={backgroundColor}
           empty={true}
+          left={20}
         />
       )
     } else {
       return (
         <LoadingCell
-          backgroundColor={backgroundColor}
         />
       )
     }
@@ -347,11 +326,13 @@ class BrowserView extends React.Component<Props, {}> {
           height={74}
           onChange={this.selectAllOnClick}
           checked={selectedNodeIds.size === nodes.size && nodes.size > 0}
-          backgroundColor={'transparent'}
           id={`header-checkbox-0-${columnIndex}`}
         />
       )
     } else if (columnIndex === fields.length + 1) {
+      if (this.props.newRowActive) {
+        return null
+      }
       return <AddFieldCell params={params}/>
     } else {
       const field = fields[columnIndex - 1]
@@ -373,22 +354,23 @@ class BrowserView extends React.Component<Props, {}> {
     const node = this.props.nodes.get(rowIndex)
     const nodeId = node.get('id')
     const field = this.props.fields[columnIndex - 1]
-    const backgroundColor = rowIndex % 2 === 0 ? '#FCFDFE' : '#FFF'
     if (columnIndex === 0) {
       return (
         <CheckboxCell
           checked={this.isSelected(nodeId)}
           onChange={() => this.props.toggleNodeSelection(nodeId)}
           height={47}
-          backgroundColor={backgroundColor}
           id={`header-checkbox-top-${rowIndex}-${columnIndex}`}
         />
       )
     } else if (columnIndex === this.props.fields.length + 1) { // AddColumn
+      if (this.props.newRowActive) {
+        return null
+      }
       return (
         <LoadingCell
-          backgroundColor={backgroundColor}
           empty={true}
+          left={20}
         />
       )
     } else {
@@ -396,7 +378,7 @@ class BrowserView extends React.Component<Props, {}> {
       return (
         <Cell
           isSelected={this.isSelected(nodeId)}
-          backgroundColor={backgroundColor}
+          backgroundColor='#fff'
           field={field}
           value={value}
           projectId={this.props.project.id}

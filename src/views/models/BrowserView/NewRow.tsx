@@ -9,6 +9,7 @@ import Cell from './Cell'
 import {TypedValue} from '../../../types/utils'
 import {Model, Field} from '../../../types/types'
 import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
+import Icon from '../../../components/Icon/Icon'
 const classes: any = require('./NewRow.scss')
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
   cancel: () => void
   gettingStarted: GettingStartedState
   nextStep: () => any
+  width: number
 }
 
 interface State {
@@ -39,11 +41,17 @@ class NewRow extends React.Component<Props, State> {
   render() {
     const fields = this.props.model.fields.edges
       .map((edge) => edge.node)
+
       // .sort(compareFields) // TODO remove this once field ordering is implemented
     const inputIndex = getFirstInputFieldIndex(fields)
 
     return (
-      <div className={classes.root}>
+      <div
+        className={classes.root}
+        style={{
+          width: this.props.width - 250 - 40
+        }}
+      >
         {fields.map(function(field, index)  {
           return (
           <div
@@ -66,8 +74,22 @@ class NewRow extends React.Component<Props, State> {
           )
         }.bind(this))}
         <div className={classes.buttons}>
-          <button onClick={this.add}>Add</button>
-          <button onClick={this.props.cancel}>Cancel</button>
+          <button onClick={this.props.cancel}>
+            <Icon
+              width={24}
+              height={24}
+              src={require('assets/new_icons/remove.svg')}
+              className={classes.cancel}
+            />
+          </button>
+          <button onClick={this.add}>
+            <Icon
+              width={24}
+              height={24}
+              src={require('assets/new_icons/check.svg')}
+              className={classes.add}
+            />
+          </button>
         </div>
       </div>
     )

@@ -17,6 +17,7 @@ interface Props {
   onScroll?: (input: any) => void
   model: Model
   project: Project
+  newRowActive: boolean
 
   loadedList: Immutable.List<boolean>
 
@@ -84,6 +85,8 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                   width: 'auto',
                   left: 0,
                   top: this.props.headerHeight + this.props.addRowHeight,
+                  transform: `translate3d(0px, ${this.props.newRowActive ? 10 : 0}px, 0px)`,
+                  transition: '.3s all',
                 }}
                 scrollTop={this.props.scrollTop ? this.props.scrollTop : null}
                 onScroll={this.props.onScroll}

@@ -37,10 +37,11 @@ class DeleteNodeRow extends React.Component<Props, State> {
         <div
           style={{
             marginLeft: 'auto',
-            marginRight: 20,
+            marginRight: 0,
             width: 200,
             textAlign: 'right',
             display: 'flex',
+            justifyContent: 'flex-end',
           }}
         >
             <div className={`${classes.button}`} onClick={this.props.clearNodeSelection}>

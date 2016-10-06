@@ -14,7 +14,7 @@ export default class AddFieldCell extends React.Component<Props, {}> {
         <Link
           to={`/${this.props.params.projectName}/models/${this.props.params.modelName}/structure/create`}
         >
-          + Create new field
+          Add Field
         </Link>
       </div>
     )
