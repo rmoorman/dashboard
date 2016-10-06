@@ -1,9 +1,9 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
-import { Field } from '../../../types/types'
-import { isScalar } from '../../../utils/graphql'
-import { onFailureShowNotification } from '../../../utils/relay'
-import { ShowNotificationCallback } from '../../../types/utils'
+import {Field} from '../../../types/types'
+import {isScalar} from '../../../utils/graphql'
+import {onFailureShowNotification} from '../../../utils/relay'
+import {ShowNotificationCallback} from '../../../types/utils'
 import {connect} from 'react-redux'
 import {showNotification} from '../../../actions/notification'
 import {bindActionCreators} from 'redux'
@@ -17,7 +17,7 @@ interface Props {
 
 class Constraints extends React.Component<Props, {}> {
 
-  render () {
+  render() {
     const disabled = this.props.field.isSystem || !isScalar(this.props.field.typeIdentifier)
     return (
       <div className={classes.root}>
@@ -37,7 +37,7 @@ class Constraints extends React.Component<Props, {}> {
     )
   }
 
-  private updateIsUnique (isUnique: boolean) {
+  private updateIsUnique(isUnique: boolean) {
     Relay.Store.commitUpdate(
       new UpdateFieldIsUniqueMutation({
         fieldId: this.props.field.id,

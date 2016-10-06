@@ -22,12 +22,12 @@ class AuthProviderPopup extends React.Component<Props, State> {
     const authProviders = this.props.project.authProviders.edges.map(edge => edge.node)
     return (
       <div className='flex justify-center items-center h-100 w-100 bg-white-50' style={{ pointerEvents: 'all' }}>
-        <div className='bg-white br-2 flex flex-column shadow-2' style={{ minWidth: 800 }}>
+        <div className='bg-white br-2 shadow-2' style={{ width: 900 }}>
           <div className='bg-accent flex justify-between items-center white pa4'>
-            <div className='f3'>
+            <div className='f-38 fw1'>
               Authentication Methods
             </div>
-            <div className='pointer dim'>
+            <div className='pointer'>
               <Icon
                 src={require('assets/icons/close.svg')}
                 width={40}
@@ -37,69 +37,68 @@ class AuthProviderPopup extends React.Component<Props, State> {
             </div>
           </div>
           <div className='flex justify-between'>
-            <div className='flex flex-column br b--light-gray'>
+            <div className='flex flex-column br b--black-10' style={{ flex: '0 0 270px' }}>
               <div
-                className='flex pa4 bb b--light-gray items-center dim pointer'
+                className={`
+                flex pa4 bb b--black-10 items-center pointer
+                ${this.state.selectedType === 'AUTH_PROVIDER_EMAIL' ? 'bg-black-05' : ''}
+                `}
                 onClick={() => this.setState({ selectedType: 'AUTH_PROVIDER_EMAIL' })}
               >
                 <Icon
                   src={require('assets/icons/logo.svg')}
                   width={40}
                   height={40}
+                  color='#00B861'
                 />
-                <div className='fw1 f4 mh3'>
-                  Email/Pass
+                <div className='fw1 f-25 ml-16'>
+                  Email
                 </div>
                 <div>
-                {authProviders.find(x => x.type === 'AUTH_PROVIDER_EMAIL') &&
+                  {authProviders.find(x => x.type === 'AUTH_PROVIDER_EMAIL') &&
                   <Icon
                     src={require('assets/new_icons/check.svg')}
                   />
-                }
+                  }
                 </div>
               </div>
               <div
-                className='flex pa4 bb b--light-gray items-center dim pointer'
+                className={`
+                flex pa4 bb b--black-10 items-center pointer
+                ${this.state.selectedType === 'AUTH_PROVIDER_DIGITS' ? 'bg-black-05' : ''}
+                `}
                 onClick={() => this.setState({ selectedType: 'AUTH_PROVIDER_DIGITS' })}
               >
-                <Icon
-                  src={require('assets/icons/logo.svg')}
-                  width={40}
-                  height={40}
-                />
-                <div className='fw1 f4 mh3'>
-                  Digits
-                </div>
+                <img src={require('assets/graphics/digits.png')}/>
                 <div>
-                {authProviders.find(x => x.type === 'AUTH_PROVIDER_EMAIL') &&
+                  {authProviders.find(x => x.type === 'AUTH_PROVIDER_EMAIL') &&
                   <Icon
                     src={require('assets/new_icons/check.svg')}
                   />
-                }
+                  }
                 </div>
               </div>
               <div
-                className='flex pa4 bb b--light-gray items-center dim pointer'
+                className={`
+                flex pa4 bb b--black-10 items-center pointer
+                ${this.state.selectedType === 'AUTH_PROVIDER_AUTH0' ? 'bg-black-05' : ''}
+                `}
                 onClick={() => this.setState({ selectedType: 'AUTH_PROVIDER_AUTH0' })}
               >
-                <Icon
-                  src={require('assets/icons/logo.svg')}
-                  width={40}
-                  height={40}
-                />
-                <div className='fw1 f4 mh3'>
-                  Auth0
-                </div>
+                <img src={require('assets/graphics/auth0.png')}/>
                 <div>
-                {authProviders.find(x => x.type === 'AUTH_PROVIDER_EMAIL') &&
+                  {authProviders.find(x => x.type === 'AUTH_PROVIDER_EMAIL') &&
                   <Icon
                     src={require('assets/new_icons/check.svg')}
                   />
-                }
+                  }
                 </div>
               </div>
             </div>
-            <AuthProviderSidePanel authProviders={authProviders} selectedType={this.state.selectedType} />
+            <AuthProviderSidePanel
+              project={this.props.project}
+              selectedType={this.state.selectedType}
+            />
           </div>
         </div>
       </div>
@@ -114,21 +113,12 @@ export default Relay.createContainer(AuthProviderPopup, {
         authProviders(first: 100) {
           edges {
             node {
-              id
               type
               isEnabled
-              digits {
-                consumerKey
-                consumerSecret
-              }
-              auth0 {
-                clientId
-                clientSecret
-                domain
-              }
             }
           }
         }
+        ${AuthProviderSidePanel.getFragment('project')}
       }
     `,
   },
