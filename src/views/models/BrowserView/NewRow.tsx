@@ -44,7 +44,6 @@ class NewRow extends React.Component<Props, State> {
 
     return (
       <div className={classes.root}>
-        <div className={classes.empty}/>
         {fields.map(function(field, index)  {
           return (
           <div

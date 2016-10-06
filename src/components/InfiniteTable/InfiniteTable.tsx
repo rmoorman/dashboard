@@ -32,13 +32,14 @@ interface Props {
   addRowHeight: number
 
   hideNewRow: () => any
-  addNewNode: () => any,
+  addNewNode: () => any
+
+  deleteSelectedNodes: () => any
 }
 
 export default class InfiniteTable extends React.Component<Props, {}> {
 
   render() {
-    console.log(this.props.columnWidth)
     return (
       <div style={{height: '100%', position: 'relative'}}>
         <InfiniteLoader
@@ -63,13 +64,14 @@ export default class InfiniteTable extends React.Component<Props, {}> {
               />
               <DataActionRow
                 width={this.props.width}
-                height={this.props.height}
+                height={47}
                 headerHeight={this.props.headerHeight}
                 model={this.props.model}
                 project={this.props.project}
                 addNewNode={this.props.addNewNode}
                 hideNewRow={this.props.hideNewRow}
                 fieldColumnWidths={this.props.fieldColumnWidths}
+                deleteSelectedNodes={this.props.deleteSelectedNodes}
                 ref={registerChild}
               />
               <Grid

@@ -59,7 +59,7 @@ interface Props {
   showPopup: (popup: Popup) => any
   closePopup: (id: string) => any
   showDonePopup: () => any
-  newRowVisible: boolean
+  newRowActive: boolean
   toggleNewRow: () => any
   hideNewRow: () => any
   toggleFilter: () => any
@@ -112,7 +112,7 @@ class BrowserView extends React.Component<Props, {}> {
     })
 
     this.props.router.setRouteLeaveHook(this.props.route, () => {
-      if (this.props.newRowVisible) {
+      if (this.props.newRowActive) {
         // TODO with custom dialogs use "return false" and display custom dialog
         if (confirm('Are you sure you want to discard unsaved changes?')) {
           this.props.resetDataAndUI()
@@ -183,17 +183,18 @@ class BrowserView extends React.Component<Props, {}> {
                   <InfiniteTable
                     loadedList={this.props.loaded}
                     minimumBatchSize={50}
-                    width={this.props.fields.reduce((sum, {name}) => sum + this.fieldColumnWidths[name], 0) + 34 + 250}
+                    width={this.props.fields.reduce((sum, {name}) => sum + this.fieldColumnWidths[name], 0) + 40 + 250}
                     height={height}
                     scrollTop={this.props.scrollTop}
                     columnCount={this.props.fields.length + 2}
                     columnWidth={(input) => this.getColumnWidth(this.fieldColumnWidths, input)}
                     loadMoreRows={(input) => this.loadData(input.startIndex)}
-                    addNew={this.props.newRowVisible}
+                    addNew={this.props.newRowActive}
                     onScroll={(input) => this.props.setScrollTop(input.scrollTop)}
 
                     hideNewRow={this.props.hideNewRow.bind(this)}
                     addNewNode={this.addNewNode.bind(this)}
+                    deleteSelectedNodes={this.deleteSelectedNodes.bind(this)}
 
                     project={this.props.project}
                     model={this.props.model}
@@ -227,11 +228,11 @@ class BrowserView extends React.Component<Props, {}> {
     return (
       <Tether
         steps={[{
-          step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE1',
+          step: this.props.newRowActive ? null : 'STEP3_CLICK_ADD_NODE1',
           title: 'Create a Node',
           description: 'Items in your data belonging to a certain model are called nodes. Create a new post node and provide values for the "imageUrl" and "description" fields.', // tslint:disable-line
         }, {
-          step: this.props.newRowVisible ? null : 'STEP3_CLICK_ADD_NODE2',
+          step: this.props.newRowActive ? null : 'STEP3_CLICK_ADD_NODE2',
           title: `Awesome! Let's create one more.`,
           description: 'Hint: You can also use your keyboard to navigate between fields (Tab or Shift+Tab) and submit (Enter).', // tslint:disable-line
         }]}
@@ -241,15 +242,15 @@ class BrowserView extends React.Component<Props, {}> {
         horizontal='right'
       >
         <div
-          className={`${classes.button} ${this.props.newRowVisible ? '' : classes.green}`}
+          className={`${classes.button} ${this.props.newRowActive ? '' : classes.green}`}
           onClick={this.handleAddNodeClick}
         >
           <Icon
             width={16}
             height={16}
-            src={require(`assets/icons/${this.props.newRowVisible ? 'close' : 'add'}.svg`)}
+            src={require(`assets/icons/${this.props.newRowActive ? 'close' : 'add'}.svg`)}
           />
-          <span>{this.props.newRowVisible ? 'Cancel' : 'Add node'}</span>
+          <span>{this.props.newRowActive ? 'Cancel' : 'Add node'}</span>
         </div>
       </Tether>
     )
@@ -319,6 +320,7 @@ class BrowserView extends React.Component<Props, {}> {
           disabled={true}
           checked={false}
           height={47}
+          id={`checkbox-${rowIndex}-${columnIndex}`}
         />
       )
     } else if (columnIndex === this.props.fields.length + 1) { // AddColumn
@@ -346,6 +348,7 @@ class BrowserView extends React.Component<Props, {}> {
           onChange={this.selectAllOnClick}
           checked={selectedNodeIds.size === nodes.size && nodes.size > 0}
           backgroundColor={'transparent'}
+          id={`header-checkbox-0-${columnIndex}`}
         />
       )
     } else if (columnIndex === fields.length + 1) {
@@ -378,6 +381,7 @@ class BrowserView extends React.Component<Props, {}> {
           onChange={() => this.props.toggleNodeSelection(nodeId)}
           height={47}
           backgroundColor={backgroundColor}
+          id={`header-checkbox-top-${rowIndex}-${columnIndex}`}
         />
       )
     } else if (columnIndex === this.props.fields.length + 1) { // AddColumn
@@ -406,7 +410,7 @@ class BrowserView extends React.Component<Props, {}> {
 
   private getColumnWidth = (fieldColumnWidths, {index}): number => {
     if (index === 0) { // Checkbox
-      return 34
+      return 40
     } else if (index === this.props.fields.length + 1) { // AddColumn
       return 250
     } else {
@@ -480,7 +484,7 @@ class BrowserView extends React.Component<Props, {}> {
 const mapStateToProps = (state: StateTree) => {
   return {
     gettingStartedState: state.gettingStarted.gettingStartedState,
-    newRowVisible: state.databrowser.ui.newRowVisible,
+    newRowActive: state.databrowser.ui.newRowActive,
     filtersVisible: state.databrowser.ui.filtersVisible,
     selectedNodeIds: state.databrowser.ui.selectedNodeIds,
     scrollTop: state.databrowser.ui.scrollTop,

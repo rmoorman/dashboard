@@ -3,7 +3,7 @@ import {ActionRowState} from "./actionrow"
 
 export interface DataBrowserUIState {
   filtersVisible: boolean
-  newRowVisible: boolean
+  newRowActive: boolean
   selectedNodeIds: Immutable.List<string>
   scrollTop: number
   loading: boolean

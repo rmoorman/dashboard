@@ -1,5 +1,6 @@
 import * as React from 'react'
 const classes: any = require('./CheckboxCell.scss')
+import {classnames} from '../../../utils/classnames'
 
 interface Props {
   onChange: (checked: boolean) => void
@@ -7,6 +8,7 @@ interface Props {
   height: number
   backgroundColor: string
   disabled?: boolean
+  id: string
 }
 
 export default class CheckboxCell extends React.Component<Props, {}> {
@@ -21,12 +23,25 @@ export default class CheckboxCell extends React.Component<Props, {}> {
         className={classes.root}
         style={{
           height: this.props.height,
-          backgroundColor: this.props.checked ? '#EEF9FF' : this.props.backgroundColor,
         }}
         onClick={() => this._toggle()}
       >
-        <input disabled={this.props.disabled} type='checkbox' checked={this.props.checked} />
+        <div
+          className={classes.border}
+        >
+
+          <div
+            className={
+              classnames(classes.dot, {
+                [classes.active]: this.props.checked,
+              })
+            }
+          >
+
+          </div>
+        </div>
       </div>
     )
   }
 }
+/*backgroundColor: this.props.checked ? '#EEF9FF' : this.props.backgroundColor,*/

@@ -1,0 +1,33 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.red {
+  color: rgb(208, 2, 27);
+
+  svg {
+    fill: rgb(208, 2, 27);
+  }
+}
+
+.button {
+  @include button;
+
+  &.red {
+    border-color: rgb(208, 2, 27);
+    color: rgb(208, 2, 27);
+    background: #fff;
+
+    &:hover {
+      background: rgb(208, 2, 27);
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
+    }
+
+    svg {
+      fill: rgb(208, 2, 27);
+    }
+  }
+}

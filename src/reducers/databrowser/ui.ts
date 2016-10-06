@@ -7,7 +7,7 @@ import {ActionRowState} from '../../types/databrowser/actionrow'
 
 const initialState: DataBrowserUIState = {
   filtersVisible: false,
-  newRowVisible: false,
+  newRowActive: false,
   selectedNodeIds: Immutable.List<string>(),
   scrollTop: 0,
   loading: true,
@@ -18,11 +18,11 @@ export function reduceUI(state: DataBrowserUIState = initialState, action: Redux
   switch (action.type) {
     case Constants.HIDE_NEW_ROW:
       return Object.assign({}, state, {
-        newRowVisible: false,
+        newRowActive: false,
       })
     case Constants.TOGGLE_NEW_ROW:
       return Object.assign({}, state, {
-        newRowVisible: !state.newRowVisible,
+        newRowActive: !state.newRowActive,
       })
     case Constants.TOGGLE_FILTER:
       return Object.assign({}, state, {
@@ -31,20 +31,25 @@ export function reduceUI(state: DataBrowserUIState = initialState, action: Redux
     case Constants.SET_NODE_SELECTION:
       return Object.assign({}, state, {
         selectedNodeIds: action.payload,
+        actionRow: action.payload.size > 0 ? ActionRowState.DeleteNode : ActionRowState.NewNode,
       })
     case Constants.CLEAR_NODE_SELECTION:
       return Object.assign({}, state, {
         selectedNodeIds: Immutable.List<string>(),
+        actionRow: ActionRowState.NewNode,
       })
     case Constants.TOGGLE_NODE_SELECTION:
       const id = action.payload
       if (state.selectedNodeIds.includes(id)) {
+        const nodes = state.selectedNodeIds.filter(x => x !== id)
         return Object.assign({}, state, {
-          selectedNodeIds: state.selectedNodeIds.filter(x => x !== id),
+          selectedNodeIds: nodes,
+          actionRow: nodes.size > 0 ? ActionRowState.DeleteNode : ActionRowState.NewNode,
         })
       }
       return Object.assign({}, state, {
-        selectedNodeIds: state.selectedNodeIds.concat(id),
+        selectedNodeIds: state.selectedNodeIds.push(id), // using Immutable.js push here
+        actionRow: ActionRowState.DeleteNode,
       })
     case Constants.SET_SCROLL_TOP:
       return Object.assign({}, state, {

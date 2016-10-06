@@ -2,6 +2,7 @@ import * as React from 'react'
 import {connect} from 'react-redux'
 import {Model, Project} from '../../../../types/types'
 import NewRow from '../NewRow'
+import NewRowInactive from '../NewRowInactive'
 import {Grid} from 'react-virtualized'
 import {ActionRowState} from '../../../../types/databrowser/actionrow'
 
@@ -15,6 +16,7 @@ interface Props {
   hideNewRow: () => any
   fieldColumnWidths: {[key: string]: number}
   actionRow?: ActionRowState
+  newRowActive: boolean
 }
 
 interface State {
@@ -23,32 +25,42 @@ interface State {
 
 class NewNodeRow extends React.Component<Props, State> {
   renderAddCell = () => {
+    if (this.props.newRowActive) {
+        return (
+          <NewRow
+            model={this.props.model}
+            projectId={this.props.project.id}
+            columnWidths={this.props.fieldColumnWidths}
+            add={this.props.addNewNode}
+            cancel={this.props.hideNewRow}
+          />
+        )
+    }
+
     return (
-      <NewRow
+      <NewRowInactive
         model={this.props.model}
-        projectId={this.props.project.id}
         columnWidths={this.props.fieldColumnWidths}
-        add={this.props.addNewNode}
-        cancel={this.props.hideNewRow}
+        height={this.props.height}
       />
     )
   }
   render() {
     return (
       <Grid
-        width={this.props.width}
+        width={this.props.width - 250}
         height={this.props.height}
         style={{
                   overflow: 'visible',
                   position: 'absolute',
-                  left: 0,
+                  left: 40,
                   width: 'auto',
                   top: this.props.headerHeight,
                 }}
         cellStyle={{position: 'absolute'}}
         rowHeight={this.props.height}
         columnCount={1}
-        columnWidth={this.props.width}
+        columnWidth={this.props.width - 250 - 40}
         rowCount={1}
         cellRenderer={this.renderAddCell}
       />
@@ -56,6 +68,10 @@ class NewNodeRow extends React.Component<Props, State> {
   }
 }
 
-const MappedDataActionRow = connect()(NewNodeRow)
+const MappedDataActionRow = connect(state => {
+  return {
+    newRowActive: state.databrowser.ui.newRowActive,
+  }
+})(NewNodeRow)
 
 export default MappedDataActionRow

@@ -59,10 +59,11 @@ class Cell extends React.Component<Props, State> {
         style={{
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: this.props.isSelected ? '#EEF9FF' : this.props.backgroundColor,
           overflow: 'visible',
         }}
-        className={rootClassnames}
+        className={classnames(rootClassnames, {
+          [classes.selected]: this.props.isSelected,
+        })}
         onClick={() => this.props.addnew ? this.startEditing() : null}
         onDoubleClick={() => this.props.addnew ? null : this.startEditing()}
       >

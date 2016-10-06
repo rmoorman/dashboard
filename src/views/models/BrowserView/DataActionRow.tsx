@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {Model, Project} from '../../../types/types'
 import {ActionRowState} from '../../../types/databrowser/actionrow'
 import NewNodeRow from './DataActionRow/NewNodeRow'
+import DeleteNodeRow from './DataActionRow/DeleteNodeRow'
 
 interface Props {
   width: number
@@ -13,6 +14,7 @@ interface Props {
   addNewNode: () => any
   hideNewRow: () => any
   actionRow: ActionRowState
+  deleteSelectedNodes: () => any
   fieldColumnWidths: number
 }
 
@@ -25,7 +27,15 @@ class DataActionRow extends React.Component<Props, State> {
     const { actionRow } = this.props
 
     switch (actionRow) {
-      case ActionRowState.NewNode:
+      case ActionRowState.DeleteNode:
+        return (
+          <DeleteNodeRow
+            headerHeight={this.props.headerHeight}
+            height={this.props.height}
+            deleteSelectedNodes={this.props.deleteSelectedNodes}
+          />
+        )
+      default:
         return (
             <NewNodeRow
               {...this.props}
