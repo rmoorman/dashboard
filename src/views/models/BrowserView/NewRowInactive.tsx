@@ -25,7 +25,7 @@ class NewRowInactive extends React.Component<Props, {}> {
             <div
               key={field.id}
               style={{
-                width: this.props.columnWidths[field.name],
+                width: this.props.columnWidths[field.name] + (index == fields.length -1 ? 1 : 0),
                 height: this.props.height,
               }}
               className={classes.cell}

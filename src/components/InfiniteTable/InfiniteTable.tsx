@@ -84,7 +84,10 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                   position: 'absolute',
                   width: 'auto',
                   left: 0,
-                  top: this.props.headerHeight + this.props.addRowHeight,
+
+                  // -1 as we have don't want to have a double border
+                  top: this.props.headerHeight + this.props.addRowHeight - 1,
+
                   transform: `translate3d(0px, ${this.props.newRowActive ? 10 : 0}px, 0px)`,
                   transition: '.3s all',
                 }}

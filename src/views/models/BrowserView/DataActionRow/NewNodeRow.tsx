@@ -49,19 +49,21 @@ class NewNodeRow extends React.Component<Props, State> {
   render() {
     return (
       <Grid
-        width={this.props.width}
+        width={this.props.width - (250 + 40 - 1)}
         height={this.props.height}
         style={{
-                  overflow: 'visible',
-                  position: 'absolute',
-                  left: 40,
-                  width: 'auto',
-                  top: this.props.headerHeight,
-                }}
+          overflow: 'visible',
+          position: 'absolute',
+          left: 40,
+          width: 'auto',
+          top: this.props.headerHeight,
+          borderBottom: '1px solid #e4e4f4',
+          zIndex: 2
+        }}
         cellStyle={{position: 'absolute'}}
         rowHeight={this.props.height}
         columnCount={1}
-        columnWidth={this.props.width}
+        columnWidth={this.props.width - (250 + 40 - 1)}
         rowCount={1}
         cellRenderer={this.renderAddCell}
       />
