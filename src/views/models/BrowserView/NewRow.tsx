@@ -128,6 +128,7 @@ export default Relay.createContainer(MappedNewRow, {
               enumValues
               typeIdentifier
               isList
+              isReadonly
               ${Cell.getFragment('field')}
             }
           }

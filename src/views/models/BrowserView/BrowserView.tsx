@@ -13,7 +13,6 @@ import {
   reloadDataAsync, loadDataAsync,
 } from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
-import calculateSize from 'calculate-size'
 import * as Immutable from 'immutable'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import Icon from '../../../components/Icon/Icon'
@@ -21,14 +20,13 @@ import mapProps from '../../../components/MapProps/MapProps'
 import Loading from '../../../components/Loading/Loading'
 import {showNotification} from '../../../actions/notification'
 import {ShowNotificationCallback, TypedValue} from '../../../types/utils'
-import {getFieldTypeName, stringToValue} from '../../../utils/valueparser'
+import {stringToValue} from '../../../utils/valueparser'
 import Tether from '../../../components/Tether/Tether'
 import NewRow from './NewRow'
 import HeaderCell from './HeaderCell'
 import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
-import {emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
-import {valueToString} from '../../../utils/valueparser'
+import {emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues, calculateFieldColumnWidths} from '../utils'
 import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
 import ModelHeader from '../ModelHeader'
 import {showDonePopup, nextStep} from '../../../actions/gettingStarted'
@@ -176,7 +174,7 @@ class BrowserView extends React.Component<Props, {}> {
           <div className={classes.tableContainer} style={{ width: '100%' }}>
             <AutoSizer>
               {({width, height}) => {
-                const fieldColumnWidths = this.calculateFieldColumnWidths(width)
+                const fieldColumnWidths = calculateFieldColumnWidths(width, this.props.fields, this.props.nodes)
                 if (this.props.loading) {
                   return
                 }
@@ -450,44 +448,6 @@ class BrowserView extends React.Component<Props, {}> {
     return this.props.addNodeAsync(this.lokka, this.props.model, this.props.fields, fieldValues)
   }
 
-  private calculateFieldColumnWidths = (width: number): any => {
-    const cellFontOptions = {
-      font: 'Open Sans',
-      fontSize: '12px',
-    }
-
-    const headerFontOptions = {
-      font: 'Open Sans',
-      fontSize: '12px',
-    }
-
-    const widths = this.props.fields.mapToObject(
-      (field) => field.name,
-      (field) => {
-        const cellWidths = this.props.nodes
-          .filter(node => !!node)
-          .map(node => node.get(field.name))
-          .map(value => valueToString(value, field, false))
-          .map(str => calculateSize(str, cellFontOptions).width + 41)
-          .toArray()
-        const headerWidth = calculateSize(`${field.name} ${getFieldTypeName(field)}`, headerFontOptions).width + 90
-
-        const maxWidth = Math.max(...cellWidths, headerWidth)
-        const lowerLimit = 150
-        const upperLimit = 400
-
-        return maxWidth > upperLimit ? upperLimit : (maxWidth < lowerLimit ? lowerLimit : maxWidth)
-      }
-    )
-
-    const totalWidth = this.props.fields.reduce((sum, {name}) => sum + widths[name], 0)
-    const fieldWidth = width - 34 - 250
-    if (totalWidth < fieldWidth) {
-      this.props.fields.forEach(({name}) => widths[name] = (widths[name] / totalWidth) * fieldWidth)
-    }
-    return widths
-  }
-
   private isSelected = (nodeId: string): boolean => {
     return this.props.selectedNodeIds.indexOf(nodeId) > -1
   }
@@ -603,6 +563,7 @@ export default Relay.createContainer(MappedBrowserView, {
                 name
                 typeIdentifier
                 isList
+                isReadonly
                 defaultValue
                 relatedModel {
                   name

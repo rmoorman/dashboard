@@ -27,24 +27,6 @@ class Header extends React.Component<Props, State> {
     endpointLayoverVisible: false,
   }
 
-  _openUserDropdown = () => {
-    this.setState({ userDropdownVisible: true } as State)
-  }
-
-  _closeUserDropdown = () => {
-    this.setState({ userDropdownVisible: false } as State)
-  }
-
-  _logout () {
-    analytics.track('header: logout', () => {
-      analytics.reset()
-      cookiestore.remove('graphcool_auth_token')
-      cookiestore.remove('graphcool_customer_id')
-      window.localStorage.clear()
-      window.location.pathname = '/'
-    })
-  }
-
   render () {
     return (
       <div className={classes.root}>
@@ -75,22 +57,22 @@ class Header extends React.Component<Props, State> {
         {this.state.userDropdownVisible &&
           <ClickOutside onClickOutside={(e) => {
             e.stopPropagation()
-            this._closeUserDropdown()
+            this.closeUserDropdown()
           }}>
             <div className={classes.userDropdown}>
               <Link
                 to={`/${this.props.params.projectName}/account`}
-                onClick={this._closeUserDropdown}
+                onClick={this.closeUserDropdown}
               >
                 Account
               </Link>
-              <div onClick={this._logout}>
+              <div onClick={this.logout}>
                 Logout
               </div>
             </div>
           </ClickOutside>
         }
-        <div className={classes.right} onClick={this._openUserDropdown}>
+        <div className={classes.right} onClick={this.openUserDropdown}>
           {this.props.viewer.user.name}
           <Icon
             width={11}
@@ -100,6 +82,24 @@ class Header extends React.Component<Props, State> {
         </div>
       </div>
     )
+  }
+
+  private openUserDropdown = () => {
+    this.setState({ userDropdownVisible: true } as State)
+  }
+
+  private closeUserDropdown = () => {
+    this.setState({ userDropdownVisible: false } as State)
+  }
+
+  private logout () {
+    analytics.track('header: logout', () => {
+      analytics.reset()
+      cookiestore.remove('graphcool_auth_token')
+      cookiestore.remove('graphcool_customer_id')
+      window.localStorage.clear()
+      window.location.pathname = '/'
+    })
   }
 }
 
