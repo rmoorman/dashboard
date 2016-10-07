@@ -90,12 +90,11 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                   transform: `translate3d(0px, ${(this.props.newRowActive && this.props.loadedList.size > 0) ? 10 : 0}px, 0px)`,
                   transition: '.3s all',
                 }}
-                scrollTop={this.props.scrollTop ? this.props.scrollTop : null}
-                onScroll={this.props.onScroll}
                 cellStyle={{position: 'absolute'}}
                 rowHeight={this.props.rowHeight}
                 columnCount={this.props.columnCount}
                 columnWidth={this.props.columnWidth}
+                overscanRowCount={10}
                 rowCount={this.props.rowCount}
                 cellRenderer={this.renderCell}
                 onSectionRendered={(section) => this.onGridRowsRendered(section, onRowsRendered)}

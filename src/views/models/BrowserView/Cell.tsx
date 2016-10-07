@@ -12,6 +12,7 @@ import {isNonScalarList} from '../../../utils/graphql'
 import {connect} from 'react-redux'
 import {showNotification} from '../../../actions/notification'
 import {bindActionCreators} from 'redux'
+import shallowCompare from 'react-addons-shallow-compare'
 const classes: any = require('./Cell.scss')
 
 export type UpdateCallback = (success: boolean) => void
@@ -45,6 +46,10 @@ class Cell extends React.Component<Props, State> {
       editing: false,
       loading: false,
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   render(): JSX.Element {
@@ -188,13 +193,7 @@ class Cell extends React.Component<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({showNotification}, dispatch)
-}
-
-const MappedCell = connect(null, mapDispatchToProps)(Cell)
-
-export default Relay.createContainer(MappedCell, {
+export default Relay.createContainer(Cell, {
   fragments: {
     field: () => Relay.QL`
       fragment on Field {

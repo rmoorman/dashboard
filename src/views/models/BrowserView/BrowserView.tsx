@@ -165,7 +165,7 @@ class BrowserView extends React.Component<Props, {}> {
         <div className={`${classes.table} ${this.props.loading ? classes.loading : ''}`}>
           <div className={classes.tableContainer} style={{ width: '100%' }}>
             <AutoSizer>
-              {({width, height}) => {
+              {({height}) => {
                 if (this.props.loading) {
                   return
                 }
@@ -270,29 +270,7 @@ class BrowserView extends React.Component<Props, {}> {
     Promise.all(promises).then(() => this.reloadData(0)).then(() => this.props.closePopup(id))
   }
 
-  private handleAddNodeClick = () => {
-    if (this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE1')) {
-      this.props.nextStep()
-    }
-    if (getFirstInputFieldIndex(this.props.fields) !== null) {
-      this.props.toggleNewRow()
-    } else {
-      const fieldValues = this.props.model.fields.edges
-        .map((edge) => edge.node)
-        .filter((f) => f.name !== 'id')
-        .mapToObject(
-          (field) => field.name,
-          (field) => ({
-            value: stringToValue(field.defaultValue, field) || emptyDefault(field),
-            field: field,
-          })
-        )
-      this.addNewNode(fieldValues)
-    }
-  }
-
   private loadingCellRenderer = ({rowIndex, columnIndex}) => {
-    const backgroundColor = rowIndex % 2 === 0 ? '#FCFDFE' : '#FFF'
     if (columnIndex === 0) {
       return (
         <CheckboxCell
