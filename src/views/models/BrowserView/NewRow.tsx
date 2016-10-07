@@ -10,6 +10,7 @@ import {TypedValue} from '../../../types/utils'
 import {Model, Field} from '../../../types/types'
 import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import Icon from '../../../components/Icon/Icon'
+import {classnames} from '../../../utils/classnames'
 const classes: any = require('./NewRow.scss')
 
 interface Props {
@@ -21,6 +22,8 @@ interface Props {
   gettingStarted: GettingStartedState
   nextStep: () => any
   width: number
+  loading: boolean
+  loaded: any
 }
 
 interface State {
@@ -44,12 +47,16 @@ class NewRow extends React.Component<Props, State> {
 
       // .sort(compareFields) // TODO remove this once field ordering is implemented
     const inputIndex = getFirstInputFieldIndex(fields)
+    const loading = this.props.loaded.size === 0
 
     return (
       <div
-        className={classes.root}
+        className={classnames(classes.root, {
+          [classes.loading]: loading,
+        })}
         style={{
-          width: this.props.width - 250 - 40
+          width: this.props.width - 250 - 40,
+          border: '4px solid ' + this.props.loading ? 'red' : 'transparent',
         }}
       >
         {fields.map(function(field, index)  {
@@ -73,7 +80,11 @@ class NewRow extends React.Component<Props, State> {
             </div>
           )
         }.bind(this))}
-        <div className={classes.buttons}>
+        <div
+          className={classnames(classes.buttons, {
+            [classes.loading]: loading,
+          })}
+        >
           <button onClick={this.props.cancel}>
             <Icon
               width={24}
@@ -104,6 +115,10 @@ class NewRow extends React.Component<Props, State> {
   }
 
   private add = () => {
+    // don't add when we're loading already new data
+    if (this.props.loaded.size === 0) {
+      return
+    }
     const allRequiredFieldsGiven = this.state.fieldValues
       .mapToArray((fieldName, obj) => obj)
       .reduce((acc, {field, value}) => acc && (value !== null || !field.isRequired), true)
@@ -127,7 +142,10 @@ class NewRow extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: StateTree) => {
-  return { gettingStarted: state.gettingStarted.gettingStartedState }
+  return {
+    gettingStarted: state.gettingStarted.gettingStartedState,
+    loaded: state.databrowser.data.loaded,
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {

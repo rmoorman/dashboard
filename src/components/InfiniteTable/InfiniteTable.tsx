@@ -87,8 +87,7 @@ export default class InfiniteTable extends React.Component<Props, {}> {
 
                   // -1 as we have don't want to have a double border
                   top: this.props.headerHeight + this.props.addRowHeight - 1,
-
-                  transform: `translate3d(0px, ${this.props.newRowActive ? 10 : 0}px, 0px)`,
+                  transform: `translate3d(0px, ${(this.props.newRowActive && this.props.loadedList.size > 0) ? 10 : 0}px, 0px)`,
                   transition: '.3s all',
                 }}
                 scrollTop={this.props.scrollTop ? this.props.scrollTop : null}

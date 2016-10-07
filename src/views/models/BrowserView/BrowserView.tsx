@@ -313,6 +313,7 @@ class BrowserView extends React.Component<Props, {}> {
     } else {
       return (
         <LoadingCell
+          backgroundColor='#fff'
         />
       )
     }

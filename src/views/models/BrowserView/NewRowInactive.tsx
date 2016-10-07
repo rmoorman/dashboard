@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {toggleNewRow} from '../../../actions/databrowser/ui'
 import {Model} from '../../../types/types'
 import Icon from '../../../components/Icon/Icon'
+import {classnames} from '../../../utils/classnames'
 const classes: any = require('./NewRowInactive.scss')
 
 interface Props {
@@ -25,10 +26,12 @@ class NewRowInactive extends React.Component<Props, {}> {
             <div
               key={field.id}
               style={{
-                width: this.props.columnWidths[field.name] + (index == fields.length -1 ? 1 : 0),
+                width: this.props.columnWidths[field.name] + (index === fields.length - 1 ? 1 : 0),
                 height: this.props.height,
               }}
-              className={classes.cell}
+              className={classnames(classes.cell, {
+                [classes.last]: index === fields.length - 1
+              })}
               onKeyDown={this.handleKeyDown}
             >
               {index === 0 && (
@@ -44,6 +47,15 @@ class NewRowInactive extends React.Component<Props, {}> {
             </div>
           )
         }.bind(this))}
+        <div
+          style={{
+                width: 250,
+                height: this.props.height,
+              }}
+          className={classes.loading}
+        >
+          <div></div>
+        </div>
       </div>
     )
   }

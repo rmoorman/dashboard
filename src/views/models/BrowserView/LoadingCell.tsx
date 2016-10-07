@@ -4,6 +4,7 @@ const classes: any = require('./LoadingCell.scss')
 interface Props {
   empty?: boolean
   left?: number
+  backgroundColor?: string
 }
 
 export default class LoadingCell extends React.Component<Props, {}> {
@@ -13,6 +14,7 @@ export default class LoadingCell extends React.Component<Props, {}> {
         className={classes.root}
         style={{
           marginLeft: 0 + this.props.left || 0,
+          backgroundColor: this.props.backgroundColor || 'transparent',
         }}
       >
         <span className={classes.content}>

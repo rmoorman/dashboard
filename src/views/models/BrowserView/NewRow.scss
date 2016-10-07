@@ -4,6 +4,12 @@
 .root {
   display: flex;
   box-shadow: 0 2px 4px 0px rgba(0,0,0,.1);
+  &.loading {
+    pointer-events: none;
+    input {
+      color: rgba(0,0,0,0.5)
+    }
+  }
 }
 
 .empty {
@@ -20,7 +26,7 @@
   padding-left: 8px;
   text-transform: uppercase;
   position: absolute;
-  right: -80px;
+  right: 170px;
   background-color: rgba(0,0,0,.05);
 
   button {
@@ -61,6 +67,25 @@
       &:hover {
         svg {
           fill: rgba(126,211,33,0.8)
+        }
+      }
+    }
+  }
+
+  &.loading {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: auto;
+
+    button {
+      .add {
+        svg {
+          fill: rgba(0,0,0,.2)
+        }
+        &:hover {
+          svg {
+            fill: rgba(0,0,0,.2)
+          }
         }
       }
     }

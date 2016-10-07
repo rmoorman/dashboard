@@ -3,10 +3,6 @@
 
 .root {
   display: flex;
-  background-image: linear-gradient(to right, rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%);
-  background-position: top;
-  background-size: 12px 1px;
-  background-repeat: repeat-x;
   cursor: pointer;
 }
 
@@ -17,15 +13,31 @@
 .cell {
   display: flex;
   align-items: center;
-  background-image: linear-gradient(rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%);
-  background-position: left;
-  background-size: 1px 12px;
-  background-repeat: repeat-y;
-  &:last-child {
-    background-image: linear-gradient(rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%), linear-gradient(rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%);
-    background-position: left, right;
-    background-size: 1px 12px, 1px 12px;
-    background-repeat: repeat-y, repeat-y;
+  background-image: linear-gradient(to right, rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%), linear-gradient(rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%);
+  background-position: top, left;
+  background-size: 12px 1px, 1px 12px;
+  background-repeat: repeat-x, repeat-y;
+  border-bottom: 1px solid #e4e4f4;
+
+}
+
+.last {
+  background-image: linear-gradient(to right, rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%), linear-gradient(rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%), linear-gradient(rgba(0,0,0,.08) 50%, rgba(255,255,255,0) 0%);
+  background-position: top, left, right;
+  background-size: 12px 1px, 1px 12px, 1px 12px;
+  background-repeat: repeat-x, repeat-y, repeat-y;
+}
+
+.loading {
+  padding-left: 19px;
+  display: flex;
+  pointer-events: none;
+  >div {
+    box-shadow: 1px 0 0 0 #e4e4f4,inset 1px 0 0 0 #e4e4f4,inset 0 1px 0 0 #e4e4f4;
+    display: block;
+    flex: 1;
+    height: 47px;
+    border-bottom: 1px solid #e4e4f4;
   }
 }
 
