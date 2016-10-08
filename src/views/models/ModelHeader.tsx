@@ -44,7 +44,10 @@ class ModelHeader extends React.Component<Props, State> {
       <div className={classes.root}>
         {this.state.authProviderPopupVisible &&
         <PopupWrapper>
-          <AuthProviderPopup project={this.props.project}/>
+          <AuthProviderPopup
+            project={this.props.project}
+            close={() => this.setState({ authProviderPopupVisible: false } as State)}
+          />
         </PopupWrapper>
         }
         <div className={classes.top}>
@@ -95,11 +98,15 @@ class ModelHeader extends React.Component<Props, State> {
             >
               Structure
             </Link>
+            {this.props.model.name === 'User' &&
+            <div
+              className='pointer f-16 pa-25'
+              onClick={() => this.setState({ authProviderPopupVisible: true } as State)}
+            >
+              Configure Auth Provider
+            </div>
+            }
           </div>
-          {this.props.model.name === 'User' &&
-          <div>
-          </div>
-          }
           <div className={classes.buttons}>
             {this.props.children}
           </div>
