@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as Relay from 'react-relay'
 import * as Immutable from 'immutable'
+import FloatingInput from '../../../components/FloatingInput/FloatingInput'
 import AddAuthProviderMutation from '../../../mutations/AddAuthProviderMutation'
 import UpdateAuthProviderMutation from '../../../mutations/UpdateAuthProviderMutation'
 import DisableAuthProviderMutation from '../../../mutations/DisableAuthProviderMutation'
@@ -169,17 +170,21 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
           </div>
           }
           {authProvider.type === 'AUTH_PROVIDER_DIGITS' &&
-          <div className='pa-38 flex flex-column'>
-            <input
-              className='pa-16 bg-light-gray br-2 bn black-50 mb-10 f-25'
-              placeholder='Consumer Key'
+          <div className='pa-38 flex flex-column fw1'>
+            <FloatingInput
+              labelClassName='f-25 pa-16 black-50'
+              className='pa-16 bg-black-05 br-2 bn mb-10 f-25'
+              label='Consumer Key'
+              placeholder='xxxxxxxxxxxxx'
               value={authProvider.digits!.consumerKey}
               onChange={(e: any) => this.setIn(['digits', 'consumerKey'], e.target.value)}
               onKeyDown={e => e.keyCode === 13 && this.enable()}
             />
-            <input
-              className='pa-16 bg-light-gray br-2 bn black-50 f-25'
-              placeholder='Consumer Secret'
+            <FloatingInput
+              labelClassName='f-25 pa-16 black-50'
+              className='pa-16 bg-black-05 br-2 bn f-25'
+              label='Consumer Secret'
+              placeholder='xxxxxxxxxxxxx'
               value={authProvider.digits!.consumerSecret}
               onChange={(e: any) => this.setIn(['digits', 'consumerSecret'], e.target.value)}
               onKeyDown={e => e.keyCode === 13 && this.enable()}
@@ -217,23 +222,29 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
           }
           {authProvider.type === 'AUTH_PROVIDER_AUTH0' &&
           <div className='pa-38 flex flex-column'>
-            <input
-              className='pa-16 bg-light-gray br-2 bn black-50 mb-10 f-25'
-              placeholder='Domain'
+            <FloatingInput
+              labelClassName='f-25 pa-16 black-50'
+              className='pa-16 bg-black-05 br-2 bn mb-10 f-25'
+              label='Domain'
+              placeholder='xxxxxxxxxxxxx'
               value={authProvider.auth0!.domain}
               onChange={(e: any) => this.setIn(['auth0', 'domain'], e.target.value)}
               onKeyDown={e => e.keyCode === 13 && this.enable()}
             />
-            <input
-              className='pa-16 bg-light-gray br-2 bn black-50 mb-10 f-25'
-              placeholder='Client Id'
+            <FloatingInput
+              labelClassName='f-25 pa-16 black-50'
+              className='pa-16 bg-black-05 br-2 bn mb-10 f-25'
+              label='Client Id'
+              placeholder='xxxxxxxxxxxxx'
               value={authProvider.auth0!.clientId}
               onChange={(e: any) => this.setIn(['auth0', 'clientId'], e.target.value)}
               onKeyDown={e => e.keyCode === 13 && this.enable()}
             />
-            <input
-              className='pa-16 bg-light-gray br-2 bn black-50 mb-10 f-25'
-              placeholder='Client Secret'
+            <FloatingInput
+              labelClassName='f-25 pa-16 black-50'
+              className='pa-16 bg-black-05 br-2 bn mb-10 f-25'
+              label='Client Secret'
+              placeholder='xxxxxxxxxxxxx'
               value={authProvider.auth0!.clientSecret}
               onChange={(e: any) => this.setIn(['auth0', 'clientSecret'], e.target.value)}
               onKeyDown={e => e.keyCode === 13 && this.enable()}
