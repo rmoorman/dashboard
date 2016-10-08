@@ -32,4 +32,3 @@ export default class FloatingLabel extends React.Component<Props, State> {
     )
   }
 }
-
