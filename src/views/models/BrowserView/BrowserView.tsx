@@ -42,6 +42,9 @@ import {startProgress, incrementProgress} from '../../../actions/progressIndicat
 import {StateTree} from '../../../types/reducers'
 import cuid from 'cuid'
 const classes: any = require('./BrowserView.scss')
+import {
+  cellTab, editCell, setBrowserViewRef
+} from '../../../actions/databrowser/ui'
 
 interface Props {
   viewer: Viewer
@@ -67,13 +70,18 @@ interface Props {
   setLoading: (loading: boolean) => any
   resetDataAndUI: () => any
   clearNodeSelection: () => any
+  setBrowserViewRef: () => any
+  cellTab: () => any
+  editCell: () => any
   setNodeSelection: (ids: Immutable.List<string>) => any
   toggleNodeSelection: (id: string) => any
   filtersVisible: boolean
   selectedNodeIds: Immutable.List<string>
+  selectedCell: [number, string]
   loading: boolean
   scrollTop: number
   itemCount: number
+  editing: boolean
   setItemCount: (itemCount: number) => any
   filter: Immutable.Map<string, TypedValue>
   orderBy: OrderBy
@@ -124,6 +132,7 @@ class BrowserView extends React.Component<Props, {}> {
         this.props.resetDataAndUI()
       }
     })
+
   }
 
   componentWillUnmount = () => {
@@ -132,7 +141,10 @@ class BrowserView extends React.Component<Props, {}> {
 
   render() {
     return (
-      <div className={`${classes.root} ${this.props.filtersVisible ? classes.filtersVisible : ''}`}>
+      <div
+        className={`${classes.root} ${this.props.filtersVisible ? classes.filtersVisible : ''}`}
+        onKeyUp={this.onKeyDown.bind(this)}
+      >
         <ModelHeader
           params={this.props.params}
           model={this.props.model}
@@ -163,7 +175,11 @@ class BrowserView extends React.Component<Props, {}> {
           </div>
         </ModelHeader>
         <div className={`${classes.table} ${this.props.loading ? classes.loading : ''}`}>
-          <div className={classes.tableContainer} style={{ width: '100%' }}>
+          <div
+            className={classes.tableContainer} style={{ width: '100%' }}
+            ref={this.props.setBrowserViewRef}
+            tabIndex="10000"
+          >
             <AutoSizer>
               {({height}) => {
                 if (this.props.loading) {
@@ -356,7 +372,7 @@ class BrowserView extends React.Component<Props, {}> {
       const value = node.get(field.name)
       return (
         <Cell
-          isSelected={this.isSelected(nodeId)}
+          rowSelected={this.isSelected(nodeId)}
           backgroundColor='#fff'
           field={field}
           value={value}
@@ -364,6 +380,8 @@ class BrowserView extends React.Component<Props, {}> {
           update={(value, field, callback) => this.updateEditingNode(value, field, callback, nodeId, rowIndex)}
           reload={() => this.loadData(rowIndex, 1)}
           nodeId={nodeId}
+          rowIndex={rowIndex}
+          fields={this.props.fields}
         />
       )
     }
@@ -376,6 +394,25 @@ class BrowserView extends React.Component<Props, {}> {
       return 250
     } else {
       return fieldColumnWidths[this.getFieldName(index - 1)]
+    }
+  }
+
+  private onKeyDown = (e: any): void => {
+    if (e.keyCode === 13 && e.shiftKey) {
+      return
+    }
+    if (this.props.editing) {
+      // then it's none of our business,
+      // let the cell do the stuff
+      return
+    }
+    switch (e.keyCode) {
+      case 9:
+        this.props.cellTab(this.props.fields)
+        e.preventDefault()
+        break
+      case 13:
+        this.props.editCell(this.props.selectedCell)
     }
   }
 
@@ -448,8 +485,10 @@ const mapStateToProps = (state: StateTree) => {
     newRowActive: state.databrowser.ui.newRowActive,
     filtersVisible: state.databrowser.ui.filtersVisible,
     selectedNodeIds: state.databrowser.ui.selectedNodeIds,
+    selectedCell: state.databrowser.ui.selectedCell,
     scrollTop: state.databrowser.ui.scrollTop,
     loading: state.databrowser.ui.loading,
+    editing: state.databrowser.ui.editing,
     itemCount: state.databrowser.data.itemCount,
     filter: state.databrowser.data.filter,
     orderBy: state.databrowser.data.orderBy,
@@ -484,6 +523,9 @@ function mapDispatchToProps(dispatch) {
       updateNodeAsync,
       reloadDataAsync,
       loadDataAsync,
+      cellTab,
+      editCell,
+      setBrowserViewRef,
     },
     dispatch)
 }

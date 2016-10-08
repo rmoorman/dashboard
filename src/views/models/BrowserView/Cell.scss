@@ -64,7 +64,7 @@
     }
   }
 
-  &.editing {
+  &.editing, &.selected {
     @include cellborder($accent-blue);
     z-index: 10;
     overflow: visible;
@@ -98,7 +98,7 @@
   }
 }
 
-.selected {
+.rowselected {
   background-color: #4A90E2;
   color: #fff;
   input {

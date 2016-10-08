@@ -8,4 +8,7 @@ export interface DataBrowserUIState {
   scrollTop: number
   loading: boolean
   actionRow: ActionRowState
+  selectedCell: [number, String]
+  editing: boolean
+  browserViewRef: any
 }
