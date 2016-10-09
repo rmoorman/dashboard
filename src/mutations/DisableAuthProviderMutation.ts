@@ -34,6 +34,9 @@ export default class DisableAuthProviderMutation extends Relay.Mutation<Props, R
   }
 
   getVariables() {
-    return this.props
+    return {
+      projectId: this.props.projectId,
+      type: this.props.type,
+    }
   }
 }
