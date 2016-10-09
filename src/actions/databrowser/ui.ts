@@ -100,9 +100,8 @@ export function setBrowserViewRef(ref: any) {
   }
 }
 
-export function cellTab(fields: Field[]) {
+export function nextCell(fields: Field[]) {
   return (dispatch, getState) => {
-    console.log('celltab')
     const { selectedCell } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
@@ -110,9 +109,44 @@ export function cellTab(fields: Field[]) {
 
     if (i === fields.length - 1) {
       // last in the row, so go to first of next row
-      dispatch(selectCell([(selectedCell[0] + 1 % nodes.size), fields[0].name]))
+      dispatch(selectCell([((selectedCell[0] + 1) % nodes.size), fields[0].name]))
     } else {
       dispatch(selectCell([selectedCell[0], fields[i + 1].name]))
     }
   }
 }
+
+export function previousCell(fields: Field[]) {
+  return (dispatch, getState) => {
+    const { selectedCell } = getState().databrowser.ui
+    const { nodes } = getState().databrowser.data
+
+    const i = fields.map(f => f.name).indexOf(selectedCell[1])
+
+    if (i === 0) {
+      // last in the row, so go to last of prev row
+      dispatch(selectCell([((selectedCell[0] - 1 + nodes.size) % nodes.size), fields[fields.length - 1].name]))
+    } else {
+      dispatch(selectCell([selectedCell[0], fields[i - 1].name]))
+    }
+  }
+}
+
+export function nextRow(fields: Field[]) {
+  return (dispatch, getState) => {
+    const { selectedCell } = getState().databrowser.ui
+    const { nodes } = getState().databrowser.data
+
+    dispatch(selectCell([((selectedCell[0] + 1) % nodes.size), selectedCell[1]]))
+  }
+}
+
+export function previousRow(fields: Field[]) {
+  return (dispatch, getState) => {
+    const { selectedCell } = getState().databrowser.ui
+    const { nodes } = getState().databrowser.data
+
+    dispatch(selectCell([((selectedCell[0] - 1 + nodes.size) % nodes.size), selectedCell[1]]))
+  }
+}
+

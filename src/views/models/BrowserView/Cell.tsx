@@ -11,7 +11,7 @@ import {isNonScalarList} from '../../../utils/graphql'
 import {connect} from 'react-redux'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
-  cellTab, stopEditCell, editCell, unselectCell, selectCell,
+  nextCell, previousCell, nextRow, previousRow, stopEditCell, editCell, unselectCell, selectCell,
 } from '../../../actions/databrowser/ui'
 const classes: any = require('./Cell.scss')
 
@@ -37,12 +37,25 @@ interface Props {
   unselectCell: () => any
   editCell: (position: [number, string]) => any
   stopEditCell: () => any
-  cellTab: () => any
+
+  nextCell: (fields: Field[]) => any
+  previousCell: (fields: Field[]) => any
+  nextRow: (fields: Field[]) => any
+  previousRow: (fields: Field[]) => any
+
   position: [number, string]
   fields: Field[]
 }
 
 class Cell extends React.Component<Props, {}> {
+
+  private escaped: boolean
+
+  constructor(props: Props) {
+    super(props)
+
+    this.escaped = false
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
@@ -78,7 +91,6 @@ class Cell extends React.Component<Props, {}> {
   // onClick={() => this.props.addnew ? this.startEditing() : this.props.selectCell(this.props.position)}
 
   private startEditing = (): void => {
-    console.log('starting to edit')
     if (this.props.editing) {
       return
     }
@@ -95,6 +107,11 @@ class Cell extends React.Component<Props, {}> {
   }
 
   private save = (value: TypedValue, keepEditing: boolean = false): void => {
+    if (this.escaped) {
+      this.escaped = false
+      return
+    }
+
     if (this.props.field.isRequired && value === null) {
       const valueString = valueToString(value, this.props.field, true)
       this.props.showNotification({
@@ -131,15 +148,35 @@ class Cell extends React.Component<Props, {}> {
     if (e.keyCode === 13 && e.shiftKey) {
       return
     }
+
     switch (e.keyCode) {
+      case 37:
+        this.save(stringToValue(e.target.value, this.props.field))
+        this.props.previousCell(this.props.fields)
+        e.preventDefault()
+        break
+      case 38:
+        this.save(stringToValue(e.target.value, this.props.field))
+        this.props.previousRow(this.props.fields)
+        e.preventDefault()
+        break
       case 9:
-        this.props.cellTab(this.props.fields)
+      case 39:
+        this.save(stringToValue(e.target.value, this.props.field))
+        this.props.nextCell(this.props.fields)
+        e.preventDefault()
+        break
+      case 40:
+        this.save(stringToValue(e.target.value, this.props.field))
+        this.props.nextRow(this.props.fields)
         e.preventDefault()
         break
       case 13:
         this.save(stringToValue(e.target.value, this.props.field))
+        e.preventDefault()
         break
       case 27:
+        this.escaped = true
         this.cancel()
         e.preventDefault()
         break
@@ -218,7 +255,10 @@ const MappedCell = connect((state, props) => {
   unselectCell,
   editCell,
   stopEditCell,
-  cellTab,
+  nextCell,
+  previousCell,
+  nextRow,
+  previousRow,
 })(Cell)
 
 

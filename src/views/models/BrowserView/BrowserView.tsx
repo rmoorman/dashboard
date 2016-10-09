@@ -43,7 +43,7 @@ import {StateTree} from '../../../types/reducers'
 import cuid from 'cuid'
 const classes: any = require('./BrowserView.scss')
 import {
-  cellTab, editCell, setBrowserViewRef
+  nextCell, previousCell, nextRow, previousRow, editCell, setBrowserViewRef
 } from '../../../actions/databrowser/ui'
 
 interface Props {
@@ -71,8 +71,13 @@ interface Props {
   resetDataAndUI: () => any
   clearNodeSelection: () => any
   setBrowserViewRef: () => any
-  cellTab: () => any
-  editCell: () => any
+
+  nextCell: (fields: Field[]) => any
+  previousCell: (fields: Field[]) => any
+  nextRow: (fields: Field[]) => any
+  previousRow: (fields: Field[]) => any
+
+  editCell: (position: [number, string]) => any
   setNodeSelection: (ids: Immutable.List<string>) => any
   toggleNodeSelection: (id: string) => any
   filtersVisible: boolean
@@ -143,7 +148,7 @@ class BrowserView extends React.Component<Props, {}> {
     return (
       <div
         className={`${classes.root} ${this.props.filtersVisible ? classes.filtersVisible : ''}`}
-        onKeyUp={this.onKeyDown.bind(this)}
+        onKeyDown={this.onKeyDown.bind(this)}
       >
         <ModelHeader
           params={this.props.params}
@@ -178,7 +183,7 @@ class BrowserView extends React.Component<Props, {}> {
           <div
             className={classes.tableContainer} style={{ width: '100%' }}
             ref={this.props.setBrowserViewRef}
-            tabIndex="10000"
+            tabIndex={100}
           >
             <AutoSizer>
               {({height}) => {
@@ -403,12 +408,25 @@ class BrowserView extends React.Component<Props, {}> {
     }
     if (this.props.editing) {
       // then it's none of our business,
-      // let the cell do the stuff
+      // let the cell do the event handling
       return
     }
     switch (e.keyCode) {
+      case 37:
+        this.props.previousCell(this.props.fields)
+        e.preventDefault()
+        break
+      case 38:
+        this.props.previousRow(this.props.fields)
+        e.preventDefault()
+        break
       case 9:
-        this.props.cellTab(this.props.fields)
+      case 39:
+        this.props.nextCell(this.props.fields)
+        e.preventDefault()
+        break
+      case 40:
+        this.props.nextRow(this.props.fields)
         e.preventDefault()
         break
       case 13:
@@ -523,7 +541,12 @@ function mapDispatchToProps(dispatch) {
       updateNodeAsync,
       reloadDataAsync,
       loadDataAsync,
-      cellTab,
+
+      nextCell,
+      previousCell,
+      nextRow,
+      previousRow,
+
       editCell,
       setBrowserViewRef,
     },
