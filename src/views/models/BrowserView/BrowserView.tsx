@@ -431,6 +431,7 @@ class BrowserView extends React.Component<Props, {}> {
         break
       case 13:
         this.props.editCell(this.props.selectedCell)
+        e.preventDefault()
     }
   }
 

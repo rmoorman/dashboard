@@ -21,9 +21,11 @@ interface Props {
   className?: string
   defaultValue: Date
   onChange: (m: Moment) => void
+  onKeyDown?: (e: any) => void
   onCancel?: () => void
   // NOTE custom `onFocus` impl needed because overriding this property breaks the package
   onFocus?: () => void
+  onClickOutside?: (moment: any) => void
   [key: string]: any
 }
 
@@ -32,7 +34,12 @@ interface State {
   open: boolean
 }
 
-export default class Cell extends React.Component<Props, State> {
+export default class DatePicker extends React.Component<Props, State> {
+
+  refs: {
+    [key: string]: any
+    container: Element
+  }
 
   constructor (props) {
     super(props)
@@ -41,14 +48,23 @@ export default class Cell extends React.Component<Props, State> {
       moment: moment.utc(props.defaultValue, ISO8601),
       open: props.defaultOpen || false,
     }
+
+    this._onKeyDown = this._onKeyDown.bind(this)
   }
 
-  _onKeyDown (e: React.KeyboardEvent<any>) {
-    if (e.keyCode === 13) {
-      this._applyChange(this.state.moment)
-    } else if (e.keyCode === 27 || e.keyCode === 9) {
-      this._onCancel()
-    }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this._onKeyDown)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this._onKeyDown)
+  }
+
+  _onKeyDown (e: any) {
+    // fake event data, as the document doesn't have a value ...
+    e.target.value = this.state.moment
+    this.props.onKeyDown(e)
   }
 
   _onChange (m: Moment) {
@@ -92,17 +108,18 @@ export default class Cell extends React.Component<Props, State> {
     delete passThroughProps.onFocus
 
     return (
-      <div className={`${classes.root} ${this.props.className}`} onClick={() => this._markOpen()}>
-        <ClickOutside onClickOutside={() => this._onCancel()}>
+      <div
+        className={`${classes.root} ${this.props.className}`}
+        onClick={() => this._markOpen()}
+        ref='container'
+      >
+        <ClickOutside onClickOutside={() => this.props.onClickOutside(this.state.moment)}>
           <Datetime
             {...passThroughProps}
             className={classes.datetime}
             dateFormat='YYYY-MM-DD'
             timeFormat='HH:mm:ssZZ'
             onChange={(m) => this._onChange(m)}
-            inputProps={{
-              onKeyDown: (e) => this._onKeyDown(e),
-            }}
             open={this.state.open}
           />
           {!this.props.applyImmediately && this.state.open &&
