@@ -49,6 +49,11 @@ interface Props {
 
 class Cell extends React.Component<Props, {}> {
 
+  refs: {
+    [key: string]: any
+    container: Element
+  }
+
   private escaped: boolean
 
   constructor(props: Props) {
@@ -83,12 +88,19 @@ class Cell extends React.Component<Props, {}> {
         })}
         onClick={() => this.props.selectCell(this.props.position)}
         onDoubleClick={() => this.startEditing()}
+        ref="container"
       >
         {this.renderContent()}
       </div>
     )
   }
   // onClick={() => this.props.addnew ? this.startEditing() : this.props.selectCell(this.props.position)}
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selected === true && this.props.selected === false) {
+      this.refs.container.scrollIntoView(false)
+    }
+  }
 
   private startEditing = (): void => {
     if (this.props.editing) {

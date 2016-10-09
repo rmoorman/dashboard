@@ -28,7 +28,7 @@ interface Props {
 
   headerHeight: number
   headerRenderer: (input: any) => JSX.Element | string
-  fieldColumnWidths: number
+  fieldColumnWidths: any
 
   addRowHeight: number
 
@@ -51,7 +51,9 @@ export default class InfiniteTable extends React.Component<Props, {}> {
           isRowLoaded={({index}) => this.props.loadedList.get(index)}
           >
           {({onRowsRendered, registerChild}) => (
-            <div style={{display: 'flex', flexDirection: 'row', height: '100%', position: 'relative'}}>
+            <div
+              style={{display: 'flex', flexDirection: 'row', height: '100%', position: 'relative'}}
+            >
               <Grid
                 columnWidth={this.props.columnWidth}
                 columnCount={this.props.columnCount}
