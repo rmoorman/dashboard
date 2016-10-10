@@ -14,13 +14,16 @@ interface State {
 
 export default class FloatingLabel extends React.Component<Props, State> {
 
-  render () {
+  render() {
     const id = randomString(5)
-    return(
+    const restProps = Object.assign({}, this.props)
+    delete restProps.labelClassName
+
+    return (
       <div className={classes.root}>
         <input
           id={id}
-          {...this.props}
+          {...restProps}
         />
         <label
           htmlFor={id}

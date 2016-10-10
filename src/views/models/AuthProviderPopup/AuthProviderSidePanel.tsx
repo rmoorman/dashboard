@@ -2,9 +2,7 @@ import * as React from 'react'
 import * as Relay from 'react-relay'
 import * as Immutable from 'immutable'
 import FloatingInput from '../../../components/FloatingInput/FloatingInput'
-import AddAuthProviderMutation from '../../../mutations/AddAuthProviderMutation'
 import UpdateAuthProviderMutation from '../../../mutations/UpdateAuthProviderMutation'
-import DisableAuthProviderMutation from '../../../mutations/DisableAuthProviderMutation'
 import {connect} from 'react-redux'
 import {onFailureShowNotification} from '../../../utils/relay'
 import {showNotification} from '../../../actions/notification'
@@ -79,7 +77,6 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
 
   render() {
     const {authProvider} = this.state
-    const exists = authProvider.id !== ''
     const text = texts[this.props.selectedType]
 
     return (
@@ -87,12 +84,12 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
         <div className='flex flex-column'>
           <div className='w-100 white pa-38 fw1 bg-black-80 relative'>
             {authProvider.isEnabled &&
-              <div
-                className='absolute pa-6 bg-accent white ttu br-1 fw5'
-                style={{ top: 16, right: 16, background: '#7ED321', fontSize: 14 }}
-              >
-                Active
-              </div>
+            <div
+              className='absolute pa-6 bg-accent white ttu br-1 fw5'
+              style={{ top: 16, right: 16, background: '#7ED321', fontSize: 14 }}
+            >
+              Active
+            </div>
             }
             <div className='f-25 b'>
               {text.title}
@@ -101,7 +98,7 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
               {text.description}
             </div>
             <div className='f-16'>
-              <a href={text.link.href} className='white underline'>
+              <a target='_blank' href={text.link.href} className='white underline'>
                 {text.link.content}
               </a>
             </div>
@@ -148,7 +145,7 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
               </div>
               <div>
                 <span className='pa-6 mb-10 br-2 dib bg-white-10' style={{ fontSize: 13 }}>
-                  digitsID
+                  digitsId
                 </span>
               </div>
             </div>
@@ -253,7 +250,7 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
           }
         </div>
         <div className='flex justify-between pa-25 bt b--light-gray'>
-          {exists &&
+          {authProvider.isEnabled &&
           <div
             className='ph-25 pv-16 f-25 white pointer'
             style={{
@@ -264,12 +261,12 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
             Disable
           </div>
           }
-          {!exists &&
+          {!authProvider.isEnabled &&
           <div className='ph-25 pv-16 f-25 white bg-accent pointer' onClick={this.enable}>
             Enable
           </div>
           }
-          {exists && this.state.hasChanged &&
+          {authProvider.isEnabled && this.state.hasChanged &&
           <div className='ph-25 pv-16 f-25 white bg-accent pointer' onClick={this.enable}>
             Update
           </div>
@@ -277,42 +274,6 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
         </div>
       </div>
     )
-  }
-
-  private getEmptyAuthProvider(props: Props): AuthProvider {
-    switch (props.selectedType) {
-      case 'AUTH_PROVIDER_EMAIL':
-        return {
-          id: '',
-          type: 'AUTH_PROVIDER_EMAIL',
-          isEnabled: false,
-          digits: null,
-          auth0: null,
-        }
-      case 'AUTH_PROVIDER_DIGITS':
-        return {
-          id: '',
-          type: 'AUTH_PROVIDER_DIGITS',
-          isEnabled: false,
-          digits: {
-            consumerKey: '',
-            consumerSecret: '',
-          },
-          auth0: null,
-        }
-      case 'AUTH_PROVIDER_AUTH0':
-        return {
-          id: '',
-          type: 'AUTH_PROVIDER_AUTH0',
-          isEnabled: false,
-          digits: null,
-          auth0: {
-            domain: '',
-            clientId: '',
-            clientSecret: '',
-          },
-        }
-    }
   }
 
   private setIn = (keyPath: string[], value: any): void => {
@@ -323,17 +284,35 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
   }
 
   private getAuthProvider(props: Props): AuthProvider {
-    const authProvider = props.project.authProviders.edges.map(e => e.node).find(a => a.type === props.selectedType)
-    return authProvider || this.getEmptyAuthProvider(props)
+    return props.project.authProviders.edges.map(e => e.node).find(a => a.type === props.selectedType)!
+  }
+
+  private enable = () => {
+    this.setState(
+      {
+        authProvider: Immutable.fromJS(this.state.authProvider).set('isEnabled', true).toJS(),
+      } as State,
+      this.update
+    )
   }
 
   private disable = () => {
+    this.setState(
+      {
+        authProvider: Immutable.fromJS(this.state.authProvider).set('isEnabled', false).toJS(),
+      } as State,
+      this.update
+    )
+  }
+
+  private update = () => {
     const {authProvider} = this.state
     Relay.Store.commitUpdate(
-      new DisableAuthProviderMutation({
+      new UpdateAuthProviderMutation({
         authProviderId: authProvider.id,
-        projectId: this.props.project.id,
-        type: authProvider.type,
+        isEnabled: authProvider.isEnabled,
+        digits: authProvider.digits,
+        auth0: authProvider.auth0,
       }),
       {
         onFailure: (transaction) => {
@@ -341,40 +320,6 @@ class AuthProviderSidePanel extends React.Component<Props, State> {
         },
       }
     )
-  }
-
-  private enable = () => {
-    const {authProvider} = this.state
-    if (authProvider.id === '') {
-      Relay.Store.commitUpdate(
-        new AddAuthProviderMutation({
-          projectId: this.props.project.id,
-          type: authProvider.type,
-          digits: authProvider.digits,
-          auth0: authProvider.auth0,
-        }),
-        {
-          onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.props.showNotification)
-          },
-        }
-      )
-    } else {
-      Relay.Store.commitUpdate(
-        new UpdateAuthProviderMutation({
-          authProviderId: authProvider.id,
-          projectId: this.props.project.id,
-          type: authProvider.type,
-          digits: authProvider.digits,
-          auth0: authProvider.auth0,
-        }),
-        {
-          onFailure: (transaction) => {
-            onFailureShowNotification(transaction, this.props.showNotification)
-          },
-        }
-      )
-    }
   }
 }
 
