@@ -25,15 +25,12 @@ const classes: any = require('./PlaygroundView.scss')
 require('graphiql/graphiql.css')
 
 const DASHBOARD_ADMIN = {
-  id: '0',
-  email: 'ADMIN',
-  roles: null,
+  id: 'ADMIN'
 }
 
 const DEFAULT_QUERY = `{
   allUsers {
     id
-    email
   }
 }`
 
@@ -126,8 +123,6 @@ class PlaygroundView extends React.Component<Props, State> {
             edges {
               node {
                 id
-                email
-                roles
               }
             }
           }
@@ -241,10 +236,9 @@ class PlaygroundView extends React.Component<Props, State> {
           <div className={classes.user}>
             <select value={this.state.selectedUserId} onChange={this.changeUser}>
               {this.state.users.map((user) => {
-                const rolesStr = user.roles ? `(${user.roles.join(', ')})` : ''
                 return (
                   <option key={user.id} value={user.id}>
-                    {user.email} {rolesStr}
+                    {user.id}
                   </option>
                 )
               })}
