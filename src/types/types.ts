@@ -146,8 +146,6 @@ export interface ActionHandlerWebhook {
 
 export interface User {
   id: string
-  email: string
-  roles: string[]
 }
 
 export interface Node {
