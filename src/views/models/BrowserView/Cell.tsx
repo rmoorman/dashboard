@@ -247,7 +247,10 @@ class Cell extends React.Component<Props, {}> {
     return (
       <span
         className={classes.value}
-        style={{pointerEvents: this.props.field.isReadonly ? '' : 'none'}}
+        style={{
+          pointerEvents: this.props.field.isReadonly ? '' : 'none',
+          cursor: this.props.field.isReadonly ? 'auto' : 'pointer',
+        }}
       >{valueString}</span>
     )
   }

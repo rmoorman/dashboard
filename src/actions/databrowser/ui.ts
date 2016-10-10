@@ -65,7 +65,6 @@ export function toggleFilter(): ReduxAction {
 }
 
 export function selectCell(position: [number, string]) {
-  console.log('selecting cell', position)
   return {
     type: Constants.SELECT_CELL,
     payload: position,
