@@ -52,7 +52,6 @@ export default class DatePicker extends React.Component<Props, State> {
     this._onKeyDown = this._onKeyDown.bind(this)
   }
 
-
   componentDidMount() {
     document.addEventListener('keydown', this._onKeyDown)
   }

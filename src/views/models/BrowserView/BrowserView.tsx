@@ -41,7 +41,7 @@ import {StateTree} from '../../../types/reducers'
 import cuid from 'cuid'
 const classes: any = require('./BrowserView.scss')
 import {
-  nextCell, previousCell, nextRow, previousRow, editCell, setBrowserViewRef
+  nextCell, previousCell, nextRow, previousRow, editCell, setBrowserViewRef,
 } from '../../../actions/databrowser/ui'
 
 interface Props {

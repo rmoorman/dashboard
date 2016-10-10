@@ -6,8 +6,7 @@ import {nextStep} from '../../../actions/gettingStarted'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {StateTree} from '../../../types/reducers'
 import Cell from './Cell'
-import {TypedValue} from '../../../types/utils'
-import {Model, Field} from '../../../types/types'
+import {Model} from '../../../types/types'
 import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import Icon from '../../../components/Icon/Icon'
 import {classnames} from '../../../utils/classnames'
@@ -47,7 +46,6 @@ class NewRow extends React.Component<Props, State> {
       this.add()
     }
   }
-
 
   render() {
     const fields = this.props.model.fields.edges
@@ -128,18 +126,6 @@ class NewRow extends React.Component<Props, State> {
     if (allRequiredFieldsGiven) {
       this.props.add(this.state.fieldValues)
     }
-  }
-
-  private update = (value: TypedValue, field: Field, callback) => {
-    if (this.props.gettingStarted.isCurrentStep('STEP3_CLICK_ENTER_IMAGEURL') &&
-        field.name === 'imageUrl') {
-      this.props.nextStep()
-    }
-
-    const {fieldValues} = this.state
-    fieldValues[field.name].value = value
-    this.setState({fieldValues, shouldFocus: false} as State)
-    callback()
   }
 
 }

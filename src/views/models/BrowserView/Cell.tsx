@@ -78,7 +78,6 @@ class Cell extends React.Component<Props, {}> {
       [classes.rowselected]: this.props.rowSelected,
     })
 
-
     return (
       <div
         style={{
@@ -95,7 +94,6 @@ class Cell extends React.Component<Props, {}> {
       </div>
     )
   }
-  // onClick={() => this.props.addnew ? this.startEditing() : this.props.selectCell(this.props.position)}
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selected === true && this.props.selected === false) {
@@ -263,39 +261,40 @@ class Cell extends React.Component<Props, {}> {
   }
 }
 
-const MappedCell = connect((state, props) => {
-  const {rowIndex, field, addnew} = props
-  const { selectedCell, editing, newRowActive, writing } = state.databrowser.ui
+const MappedCell = connect(
+  (state, props) => {
+    const {rowIndex, field, addnew} = props
+    const { selectedCell, editing, newRowActive, writing } = state.databrowser.ui
 
+    const cellEditing = !writing && (editing || ((field.isList) ? false : addnew))
 
-  const cellEditing = !writing && (editing || ((field.isList) ? false : addnew))
+    if (selectedCell[0] === rowIndex && selectedCell[1] === field.name) {
+      return {
+        selected: true,
+        editing: cellEditing,
+        position: [rowIndex, field.name],
+        newRowActive,
+      }
+    }
 
-  if (selectedCell[0] === rowIndex && selectedCell[1] === field.name) {
     return {
-      selected: true,
-      editing: cellEditing,
+      selected: false,
+      editing: false,
       position: [rowIndex, field.name],
       newRowActive,
     }
+  },
+  {
+    selectCell,
+    unselectCell,
+    editCell,
+    stopEditCell,
+    nextCell,
+    previousCell,
+    nextRow,
+    previousRow,
   }
-
-  return {
-    selected: false,
-    editing: false,
-    position: [rowIndex, field.name],
-    newRowActive,
-  }
-}, {
-  selectCell,
-  unselectCell,
-  editCell,
-  stopEditCell,
-  nextCell,
-  previousCell,
-  nextRow,
-  previousRow,
-})(Cell)
-
+)(Cell)
 
 export default Relay.createContainer(MappedCell, {
   fragments: {

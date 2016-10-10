@@ -30,7 +30,7 @@ class NewRowInactive extends React.Component<Props, {}> {
                 height: this.props.height,
               }}
               className={classnames(classes.cell, {
-                [classes.last]: index === fields.length - 1
+                [classes.last]: index === fields.length - 1,
               })}
               onKeyDown={this.handleKeyDown}
             >

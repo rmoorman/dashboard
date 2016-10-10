@@ -32,7 +32,7 @@ class DeleteNodeRow extends React.Component<Props, State> {
             height: this.props.height,
         }}
       >
-        <Icon width={16} height={16} src={require('assets/icons/delete.svg')} className="mr1" />
+        <Icon width={16} height={16} src={require('assets/icons/delete.svg')} className='mr1' />
         <span>Delete {nodes} node{nodes > 1 ? 's' : ''}?</span>
         <div
           style={{
@@ -56,12 +56,15 @@ class DeleteNodeRow extends React.Component<Props, State> {
   }
 }
 
-const MappedDataActionRow = connect(state => {
-  return {
-    selectedNodeIds: state.databrowser.ui.selectedNodeIds,
+const MappedDataActionRow = connect(
+  state => {
+    return {
+      selectedNodeIds: state.databrowser.ui.selectedNodeIds,
+    }
+  },
+  {
+    clearNodeSelection,
   }
-}, {
-  clearNodeSelection,
-})(DeleteNodeRow)
+)(DeleteNodeRow)
 
 export default MappedDataActionRow

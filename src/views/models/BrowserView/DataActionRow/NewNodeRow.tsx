@@ -73,7 +73,7 @@ class NewNodeRow extends React.Component<Props, State> {
               left: 40,
               width: 'auto',
               top: this.props.headerHeight,
-              zIndex: 2
+              zIndex: 2,
             }}
             cellStyle={{position: 'absolute'}}
             rowHeight={this.props.height}

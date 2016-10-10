@@ -25,7 +25,6 @@ export function toggleNewRow(fields: Field[]) {
       }
     }
 
-
     dispatch({
       type: Constants.TOGGLE_NEW_ROW,
     })
@@ -33,7 +32,7 @@ export function toggleNewRow(fields: Field[]) {
 }
 
 function getFirstNonReadonlyField(fields: Field[]) {
-  for(let i = 0; i < fields.length; i++) {
+  for (let i = 0; i < fields.length; i++) {
     if (!fields[i].isReadonly) {
       return fields[i]
     }
@@ -128,7 +127,9 @@ export function setBrowserViewRef(ref: any) {
 
 export function nextCell(fields: Field[]) {
   return (dispatch, getState) => {
-    if (!fields) return
+    if (!fields) {
+      return
+    }
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
@@ -145,7 +146,9 @@ export function nextCell(fields: Field[]) {
 
 export function previousCell(fields: Field[]) {
   return (dispatch, getState) => {
-    if (!fields) return
+    if (!fields) {
+      return
+    }
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
@@ -163,7 +166,9 @@ export function previousCell(fields: Field[]) {
 
 export function nextRow(fields: Field[]) {
   return (dispatch, getState) => {
-    if (!fields) return
+    if (!fields) {
+      return
+    }
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
@@ -177,7 +182,9 @@ export function nextRow(fields: Field[]) {
 
 export function previousRow(fields: Field[]) {
   return (dispatch, getState) => {
-    if (!fields) return
+    if (!fields) {
+      return
+    }
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
@@ -188,4 +195,3 @@ export function previousRow(fields: Field[]) {
     dispatch(selectCell([((selectedCell[0] - 1 + nodes.size) % nodes.size), selectedCell[1]]))
   }
 }
-
