@@ -25,7 +25,7 @@ const classes: any = require('./PlaygroundView.scss')
 require('graphiql/graphiql.css')
 
 const DASHBOARD_ADMIN = {
-  id: 'ADMIN'
+  id: 'ADMIN',
 }
 
 const DEFAULT_QUERY = `{
