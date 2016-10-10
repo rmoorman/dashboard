@@ -95,7 +95,6 @@ export function unselectCell() {
 }
 
 export function editCell(position: [number, string]) {
-  console.log('editCell', position)
   return {
     type: Constants.EDIT_CELL,
     payload: position,
