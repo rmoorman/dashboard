@@ -25,8 +25,8 @@ interface Props {
   router: ReactRouter.InjectedRouter
 }
 
-const emptyRoleToken = '____EMPTY_ROLE_TOKEN'
-const addRoleToken = '____ADD_ROLE_TOKEN'
+// const emptyRoleToken = '____EMPTY_ROLE_TOKEN'
+// const addRoleToken = '____ADD_ROLE_TOKEN'
 const emptyStepToken = '____EMPTY_STEP_TOKEN'
 
 class PermissionType extends React.Component<Props, {}> {
@@ -38,14 +38,14 @@ class PermissionType extends React.Component<Props, {}> {
     })
   }
 
-  _onChangeUserRole (userRole: string) {
-    if (userRole === addRoleToken) {
-      this.props.router.push(`/${this.props.params.projectName}/models/User/structure/edit/roles`)
-
-      return
-    }
-    this.props.dataCallback({ userRole, useUserRole: true })
-  }
+  // _onChangeUserRole (userRole: string) {
+  //   if (userRole === addRoleToken) {
+  //     this.props.router.push(`/${this.props.params.projectName}/models/User/structure/edit/roles`)
+  //
+  //     return
+  //   }
+  //   this.props.dataCallback({ userRole, useUserRole: true })
+  // }
 
   _isValid (userPath: string[]): boolean {
     return this.props.possibleRelatedPermissionPaths.findIndex((arr) => arr.map((f) => f.id).equals(userPath)) > -1
@@ -66,43 +66,43 @@ class PermissionType extends React.Component<Props, {}> {
     this.props.dataCallback({ useUserRole: false, userRole: null })
   }
 
-  _renderAuthenticated () {
-    const fontOptions = {
-      font: 'Open Sans',
-      fontSize: '13px',
-    }
-
-    const selectedText = this.props.userRole || 'Select Role...'
-    const selectWidth = calculateSize(selectedText, fontOptions).width
-
-    return (
-      <div className={`${classes.authenticated} ${this.props.useUserRole ? '' : classes.inactive}`}>
-        <span>Limit to</span>
-        <select
-          style={{ width: selectWidth }}
-          value={this.props.userRole || emptyRoleToken}
-          onChange={(e: any) => this._onChangeUserRole(e.target.value)}
-        >
-          <option disabled value={emptyRoleToken}>Select Role...</option>
-          {this.props.availableUserRoles.map((userRole) => (
-            <option key={userRole} value={userRole}>{userRole}</option>
-          ))}
-          <optgroup label='Actions'>
-            <option value={addRoleToken}>Create a new role...</option>
-          </optgroup>
-        </select>
-        {this.props.useUserRole &&
-          <div className={classes.delete} onClick={() => this._disableUserRole()}>
-            <Icon
-              width={15}
-              height={15}
-              src={require('assets/icons/close.svg')}
-            />
-          </div>
-        }
-      </div>
-    )
-  }
+  // _renderAuthenticated () {
+  //   const fontOptions = {
+  //     font: 'Open Sans',
+  //     fontSize: '13px',
+  //   }
+  //
+  //   const selectedText = this.props.userRole || 'Select Role...'
+  //   const selectWidth = calculateSize(selectedText, fontOptions).width
+  //
+  //   return (
+  //     <div className={`${classes.authenticated} ${this.props.useUserRole ? '' : classes.inactive}`}>
+  //       <span>Limit to</span>
+  //       <select
+  //         style={{ width: selectWidth }}
+  //         value={this.props.userRole || emptyRoleToken}
+  //         onChange={(e: any) => this._onChangeUserRole(e.target.value)}
+  //       >
+  //         <option disabled value={emptyRoleToken}>Select Role...</option>
+  //         {this.props.availableUserRoles.map((userRole) => (
+  //           <option key={userRole} value={userRole}>{userRole}</option>
+  //         ))}
+  //         <optgroup label='Actions'>
+  //           <option value={addRoleToken}>Create a new role...</option>
+  //         </optgroup>
+  //       </select>
+  //       {this.props.useUserRole &&
+  //         <div className={classes.delete} onClick={() => this._disableUserRole()}>
+  //           <Icon
+  //             width={15}
+  //             height={15}
+  //             src={require('assets/icons/close.svg')}
+  //           />
+  //         </div>
+  //       }
+  //     </div>
+  //   )
+  // }
 
   _renderRelatedLevel (level: number) {
     const fields = this.props.possibleRelatedPermissionPaths
@@ -202,7 +202,7 @@ class PermissionType extends React.Component<Props, {}> {
           >
             <option value='GUEST'>Guest</option>
             <option value='AUTHENTICATED'>Authenticated</option>
-            <option disabled value='RELATED'>Related</option>
+            <option disabled value='RELATED'>Related (coming soon)</option>
             {
               // TODO enable again when related permission are implemented
               // <option disabled={this.props.possibleRelatedPermissionPaths.length === 0} value='RELATED'>
@@ -210,7 +210,7 @@ class PermissionType extends React.Component<Props, {}> {
               // </option>
             }
           </select>
-          {this.props.userType === 'AUTHENTICATED' && this._renderAuthenticated()}
+          {/*{this.props.userType === 'AUTHENTICATED' && this._renderAuthenticated()}*/}
           {this.props.userType === 'RELATED' && this._renderRelated()}
         </div>
       </div>
