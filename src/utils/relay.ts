@@ -54,6 +54,7 @@ function getInputString(fieldValues: {[key: string]: any}): string {
   return fieldValues
     .mapToArray((fieldName, obj) => obj)
     .filter(({value}) => value !== null)
+    .filter(({field}) => !field.isReadonly)
     .filter(({field}) => (!isNonScalarList(field)))
     .map(({field, value}) => toGQL(value, field))
     .join(' ')

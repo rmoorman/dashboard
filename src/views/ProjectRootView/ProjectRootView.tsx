@@ -9,7 +9,6 @@ import mapProps from '../../components/MapProps/MapProps'
 import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
 import OnboardingPopup from '../../components/onboarding/OnboardingPopup/OnboardingPopup'
 import PlaygroundCPopup from '../../components/onboarding/PlaygroundCPopup/PlaygroundCPopup'
-import AuthProviderPopup from '../models/AuthProviderPopup/AuthProviderPopup'
 import {connect} from 'react-redux'
 import {validateProjectName} from '../../utils/nameValidator'
 import ProjectSelection from '../../components/ProjectSelection/ProjectSelection'
@@ -167,10 +166,6 @@ class ProjectRootView extends React.Component<Props, {}> {
             <PlaygroundCPopup projectId={this.props.project.id} />
           </PopupWrapper>
         }
-        {/*<PopupWrapper>
-          <AuthProviderPopup project={this.props.project}/>
-        </PopupWrapper>
-          */}
       </div>
     )
   }
@@ -264,7 +259,6 @@ export default Relay.createContainer(MappedProjectRootView, {
         project: projectByName(projectName: $projectName) {
           id
           name
-          ${AuthProviderPopup.getFragment('project')}
           ${SideNav.getFragment('project')}
         }
         user {

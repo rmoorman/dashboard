@@ -7,8 +7,10 @@ import {Link} from 'react-router'
 import ModelDescription from './ModelDescription'
 import Tether from '../../components/Tether/Tether'
 import Header from '../../components/Header/Header'
-import { Model, Viewer, Project } from '../../types/types'
+import {Model, Viewer, Project} from '../../types/types'
 import {GettingStartedState} from '../../types/gettingStarted'
+import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
+import AuthProviderPopup from './AuthProviderPopup/AuthProviderPopup'
 const classes: any = require('./ModelHeader.scss')
 
 interface Props {
@@ -21,9 +23,17 @@ interface Props {
   project: Project
 }
 
-class ModelHeader extends React.Component<Props, {}> {
+interface State {
+  authProviderPopupVisible: boolean
+}
 
-  render () {
+class ModelHeader extends React.Component<Props, State> {
+
+  state = {
+    authProviderPopupVisible: false,
+  }
+
+  render() {
     const dataViewOnClick = () => {
       if (this.props.gettingStartedState.isCurrentStep('STEP3_CLICK_DATA_BROWSER')) {
         this.props.nextStep()
@@ -32,6 +42,14 @@ class ModelHeader extends React.Component<Props, {}> {
 
     return (
       <div className={classes.root}>
+        {this.state.authProviderPopupVisible &&
+        <PopupWrapper>
+          <AuthProviderPopup
+            project={this.props.project}
+            close={() => this.setState({ authProviderPopupVisible: false } as State)}
+          />
+        </PopupWrapper>
+        }
         <div className={classes.top}>
           <Header
             viewer={this.props.viewer}
@@ -47,7 +65,7 @@ class ModelHeader extends React.Component<Props, {}> {
                 <span className={classes.itemCount}>{this.props.model.itemCount} items</span>
               </div>
               <div className={classes.titleDescription}>
-                <ModelDescription model={this.props.model} />
+                <ModelDescription model={this.props.model}/>
               </div>
             </div>
           </Header>
@@ -80,6 +98,14 @@ class ModelHeader extends React.Component<Props, {}> {
             >
               Structure
             </Link>
+            {this.props.model.name === 'User' &&
+            <div
+              className='pointer f-16 pa-25'
+              onClick={() => this.setState({ authProviderPopupVisible: true } as State)}
+            >
+              Configure Auth Provider
+            </div>
+            }
           </div>
           <div className={classes.buttons}>
             {this.props.children}
@@ -97,7 +123,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ nextStep }, dispatch)
+  return bindActionCreators({nextStep}, dispatch)
 }
 
 const ReduxContainer = connect(
@@ -118,6 +144,7 @@ export default Relay.createContainer(ReduxContainer, {
     project: () => Relay.QL`
       fragment on Project {
         ${Header.getFragment('project')}
+        ${AuthProviderPopup.getFragment('project')}
       }
     `,
     model: () => Relay.QL`

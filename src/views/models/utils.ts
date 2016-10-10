@@ -82,7 +82,7 @@ export function compareFields(a: Field, b: Field): number {
 export function getFirstInputFieldIndex(fields: Field[]): number {
   let inputIndex
   const hasInputField = fields.some((field, index) => {
-    if (isNonScalarList(field) || field.name === 'id') {
+    if (isNonScalarList(field) || field.name === 'id' || field.isReadonly) {
       return false
     } else {
       inputIndex = index

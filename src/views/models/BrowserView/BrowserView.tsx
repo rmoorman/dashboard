@@ -591,6 +591,7 @@ export default Relay.createContainer(MappedBrowserView, {
                 name
                 typeIdentifier
                 isList
+                isReadonly
                 defaultValue
                 relatedModel {
                   name

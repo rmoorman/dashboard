@@ -247,6 +247,7 @@ class Cell extends React.Component<Props, {}> {
     return (
       <span
         className={classes.value}
+        style={{pointerEvents: this.props.field.isReadonly ? '' : 'none'}}
       >{valueString}</span>
     )
   }
@@ -302,6 +303,7 @@ export default Relay.createContainer(MappedCell, {
         name
         isList
         isRequired
+        isReadonly
         typeIdentifier
         isReadonly
         enumValues
@@ -310,6 +312,6 @@ export default Relay.createContainer(MappedCell, {
         }
         ${RelationsPopup.getFragment('originField')}
       }
-    `, // Add isReadOnly back to the schema when backend implemented
+    `,
   },
 })
