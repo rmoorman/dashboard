@@ -72,6 +72,7 @@ function getNonScalarEditCell(reqs: CellRequirements): JSX.Element {
       relatedModel={reqs.field.relatedModel}
       projectId={reqs.projectId}
       value={reqs.value ? reqs.value.id : null}
+      onKeyDown={reqs.methods.onKeyDown}
       save={reqs.methods.save}
       cancel={reqs.methods.cancel}
     />

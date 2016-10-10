@@ -41,6 +41,12 @@ class NewRow extends React.Component<Props, State> {
     }
   }
 
+  keyDown = (e: any) => {
+    if (e.keyCode === 13) {
+      this.add()
+    }
+  }
+
 
   render() {
     const fields = this.props.model.fields.edges
@@ -59,6 +65,7 @@ class NewRow extends React.Component<Props, State> {
           width: this.props.width - 250 - 40,
           border: '4px solid ' + this.props.loading ? 'red' : 'transparent',
         }}
+        onKeyDown={this.keyDown}
       >
         {fields.map(function(field, index)  {
           return (

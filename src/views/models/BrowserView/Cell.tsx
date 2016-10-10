@@ -37,6 +37,7 @@ interface Props {
   unselectCell: () => any
   editCell: (position: [number, string]) => any
   stopEditCell: () => any
+  newRowActive: boolean
 
   nextCell: (fields: Field[]) => any
   previousCell: (fields: Field[]) => any
@@ -45,6 +46,8 @@ interface Props {
 
   position: [number, string]
   fields: Field[]
+
+  loaded: boolean[]
 }
 
 class Cell extends React.Component<Props, {}> {
@@ -165,7 +168,6 @@ class Cell extends React.Component<Props, {}> {
   }
 
   private onKeyDown = (e: any): void => {
-    console.log('key down', e.keyCode)
     if (e.keyCode === 13 && e.shiftKey) {
       return
     }
@@ -185,7 +187,6 @@ class Cell extends React.Component<Props, {}> {
       case 9:
       case 39:
         this.stopEvent(e)
-        console.log('save and nextCell')
         this.save(stringToValue(e.target.value, this.props.field))
         console.log(this.props)
         this.props.nextCell(this.props.fields)
@@ -196,7 +197,9 @@ class Cell extends React.Component<Props, {}> {
         this.props.nextRow(this.props.fields)
         break
       case 13:
-        this.stopEvent(e)
+        if (!this.props.newRowActive) {
+          this.stopEvent(e)
+        }
         this.save(stringToValue(e.target.value, this.props.field))
         break
       case 27:
@@ -259,13 +262,15 @@ class Cell extends React.Component<Props, {}> {
 
 const MappedCell = connect((state, props) => {
   const {rowIndex, field, addnew} = props
-  const { selectedCell, editing } = state.databrowser.ui
+  const { selectedCell, editing, newRowActive } = state.databrowser.ui
+  const { loaded } = state.databrowser.data
 
   if (selectedCell[0] === rowIndex && selectedCell[1] === field.name) {
     return {
       selected: true,
-      editing: editing || (field.isList ? false : addnew),
+      editing: loaded.size > 0 && (editing || ((field.isList) ? false : addnew)),
       position: [rowIndex, field.name],
+      newRowActive,
     }
   }
 
