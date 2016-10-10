@@ -113,7 +113,9 @@ export default class DatePicker extends React.Component<Props, State> {
         onClick={() => this._markOpen()}
         ref='container'
       >
-        <ClickOutside onClickOutside={() => this.props.onClickOutside(this.state.moment)}>
+        <ClickOutside onClickOutside={() =>
+          typeof this.props.onClickOutside === 'function' && this.props.onClickOutside(this.state.moment)
+        }>
           <Datetime
             {...passThroughProps}
             className={classes.datetime}

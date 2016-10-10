@@ -266,7 +266,6 @@ const MappedCell = connect((state, props) => {
 
 
   const cellEditing = !writing && (editing || ((field.isList) ? false : addnew))
-  console.log(writing, cellEditing)
 
   if (selectedCell[0] === rowIndex && selectedCell[1] === field.name) {
     return {
@@ -281,6 +280,7 @@ const MappedCell = connect((state, props) => {
     selected: false,
     editing: false,
     position: [rowIndex, field.name],
+    newRowActive,
   }
 }, {
   selectCell,
