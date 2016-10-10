@@ -185,7 +185,6 @@ class Cell extends React.Component<Props, {}> {
       case 39:
         this.stopEvent(e)
         this.save(stringToValue(e.target.value, this.props.field))
-        console.log(this.props)
         this.props.nextCell(this.props.fields)
         break
       case 40:
