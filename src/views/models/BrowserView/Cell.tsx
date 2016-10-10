@@ -87,7 +87,7 @@ class Cell extends React.Component<Props, {}> {
           overflow: 'visible',
         }}
         className={rootClassnames}
-        onClick={() => this.props.selectCell(this.props.position)}
+        onClick={() => this.props.addnew ? this.startEditing() : this.props.selectCell(this.props.position)}
         onDoubleClick={() => this.startEditing()}
         ref='container'
       >
@@ -262,13 +262,16 @@ class Cell extends React.Component<Props, {}> {
 
 const MappedCell = connect((state, props) => {
   const {rowIndex, field, addnew} = props
-  const { selectedCell, editing, newRowActive } = state.databrowser.ui
-  const { loaded } = state.databrowser.data
+  const { selectedCell, editing, newRowActive, writing } = state.databrowser.ui
+
+
+  const cellEditing = !writing && (editing || ((field.isList) ? false : addnew))
+  console.log(writing, cellEditing)
 
   if (selectedCell[0] === rowIndex && selectedCell[1] === field.name) {
     return {
       selected: true,
-      editing: loaded.size > 0 && (editing || ((field.isList) ? false : addnew)),
+      editing: cellEditing,
       position: [rowIndex, field.name],
       newRowActive,
     }

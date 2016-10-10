@@ -24,6 +24,7 @@ interface Props {
   width: number
   loading: boolean
   loaded: any
+  writing: boolean
 }
 
 interface State {
@@ -54,7 +55,7 @@ class NewRow extends React.Component<Props, State> {
 
       // .sort(compareFields) // TODO remove this once field ordering is implemented
     const inputIndex = getFirstInputFieldIndex(fields)
-    const loading = this.props.loaded.size === 0
+    const loading = this.props.writing
 
     return (
       <div
@@ -118,7 +119,7 @@ class NewRow extends React.Component<Props, State> {
 
   private add = () => {
     // don't add when we're loading already new data
-    if (this.props.loaded.size === 0) {
+    if (this.props.writing) {
       return
     }
     const allRequiredFieldsGiven = this.state.fieldValues
@@ -146,7 +147,7 @@ class NewRow extends React.Component<Props, State> {
 const mapStateToProps = (state: StateTree) => {
   return {
     gettingStarted: state.gettingStarted.gettingStartedState,
-    loaded: state.databrowser.data.loaded,
+    writing: state.databrowser.ui.writing,
   }
 }
 

@@ -11,4 +11,5 @@ export interface DataBrowserUIState {
   selectedCell: [number, String]
   editing: boolean
   browserViewRef: any
+  writing: boolean
 }

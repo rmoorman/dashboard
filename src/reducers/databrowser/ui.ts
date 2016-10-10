@@ -11,10 +11,11 @@ const initialState: DataBrowserUIState = {
   selectedNodeIds: Immutable.List<string>(),
   scrollTop: 0,
   loading: true,
+  writing: false,
   actionRow: ActionRowState.NewNode,
   selectedCell: [-1, null],
   editing: false,
-  browserViewRef: null
+  browserViewRef: null,
 }
 
 export function reduceUI(state: DataBrowserUIState = initialState, action: ReduxAction): DataBrowserUIState {
@@ -79,6 +80,10 @@ export function reduceUI(state: DataBrowserUIState = initialState, action: Redux
       return Object.assign({}, state, {
         loading: action.payload,
       })
+    case Constants.SET_WRITING:
+      return Object.assign({}, state, {
+        writing: action.payload,
+      })
     case Constants.ACTIVATE_NEW_NODE_ROW:
       return Object.assign({}, state, {
         actionRow: ActionRowState.NewNode,
@@ -93,7 +98,7 @@ export function reduceUI(state: DataBrowserUIState = initialState, action: Redux
       })
     case Constants.SET_BROWSER_VIEW_REF:
       return Object.assign({}, state, {
-        browserViewRef: action.payload
+        browserViewRef: action.payload,
       })
     case SharedConstants.RESET:
       return initialState
