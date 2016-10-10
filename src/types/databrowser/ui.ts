@@ -1,5 +1,5 @@
 import * as Immutable from 'immutable'
-import {ActionRowState} from "./actionrow"
+import {ActionRowState} from './actionrow'
 
 export interface DataBrowserUIState {
   filtersVisible: boolean
