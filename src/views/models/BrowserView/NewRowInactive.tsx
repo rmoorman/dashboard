@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {connect} from 'react-redux'
 import {toggleNewRow} from '../../../actions/databrowser/ui'
-import {Model} from '../../../types/types'
+import {Model, Field} from '../../../types/types'
 import Icon from '../../../components/Icon/Icon'
 import {classnames} from '../../../utils/classnames'
 const classes: any = require('./NewRowInactive.scss')
@@ -9,7 +9,7 @@ const classes: any = require('./NewRowInactive.scss')
 interface Props {
   columnWidths: {[key: string]: number}
   model: Model
-  toggleNewRow: () => any
+  toggleNewRow: (fields: Field[]) => any
   height: number
 }
 
@@ -20,7 +20,7 @@ class NewRowInactive extends React.Component<Props, {}> {
       .map((edge) => edge.node)
 
     return (
-      <div className={classes.root} onClick={this.props.toggleNewRow}>
+      <div className={classes.root} onClick={() => this.props.toggleNewRow(fields)}>
         {fields.map(function(field, index)  {
           return (
             <div

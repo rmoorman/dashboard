@@ -9,9 +9,18 @@ export function hideNewRow(): ReduxAction {
   }
 }
 
-export function toggleNewRow(): ReduxAction {
-  return {
-    type: Constants.TOGGLE_NEW_ROW,
+export function toggleNewRow(fields: Field[]) {
+  return (dispatch, getState) => {
+    const { newRowActive } = getState().databrowser.ui
+
+    // if we're activating the new row, also select the first field
+    if (!newRowActive && fields) {
+      dispatch(selectCell([-1, fields[1].name]))
+    }
+
+    dispatch({
+      type: Constants.TOGGLE_NEW_ROW,
+    })
   }
 }
 
@@ -56,6 +65,7 @@ export function toggleFilter(): ReduxAction {
 }
 
 export function selectCell(position: [number, string]) {
+  console.log('selecting cell', position)
   return {
     type: Constants.SELECT_CELL,
     payload: position,
@@ -69,6 +79,7 @@ export function unselectCell() {
 }
 
 export function editCell(position: [number, string]) {
+  console.log('editCell', position)
   return {
     type: Constants.EDIT_CELL,
     payload: position,
@@ -82,9 +93,7 @@ export function stopEditCell() {
 
     if (browserViewRef !== null) {
       browserViewRef.focus()
-      setTimeout(() => {
-        browserViewRef.click()
-      }, 1000)
+      browserViewRef.click()
     }
 
     dispatch({
@@ -102,14 +111,15 @@ export function setBrowserViewRef(ref: any) {
 
 export function nextCell(fields: Field[]) {
   return (dispatch, getState) => {
-    const { selectedCell } = getState().databrowser.ui
+    if (!fields) return
+    const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
     const i = fields.map(f => f.name).indexOf(selectedCell[1])
 
     if (i === fields.length - 1) {
       // last in the row, so go to first of next row
-      dispatch(selectCell([((selectedCell[0] + 1) % nodes.size), fields[0].name]))
+      dispatch(selectCell([((selectedCell[0] + (newRowActive ? 0 : 1)) % nodes.size), fields[0].name]))
     } else {
       dispatch(selectCell([selectedCell[0], fields[i + 1].name]))
     }
@@ -118,14 +128,16 @@ export function nextCell(fields: Field[]) {
 
 export function previousCell(fields: Field[]) {
   return (dispatch, getState) => {
-    const { selectedCell } = getState().databrowser.ui
+    if (!fields) return
+    const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
     const i = fields.map(f => f.name).indexOf(selectedCell[1])
 
     if (i === 0) {
       // last in the row, so go to last of prev row
-      dispatch(selectCell([((selectedCell[0] - 1 + nodes.size) % nodes.size), fields[fields.length - 1].name]))
+      dispatch(selectCell([((selectedCell[0] + (newRowActive ? 0 : (nodes.size - 1))) % nodes.size),
+        fields[fields.length - 1].name]))
     } else {
       dispatch(selectCell([selectedCell[0], fields[i - 1].name]))
     }
@@ -134,8 +146,13 @@ export function previousCell(fields: Field[]) {
 
 export function nextRow(fields: Field[]) {
   return (dispatch, getState) => {
-    const { selectedCell } = getState().databrowser.ui
+    if (!fields) return
+    const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
+
+    if (newRowActive) {
+      return
+    }
 
     dispatch(selectCell([((selectedCell[0] + 1) % nodes.size), selectedCell[1]]))
   }
@@ -143,8 +160,13 @@ export function nextRow(fields: Field[]) {
 
 export function previousRow(fields: Field[]) {
   return (dispatch, getState) => {
-    const { selectedCell } = getState().databrowser.ui
+    if (!fields) return
+    const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
+
+    if (newRowActive) {
+      return
+    }
 
     dispatch(selectCell([((selectedCell[0] - 1 + nodes.size) % nodes.size), selectedCell[1]]))
   }

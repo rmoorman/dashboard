@@ -41,6 +41,7 @@ class NewRow extends React.Component<Props, State> {
     }
   }
 
+
   render() {
     const fields = this.props.model.fields.edges
       .map((edge) => edge.node)
@@ -70,12 +71,14 @@ class NewRow extends React.Component<Props, State> {
                 needsFocus={this.state.shouldFocus ? index === inputIndex : false}
                 addnew={true}
                 field={field}
+                fields={fields}
                 width={this.props.columnWidths[field.name]}
                 update={this.update}
                 value={this.state.fieldValues[field.name] ? this.state.fieldValues[field.name].value : ''}
                 cancel={this.props.cancel}
                 projectId={this.props.projectId}
                 reload={() => null}
+                rowIndex={-1}
               />
             </div>
           )
@@ -104,14 +107,6 @@ class NewRow extends React.Component<Props, State> {
         </div>
       </div>
     )
-  }
-
-  private handleKeyDown = (e) => {
-    if (e.keyCode === 13) {
-      this.add()
-    } else if (e.keyCode === 27) {
-      this.props.cancel()
-    }
   }
 
   private add = () => {

@@ -148,7 +148,7 @@ class BrowserView extends React.Component<Props, {}> {
     return (
       <div
         className={`${classes.root} ${this.props.filtersVisible ? classes.filtersVisible : ''}`}
-        onKeyDown={this.onKeyDown.bind(this)}
+        onKeyDown={this.onKeyDown}
       >
         <ModelHeader
           params={this.props.params}
@@ -403,9 +403,11 @@ class BrowserView extends React.Component<Props, {}> {
   }
 
   private onKeyDown = (e: any): void => {
+    console.log('getting onKey in BrowserView', e)
     if (e.keyCode === 13 && e.shiftKey) {
       return
     }
+    console.log('editing', this.props.editing)
     if (this.props.editing) {
       // then it's none of our business,
       // let the cell do the event handling

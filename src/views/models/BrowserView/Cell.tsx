@@ -83,12 +83,10 @@ class Cell extends React.Component<Props, {}> {
           alignItems: 'center',
           overflow: 'visible',
         }}
-        className={classnames(rootClassnames, {
-          [classes.selected]: this.props.selected,
-        })}
+        className={rootClassnames}
         onClick={() => this.props.selectCell(this.props.position)}
         onDoubleClick={() => this.startEditing()}
-        ref="container"
+        ref='container'
       >
         {this.renderContent()}
       </div>
@@ -156,41 +154,55 @@ class Cell extends React.Component<Props, {}> {
     })
   }
 
+  private stopEvent = (e: any) => {
+    e.preventDefault()
+    if (typeof e.stopImmediatePropagation === 'function') {
+      e.stopImmediatePropagation()
+    }
+    if (typeof e.stopPropagation === 'function') {
+      e.stopPropagation()
+    }
+  }
+
   private onKeyDown = (e: any): void => {
+    console.log('key down', e.keyCode)
     if (e.keyCode === 13 && e.shiftKey) {
       return
     }
 
+
     switch (e.keyCode) {
       case 37:
+        this.stopEvent(e)
         this.save(stringToValue(e.target.value, this.props.field))
         this.props.previousCell(this.props.fields)
-        e.preventDefault()
         break
       case 38:
+        this.stopEvent(e)
         this.save(stringToValue(e.target.value, this.props.field))
         this.props.previousRow(this.props.fields)
-        e.preventDefault()
         break
       case 9:
       case 39:
+        this.stopEvent(e)
+        console.log('save and nextCell')
         this.save(stringToValue(e.target.value, this.props.field))
+        console.log(this.props)
         this.props.nextCell(this.props.fields)
-        e.preventDefault()
         break
       case 40:
+        this.stopEvent(e)
         this.save(stringToValue(e.target.value, this.props.field))
         this.props.nextRow(this.props.fields)
-        e.preventDefault()
         break
       case 13:
+        this.stopEvent(e)
         this.save(stringToValue(e.target.value, this.props.field))
-        e.preventDefault()
         break
       case 27:
+        this.stopEvent(e)
         this.escaped = true
         this.cancel()
-        e.preventDefault()
         break
     }
   }
@@ -246,13 +258,13 @@ class Cell extends React.Component<Props, {}> {
 }
 
 const MappedCell = connect((state, props) => {
-  const {rowIndex, field} = props
+  const {rowIndex, field, addnew} = props
   const { selectedCell, editing } = state.databrowser.ui
 
   if (selectedCell[0] === rowIndex && selectedCell[1] === field.name) {
     return {
       selected: true,
-      editing,
+      editing: editing || (field.isList ? false : addnew),
       position: [rowIndex, field.name],
     }
   }
