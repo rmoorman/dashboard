@@ -48,7 +48,7 @@ class Tether extends React.Component<Props, {}> {
         style={{
           zIndex: this.props.zIndex ? this.props.zIndex : 999,
         }}
-        offset={`${this.props.offsetY}px ${this.props.offsetX}px`}
+        targetOffset={`${this.props.offsetY}px ${this.props.offsetX}px`}
         attachment={`${isBottom ? 'top' : 'bottom'} ${this.props.horizontal}`}
         targetAttachment={`${isBottom ? 'bottom' : 'top'} ${this.props.horizontal}`}
       >

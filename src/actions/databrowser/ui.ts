@@ -2,6 +2,7 @@ import Constants from '../../constants/databrowser/ui'
 import * as Immutable from 'immutable'
 import {ReduxAction} from '../../types/reducers'
 import {Field} from '../../types/types'
+import {nextStep} from '../gettingStarted'
 
 export function hideNewRow(): ReduxAction {
   return {
@@ -12,16 +13,33 @@ export function hideNewRow(): ReduxAction {
 export function toggleNewRow(fields: Field[]) {
   return (dispatch, getState) => {
     const { newRowActive } = getState().databrowser.ui
+    const { step } = getState().gettingStarted.gettingStartedState
 
     // if we're activating the new row, also select the first field
     if (!newRowActive && fields) {
-      dispatch(selectCell([-1, fields[1].name]))
+      const firstNonReadonlyField = getFirstNonReadonlyField(fields)
+      dispatch(selectCell([-1, firstNonReadonlyField.name]))
+
+      if (step === 'STEP3_CLICK_ADD_NODE1') {
+        dispatch(nextStep())
+      }
     }
+
 
     dispatch({
       type: Constants.TOGGLE_NEW_ROW,
     })
   }
+}
+
+function getFirstNonReadonlyField(fields: Field[]) {
+  for(let i = 0; i < fields.length; i++) {
+    if (!fields[i].isReadonly) {
+      return fields[i]
+    }
+  }
+
+  return fields[0]
 }
 
 export function setNodeSelection(ids: Immutable.List<string>): ReduxAction {

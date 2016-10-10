@@ -119,6 +119,7 @@ export class SideNav extends React.Component<Props, State> {
           >
             <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
             <Tether
+              side='top'
               steps={[{
                 step: 'STEP4_CLICK_PLAYGROUND',
                 title: 'Open the Playground',

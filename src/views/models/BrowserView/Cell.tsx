@@ -172,7 +172,6 @@ class Cell extends React.Component<Props, {}> {
       return
     }
 
-
     switch (e.keyCode) {
       case 37:
         this.stopEvent(e)

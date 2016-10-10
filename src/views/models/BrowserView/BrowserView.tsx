@@ -20,13 +20,11 @@ import mapProps from '../../../components/MapProps/MapProps'
 import Loading from '../../../components/Loading/Loading'
 import {showNotification} from '../../../actions/notification'
 import {ShowNotificationCallback, TypedValue} from '../../../types/utils'
-import {stringToValue} from '../../../utils/valueparser'
-import Tether from '../../../components/Tether/Tether'
 import NewRow from './NewRow'
 import HeaderCell from './HeaderCell'
 import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
-import {emptyDefault, getFirstInputFieldIndex, getDefaultFieldValues, calculateFieldColumnWidths} from '../utils'
+import {getDefaultFieldValues, calculateFieldColumnWidths} from '../utils'
 import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
 import ModelHeader from '../ModelHeader'
 import {showDonePopup, nextStep} from '../../../actions/gettingStarted'
@@ -160,7 +158,6 @@ class BrowserView extends React.Component<Props, {}> {
           <label htmlFor='fileselector' className={classes.button}>
             Import JSON
           </label>
-          {this.renderTether()}
           <div
             className={`${classes.button} ${this.props.filtersVisible ? classes.blue : ''}`}
             onClick={this.props.toggleFilter}
@@ -233,28 +230,6 @@ class BrowserView extends React.Component<Props, {}> {
         </div>
         }
       </div>
-    )
-  }
-
-  private renderTether = (): JSX.Element => {
-    return (
-      <Tether
-        steps={[{
-          step: this.props.newRowActive ? null : 'STEP3_CLICK_ADD_NODE1',
-          title: 'Create a Node',
-          description: 'Items in your data belonging to a certain model are called nodes. Create a new post node and provide values for the "imageUrl" and "description" fields.', // tslint:disable-line
-        }, {
-          step: this.props.newRowActive ? null : 'STEP3_CLICK_ADD_NODE2',
-          title: `Awesome! Let's create one more.`,
-          description: 'Hint: You can also use your keyboard to navigate between fields (Tab or Shift+Tab) and submit (Enter).', // tslint:disable-line
-        }]}
-        offsetX={15}
-        offsetY={5}
-        width={351}
-        horizontal='right'
-      >
-        <div></div>
-      </Tether>
     )
   }
 
@@ -403,11 +378,9 @@ class BrowserView extends React.Component<Props, {}> {
   }
 
   private onKeyDown = (e: any): void => {
-    console.log('getting onKey in BrowserView', e)
     if (e.keyCode === 13 && e.shiftKey) {
       return
     }
-    console.log('editing', this.props.editing)
     if (this.props.editing) {
       // then it's none of our business,
       // let the cell do the event handling
