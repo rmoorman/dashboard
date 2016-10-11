@@ -24,7 +24,6 @@ interface Props {
   permission?: Permission
   hide?: () => void
   possibleRelatedPermissionPaths: Field[][]
-  availableUserRoles: string[]
   showNotification: ShowNotificationCallback
 }
 
@@ -100,7 +99,6 @@ class PermissionRow extends React.Component<Props, State> {
             useUserRole={this.state.useUserRole}
             dataCallback={(data) => this.onPermissionTypeDataCallback(data)}
             possibleRelatedPermissionPaths={this.props.possibleRelatedPermissionPaths}
-            availableUserRoles={this.props.availableUserRoles}
             params={this.props.params}
           />
         </div>

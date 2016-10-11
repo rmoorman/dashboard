@@ -19,7 +19,6 @@ interface Props {
   userPath: string[]
   userRole: string
   useUserRole: boolean
-  availableUserRoles: string[]
   possibleRelatedPermissionPaths: Field[][]
   isValid: boolean
   router: ReactRouter.InjectedRouter
@@ -83,10 +82,6 @@ class PermissionType extends React.Component<Props, {}> {
   //         value={this.props.userRole || emptyRoleToken}
   //         onChange={(e: any) => this._onChangeUserRole(e.target.value)}
   //       >
-  //         <option disabled value={emptyRoleToken}>Select Role...</option>
-  //         {this.props.availableUserRoles.map((userRole) => (
-  //           <option key={userRole} value={userRole}>{userRole}</option>
-  //         ))}
   //         <optgroup label='Actions'>
   //           <option value={addRoleToken}>Create a new role...</option>
   //         </optgroup>
