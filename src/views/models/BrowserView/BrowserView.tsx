@@ -412,7 +412,12 @@ class BrowserView extends React.Component<Props, {}> {
         break
       case 9:
       case 39:
-        this.props.nextCell(this.props.fields)
+        // go back for shift+tab
+        if (e.shiftKey) {
+          this.props.previousCell(this.props.fields)
+        } else {
+          this.props.nextCell(this.props.fields)
+        }
         e.preventDefault()
         break
       case 40:
@@ -420,8 +425,11 @@ class BrowserView extends React.Component<Props, {}> {
         e.preventDefault()
         break
       case 13:
-        this.props.editCell(this.props.selectedCell)
-        e.preventDefault()
+        const selectedField = this.props.fields.find(f => f.name === this.props.selectedCell.field)
+        if (!selectedField.isReadonly) {
+          this.props.editCell(this.props.selectedCell)
+          e.preventDefault()
+        }
     }
   }
 
