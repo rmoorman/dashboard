@@ -8,8 +8,13 @@ export interface DataBrowserUIState {
   scrollTop: number
   loading: boolean
   actionRow: ActionRowState
-  selectedCell: [number, String]
+  selectedCell: GridPosition
   editing: boolean
   browserViewRef: any
   writing: boolean
+}
+
+export interface GridPosition {
+  row: number
+  field: string
 }

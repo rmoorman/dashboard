@@ -24,7 +24,10 @@ interface Props {
   value: any
   update: (value: TypedValue, field: Field, callback: UpdateCallback) => void
   reload: () => void
+  // rowSelected is the selection for deletion
   rowSelected?: boolean
+  // rowHasCursor means the cursor is in the row
+  rowHasCursor: boolean
   isReadonly: boolean
   addnew: boolean
   backgroundColor: string
@@ -76,6 +79,7 @@ class Cell extends React.Component<Props, {}> {
       [classes.editing]: this.props.editing,
       [classes.selected]: this.props.selected,
       [classes.rowselected]: this.props.rowSelected,
+      [classes.rowhascursor]: this.props.rowHasCursor && !this.props.addnew,
     })
 
     return (
@@ -193,6 +197,7 @@ class Cell extends React.Component<Props, {}> {
         this.props.nextRow(this.props.fields)
         break
       case 13:
+        // in the new row case, the row needs the event, so let it bubble up
         if (!this.props.newRowActive) {
           this.stopEvent(e)
         }
@@ -244,9 +249,9 @@ class Cell extends React.Component<Props, {}> {
       <span
         className={classes.value}
         style={{
-          pointerEvents: this.props.field.isReadonly ? '' : 'none',
           cursor: this.props.field.isReadonly ? 'auto' : 'pointer',
         }}
+        onKeyDown={this.onKeyDown}
       >{valueString}</span>
     )
   }
@@ -267,20 +272,28 @@ const MappedCell = connect(
 
     const cellEditing = !writing && (editing || ((field.isList) ? false : addnew))
 
-    if (selectedCell[0] === rowIndex && selectedCell[1] === field.name) {
+    if (selectedCell.row === rowIndex && selectedCell.field === field.name) {
       return {
         selected: true,
         editing: cellEditing,
-        position: [rowIndex, field.name],
+        position: {
+          row: rowIndex,
+          field: field.name,
+        },
         newRowActive,
+        rowHasCursor: selectedCell.row === rowIndex,
       }
     }
 
     return {
       selected: false,
       editing: false,
-      position: [rowIndex, field.name],
+      position: {
+        row: rowIndex,
+        field: field.name,
+      },
       newRowActive,
+      rowHasCursor: selectedCell.row === rowIndex,
     }
   },
   {

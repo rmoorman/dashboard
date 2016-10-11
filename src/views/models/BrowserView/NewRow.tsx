@@ -6,7 +6,8 @@ import {nextStep} from '../../../actions/gettingStarted'
 import {GettingStartedState} from '../../../types/gettingStarted'
 import {StateTree} from '../../../types/reducers'
 import Cell from './Cell'
-import {Model} from '../../../types/types'
+import {TypedValue} from '../../../types/utils'
+import {Model, Field} from '../../../types/types'
 import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import Icon from '../../../components/Icon/Icon'
 import {classnames} from '../../../utils/classnames'
@@ -66,12 +67,11 @@ class NewRow extends React.Component<Props, State> {
         }}
         onKeyDown={this.keyDown}
       >
-        {fields.map(function(field, index)  {
+        {fields.map((field, index) => {
           return (
           <div
             key={field.id}
             style={{width: this.props.columnWidths[field.name]}}
-            onKeyDown={this.handleKeyDown}
           >
               <Cell
                 needsFocus={this.state.shouldFocus ? index === inputIndex : false}
@@ -88,7 +88,7 @@ class NewRow extends React.Component<Props, State> {
               />
             </div>
           )
-        }.bind(this))}
+        })}
         <div
           className={classnames(classes.buttons, {
             [classes.loading]: loading,
@@ -126,6 +126,18 @@ class NewRow extends React.Component<Props, State> {
     if (allRequiredFieldsGiven) {
       this.props.add(this.state.fieldValues)
     }
+  }
+
+  private update = (value: TypedValue, field: Field, callback) => {
+    if (this.props.gettingStarted.isCurrentStep('STEP3_CLICK_ENTER_IMAGEURL') &&
+        field.name === 'imageUrl') {
+      this.props.nextStep()
+    }
+
+    const {fieldValues} = this.state
+    fieldValues[field.name].value = value
+    this.setState({fieldValues, shouldFocus: false} as State)
+    callback()
   }
 
 }

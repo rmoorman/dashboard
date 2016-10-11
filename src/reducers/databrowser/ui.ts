@@ -13,7 +13,10 @@ const initialState: DataBrowserUIState = {
   loading: true,
   writing: false,
   actionRow: ActionRowState.NewNode,
-  selectedCell: [-1, null],
+  selectedCell: {
+    row: -1,
+    field: null,
+  },
   editing: false,
   browserViewRef: null,
 }
@@ -48,7 +51,10 @@ export function reduceUI(state: DataBrowserUIState = initialState, action: Redux
       })
     case Constants.UNSELECT_CELL:
       return Object.assign({}, state, {
-        selectedCell: [-1,null],
+        selectedCell: {
+          row: -1,
+          field: null,
+        },
       })
     case Constants.EDIT_CELL:
       return Object.assign({}, state, {

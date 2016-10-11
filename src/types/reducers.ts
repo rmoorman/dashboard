@@ -11,7 +11,7 @@ export interface ReduxAction {
 
 export type Dispatch = (action: ReduxAction | ReduxThunk) => any
 
-export type ReduxThunk = (dispatch: Dispatch, getState: () => StateTree) => Promise<{}>
+export type ReduxThunk = (dispatch: Dispatch, getState: () => StateTree) => Promise<{}> | void
 
 export interface StateTree {
   gettingStarted: GettingStartedReducerState

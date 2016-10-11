@@ -1,8 +1,9 @@
 import Constants from '../../constants/databrowser/ui'
 import * as Immutable from 'immutable'
-import {ReduxAction} from '../../types/reducers'
+import {ReduxAction, ReduxThunk} from '../../types/reducers'
 import {Field} from '../../types/types'
 import {nextStep} from '../gettingStarted'
+import {GridPosition} from '../../types/databrowser/ui'
 
 export function hideNewRow(): ReduxAction {
   return {
@@ -10,7 +11,7 @@ export function hideNewRow(): ReduxAction {
   }
 }
 
-export function toggleNewRow(fields: Field[]) {
+export function toggleNewRow(fields: Field[]): ReduxThunk {
   return (dispatch, getState) => {
     const { newRowActive } = getState().databrowser.ui
     const { step } = getState().gettingStarted.gettingStartedState
@@ -18,7 +19,10 @@ export function toggleNewRow(fields: Field[]) {
     // if we're activating the new row, also select the first field
     if (!newRowActive && fields) {
       const firstNonReadonlyField = getFirstNonReadonlyField(fields)
-      dispatch(selectCell([-1, firstNonReadonlyField.name]))
+      dispatch(selectCell({
+        row: -1,
+        field: firstNonReadonlyField.name,
+      }))
 
       if (step === 'STEP3_CLICK_ADD_NODE1') {
         dispatch(nextStep())
@@ -31,7 +35,7 @@ export function toggleNewRow(fields: Field[]) {
   }
 }
 
-function getFirstNonReadonlyField(fields: Field[]) {
+function getFirstNonReadonlyField(fields: Field[]): Field {
   for (let i = 0; i < fields.length; i++) {
     if (!fields[i].isReadonly) {
       return fields[i]
@@ -54,21 +58,21 @@ export function clearNodeSelection(): ReduxAction {
   }
 }
 
-export function toggleNodeSelection(id: string) {
+export function toggleNodeSelection(id: string): ReduxAction {
   return {
     type: Constants.TOGGLE_NODE_SELECTION,
     payload: id,
   }
 }
 
-export function setScrollTop(scrollTop: number) {
+export function setScrollTop(scrollTop: number): ReduxAction {
   return {
     type: Constants.SET_SCROLL_TOP,
     payload: scrollTop,
   }
 }
 
-export function setLoading(loading: boolean) {
+export function setLoading(loading: boolean): ReduxAction {
   return {
     type: Constants.SET_LOADING,
     payload: loading,
@@ -81,34 +85,33 @@ export function toggleFilter(): ReduxAction {
   }
 }
 
-export function selectCell(position: [number, string]) {
+export function selectCell(position: GridPosition): ReduxAction {
   return {
     type: Constants.SELECT_CELL,
     payload: position,
   }
 }
 
-export function unselectCell() {
+export function unselectCell(): ReduxAction {
   return {
     type: Constants.UNSELECT_CELL,
   }
 }
 
-export function editCell(position: [number, string]) {
+export function editCell(position: GridPosition): ReduxAction {
   return {
     type: Constants.EDIT_CELL,
     payload: position,
   }
 }
 
-export function stopEditCell() {
+export function stopEditCell(): ReduxThunk {
   return (dispatch, getState) => {
 
     const { browserViewRef } = getState().databrowser.ui
 
     if (browserViewRef !== null) {
       browserViewRef.focus()
-      browserViewRef.click()
     }
 
     dispatch({
@@ -117,14 +120,14 @@ export function stopEditCell() {
   }
 }
 
-export function setBrowserViewRef(ref: any) {
+export function setBrowserViewRef(ref: any): ReduxAction {
   return {
     type: Constants.SET_BROWSER_VIEW_REF,
     payload: ref,
   }
 }
 
-export function nextCell(fields: Field[]) {
+export function nextCell(fields: Field[]): ReduxThunk {
   return (dispatch, getState) => {
     if (!fields) {
       return
@@ -132,18 +135,24 @@ export function nextCell(fields: Field[]) {
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
-    const i = fields.map(f => f.name).indexOf(selectedCell[1])
+    const i = fields.map(f => f.name).indexOf(selectedCell.field)
 
     if (i === fields.length - 1) {
       // last in the row, so go to first of next row
-      dispatch(selectCell([((selectedCell[0] + (newRowActive ? 0 : 1)) % nodes.size), fields[0].name]))
+      dispatch(selectCell({
+        row: ((selectedCell.row + (newRowActive ? 0 : 1)) % nodes.size),
+        field: fields[0].name,
+      }))
     } else {
-      dispatch(selectCell([selectedCell[0], fields[i + 1].name]))
+      dispatch(selectCell({
+        row: selectedCell.row,
+        field: fields[i + 1].name,
+      }))
     }
   }
 }
 
-export function previousCell(fields: Field[]) {
+export function previousCell(fields: Field[]): ReduxThunk {
   return (dispatch, getState) => {
     if (!fields) {
       return
@@ -151,19 +160,24 @@ export function previousCell(fields: Field[]) {
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
-    const i = fields.map(f => f.name).indexOf(selectedCell[1])
+    const i = fields.map(f => f.name).indexOf(selectedCell.field)
 
     if (i === 0) {
       // last in the row, so go to last of prev row
-      dispatch(selectCell([((selectedCell[0] + (newRowActive ? 0 : (nodes.size - 1))) % nodes.size),
-        fields[fields.length - 1].name]))
+      dispatch(selectCell({
+        row: selectedCell.row + (newRowActive ? 0 : (nodes.size - 1)) % nodes.size,
+        field: fields[fields.length - 1].name,
+      }))
     } else {
-      dispatch(selectCell([selectedCell[0], fields[i - 1].name]))
+      dispatch(selectCell({
+        row: selectedCell.row,
+        field: fields[i - 1].name,
+      }))
     }
   }
 }
 
-export function nextRow(fields: Field[]) {
+export function nextRow(fields: Field[]): ReduxThunk {
   return (dispatch, getState) => {
     if (!fields) {
       return
@@ -171,15 +185,20 @@ export function nextRow(fields: Field[]) {
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
-    if (newRowActive) {
-      return
+    const rowIndex: number = ((selectedCell.row + 1 + 1) % nodes.size) - 1
+
+    if (rowIndex === -1 && !newRowActive) {
+      dispatch(toggleNewRow(fields))
     }
 
-    dispatch(selectCell([((selectedCell[0] + 1) % nodes.size), selectedCell[1]]))
+    dispatch(selectCell({
+      row: rowIndex,
+      field: selectedCell.field,
+    }))
   }
 }
 
-export function previousRow(fields: Field[]) {
+export function previousRow(fields: Field[]): ReduxThunk {
   return (dispatch, getState) => {
     if (!fields) {
       return
@@ -187,10 +206,15 @@ export function previousRow(fields: Field[]) {
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
-    if (newRowActive) {
-      return
+    const rowIndex = ((selectedCell.row - 1 + 1 + nodes.size) % nodes.size) - 1
+
+    if (rowIndex === -1 && !newRowActive) {
+      dispatch(toggleNewRow(fields))
     }
 
-    dispatch(selectCell([((selectedCell[0] - 1 + nodes.size) % nodes.size), selectedCell[1]]))
+    dispatch(selectCell({
+      row: rowIndex,
+      field: selectedCell.field,
+    }))
   }
 }
