@@ -21,9 +21,11 @@ interface Props {
   className?: string
   defaultValue: Date
   onChange: (m: Moment) => void
+  onKeyDown?: (e: any) => void
   onCancel?: () => void
   // NOTE custom `onFocus` impl needed because overriding this property breaks the package
   onFocus?: () => void
+  onClickOutside?: (moment: Moment) => void
   [key: string]: any
 }
 
@@ -32,7 +34,12 @@ interface State {
   open: boolean
 }
 
-export default class Cell extends React.Component<Props, State> {
+export default class DatePicker extends React.Component<Props, State> {
+
+  refs: {
+    [key: string]: any
+    container: Element
+  }
 
   constructor (props) {
     super(props)
@@ -41,44 +48,16 @@ export default class Cell extends React.Component<Props, State> {
       moment: moment.utc(props.defaultValue, ISO8601),
       open: props.defaultOpen || false,
     }
+
+    this.onKeyDown = this.onKeyDown.bind(this)
   }
 
-  _onKeyDown (e: React.KeyboardEvent<any>) {
-    if (e.keyCode === 13) {
-      this._applyChange(this.state.moment)
-    } else if (e.keyCode === 27 || e.keyCode === 9) {
-      this._onCancel()
-    }
+  componentDidMount() {
+    document.addEventListener('keydown', this.onKeyDown)
   }
 
-  _onChange (m: Moment) {
-    if (this.props.applyImmediately) {
-      this._applyChange(m)
-    } else {
-      this.setState({ moment: m } as State)
-    }
-  }
-
-  _applyChange (m: Moment) {
-    this.setState({ open: false } as State)
-    this.props.onChange(m)
-  }
-
-  _onCancel () {
-    this.setState({ open: false } as State)
-    if (this.props.onCancel) {
-      this.props.onCancel()
-    }
-  }
-
-  _markOpen () {
-    if (!this.state.open) {
-      this.setState({ open: true } as State)
-
-      if (this.props.onFocus) {
-        this.props.onFocus()
-      }
-    }
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.onKeyDown)
   }
 
   render () {
@@ -92,27 +71,66 @@ export default class Cell extends React.Component<Props, State> {
     delete passThroughProps.onFocus
 
     return (
-      <div className={`${classes.root} ${this.props.className}`} onClick={() => this._markOpen()}>
-        <ClickOutside onClickOutside={() => this._onCancel()}>
+      <div
+        className={`${classes.root} ${this.props.className}`}
+        onClick={() => this.markOpen()}
+        ref='container'
+      >
+        <ClickOutside onClickOutside={() =>
+          typeof this.props.onClickOutside === 'function' && this.props.onClickOutside(this.state.moment)
+        }>
           <Datetime
             {...passThroughProps}
             className={classes.datetime}
             dateFormat='YYYY-MM-DD'
             timeFormat='HH:mm:ssZZ'
-            onChange={(m) => this._onChange(m)}
-            inputProps={{
-              onKeyDown: (e) => this._onKeyDown(e),
-            }}
+            onChange={(m) => this.onChange(m)}
             open={this.state.open}
           />
           {!this.props.applyImmediately && this.state.open &&
             <div className={classes.buttons}>
-              <span onClick={() => this._applyChange(this.state.moment)}>Ok</span>
-              <span onClick={() => this._onCancel()}>Cancel</span>
+              <span onClick={() => this.applyChange(this.state.moment)}>Ok</span>
+              <span onClick={() => this.onCancel()}>Cancel</span>
             </div>
           }
         </ClickOutside>
       </div>
     )
+  }
+
+  private onKeyDown (e: any) {
+    // fake event data, as the document doesn't have a value ...
+    e.target.value = this.state.moment
+    this.props.onKeyDown(e)
+  }
+
+  private onChange (m: Moment) {
+    if (this.props.applyImmediately) {
+      this.applyChange(m)
+    } else {
+      this.setState({ moment: m } as State)
+    }
+  }
+
+  private applyChange (m: Moment) {
+    this.setState({ open: false } as State)
+    this.props.onChange(m)
+  }
+
+  private onCancel () {
+    this.setState({ open: false } as State)
+    if (this.props.onCancel) {
+      this.props.onCancel()
+    }
+  }
+
+  private markOpen () {
+    if (!this.state.open) {
+      this.setState({ open: true } as State)
+
+      if (this.props.onFocus) {
+        this.props.onFocus()
+      }
+    }
   }
 }

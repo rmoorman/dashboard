@@ -3,22 +3,31 @@
 
 .root {
   display: flex;
-  background: $blue3;
+  box-shadow: 0 2px 4px 0px rgba(0,0,0,.1);
+  &.loading {
+    pointer-events: none;
+    input {
+      color: rgba(0,0,0,0.5)
+    }
+  }
 }
 
 .empty {
-  width: 34px;
+  width: 40px;
   @include cellborder($grey2);
 }
 
 .buttons {
-  width: 250px;
+  width: 80px;
+  height: 47px;
   display: flex;
   align-items: center;
   font-size: 13px;
-  padding-left: 20px;
+  padding-left: 8px;
   text-transform: uppercase;
-  @include cellborder($grey2);
+  position: absolute;
+  right: 170px;
+  background-color: rgba(0,0,0,.05);
 
   button {
     border: none;
@@ -38,6 +47,47 @@
 
     &:focus {
       color: $accent;
+    }
+
+    .cancel {
+      svg {
+        fill: rgba(0,0,0,.2)
+      }
+      &:hover {
+        svg {
+          fill: rgba(0,0,0,.1)
+        }
+      }
+    }
+
+    .add {
+      svg {
+        fill: rgba(126,211,33,1)
+      }
+      &:hover {
+        svg {
+          fill: rgba(126,211,33,0.8)
+        }
+      }
+    }
+  }
+
+  &.loading {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: auto;
+
+    button {
+      .add {
+        svg {
+          fill: rgba(0,0,0,.2)
+        }
+        &:hover {
+          svg {
+            fill: rgba(0,0,0,.2)
+          }
+        }
+      }
     }
   }
 }

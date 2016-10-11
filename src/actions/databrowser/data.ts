@@ -3,6 +3,7 @@ import {TypedValue} from '../../types/utils'
 import {OrderBy, Field, Model} from '../../types/types'
 import {StateTree} from '../../types/reducers'
 import Constants from '../../constants/databrowser/data'
+import UiConstants from '../../constants/databrowser/ui'
 import * as Immutable from 'immutable'
 import {addNode as addRelayNode, queryNodes, updateNode as updateRelayNode} from '../../utils/relay'
 import {hideNewRow, setLoading, clearNodeSelection} from './ui'
@@ -122,17 +123,20 @@ export function loadDataAsync(lokka: any,
 
 export function addNodeAsync(lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }): ReduxThunk { // tslint:disable-line
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
+    dispatch(setWriting(true))
     return addRelayNode(lokka, model.name, fieldValues)
       .then(() => dispatch(reloadDataAsync(lokka, model.namePlural, fields)))
       .then(() => {
         const { gettingStartedState } = getState().gettingStarted
         if (model.name === 'Post' && (
           gettingStartedState.isCurrentStep('STEP3_CLICK_ENTER_DESCRIPTION') ||
+          gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE1') ||
           gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE2')
         )) {
           dispatch(showDonePopup())
           dispatch(nextStep())
         }
+        dispatch(setWriting(false))
         dispatch(hideNewRow())
       })
       .catch((err) => {
@@ -151,15 +155,25 @@ export function updateNodeAsync(lokka: any,
                                 index: number): ReduxThunk {
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
     const { loaded } = getState().databrowser.data
+    dispatch(setWriting(true))
     return updateRelayNode(lokka, model.name, value, field, nodeId)
       .then(() => dispatch(setLoaded(loaded.set(index, false))))
       .then(() => dispatch(loadDataAsync(lokka, model.namePlural, fields, index, 1)))
       .then(() => {
         callback(true)
+        dispatch(setWriting(false))
       })
       .catch((err) => {
         callback(false)
+        dispatch(setWriting(false))
         err.rawError.forEach((error) => dispatch(showNotification({message: error.message, level: 'error'})))
       })
+  }
+}
+
+function setWriting(payload: boolean) {
+  return {
+    type: UiConstants.SET_WRITING,
+    payload,
   }
 }

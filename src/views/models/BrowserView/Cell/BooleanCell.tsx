@@ -11,6 +11,7 @@ export default class BooleanCell extends React.Component<CellProps<boolean>, {}>
         rightText='true'
         side={this.props.value ? ToggleSide.Right : ToggleSide.Left}
         onClickOutside={(side) => this.props.save(side === ToggleSide.Left ? false : true)}
+        onKeyDown={this.props.onKeyDown}
       />
     )
   }

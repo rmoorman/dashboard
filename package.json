@@ -70,6 +70,7 @@
     "react-twitter-widgets": "^0.2.4",
     "react-virtualized": "^7.22.1",
     "redux": "^3.5.2",
+    "redux-actions": "^0.12.0",
     "redux-thunk": "^2.1.0",
     "tachyons": "^4.5.2"
   },

@@ -26,6 +26,7 @@ declare module 'graphiql/dist/components/QueryEditor'
 declare module 'react-notification-system'
 declare module 'react-toggle-button'
 declare module 'react-virtualized'
+declare module 'react-addons-shallow-compare'
 declare var Smooch: any
 declare var analytics: any
 declare var __BACKEND_ADDR__: any

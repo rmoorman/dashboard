@@ -15,6 +15,7 @@ interface Props {
   save: (value: string) => void
   cancel: () => void
   onFocus?: () => void
+  onKeyDown: (e: any) => void
 }
 
 interface State {
@@ -24,6 +25,8 @@ interface State {
 
 class NodeSelector extends React.Component<Props, State> {
 
+  private mounted: boolean
+
   constructor (props: Props) {
     super(props)
 
@@ -31,6 +34,8 @@ class NodeSelector extends React.Component<Props, State> {
       nodes: [],
       value: props.value || '',
     }
+
+    this.mounted = false
 
     const lokka = getLokka(this.props.projectId)
 
@@ -40,12 +45,22 @@ class NodeSelector extends React.Component<Props, State> {
     queryNodes(lokka, props.relatedModel.namePlural, fields)
       .then((results) => {
         const nodes = results[`all${props.relatedModel.namePlural}`]
-        this.setState({ nodes } as State)
+        if (this.mounted) {
+          this.setState({ nodes } as State)
+        }
       })
   }
 
   componentWillReceiveProps (nextProps: Props) {
     this.setState({ value: nextProps.value } as State)
+  }
+
+  componentDidMount() {
+    this.mounted = true
+  }
+
+  componentWillUnmount() {
+    this.mounted = false
   }
 
   render () {
@@ -54,27 +69,31 @@ class NodeSelector extends React.Component<Props, State> {
         onClickOutside={() => this.props.cancel()}
         style={{ width: '100%' }}
       >
-        <Autocomplete
-          wrapperProps={{className: classes.wrapper}}
-          menuStyle={{
-            padding: 0,
-            position: 'absolute',
-            maxHeight: 300,
-            top: '100%',
-            left: 0,
-            background: '#fff',
-            overflow: 'auto',
-            zIndex: 100,
-          }}
-          value={this.state.value || ''}
-          items={this.state.nodes}
-          shouldItemRender={this.shouldNodeRender}
-          inputProps={{autoFocus: true}}
-          getItemValue={(node: NonScalarValue) => node.id}
-          onChange={(event, value) => this.setState({ value } as State)}
-          onSelect={(value, node) => this.props.save(node)}
-          renderItem={this.renderNode}
-        />
+        <div
+          onKeyDown={this.props.onKeyDown}
+        >
+            <Autocomplete
+              wrapperProps={{className: classes.wrapper}}
+              menuStyle={{
+                padding: 0,
+                position: 'absolute',
+                maxHeight: 300,
+                top: '100%',
+                left: 0,
+                background: '#fff',
+                overflow: 'auto',
+                zIndex: 100,
+              }}
+              value={this.state.value || ''}
+              items={this.state.nodes}
+              shouldItemRender={this.shouldNodeRender}
+              inputProps={{autoFocus: true}}
+              getItemValue={(node: NonScalarValue) => node.id}
+              onChange={(event, value) => this.setState({ value } as State)}
+              onSelect={(value, node) => this.props.save(node)}
+              renderItem={this.renderNode}
+            />
+        </div>
       </ClickOutside>
     )
   }
