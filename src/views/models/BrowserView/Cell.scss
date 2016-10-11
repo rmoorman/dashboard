@@ -98,15 +98,14 @@
   }
 }
 
+.rowhascursor {
+  background-color: transparent;
+}
+
 .rowselected {
-  background-color: #4A90E2;
+  background-color: #4A90E2 !important;
   color: #fff;
   input {
     color: #fff !important;
   }
 }
-
-.rowhascursor {
-  background-color: transparent;
-}
-

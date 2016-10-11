@@ -58,7 +58,7 @@ class Cell extends React.PureComponent<Props, {}> {
 
   refs: {
     [key: string]: any
-    container: Element
+    container: any // needs to be any, as scrollIntoViewIfNeeded is not yet there
   }
 
   private escaped: boolean
@@ -99,7 +99,7 @@ class Cell extends React.PureComponent<Props, {}> {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selected === true && this.props.selected === false) {
-      this.refs.container.scrollIntoView(false)
+      this.refs.container.scrollIntoViewIfNeeded()
     }
   }
 
@@ -120,6 +120,10 @@ class Cell extends React.PureComponent<Props, {}> {
   }
 
   private save = (value: TypedValue, keepEditing: boolean = false): void => {
+    if (this.props.isReadonly) {
+      return
+    }
+
     if (this.escaped) {
       this.escaped = false
       return
@@ -193,7 +197,12 @@ class Cell extends React.PureComponent<Props, {}> {
       case 39:
         this.stopEvent(e)
         this.save(stringToValue(e.target.value, this.props.field))
-        this.props.nextCell(this.props.fields)
+        // go back for shift+tab
+        if (e.shiftKey) {
+          this.props.previousCell(this.props.fields)
+        } else {
+          this.props.nextCell(this.props.fields)
+        }
         break
       case 40:
         this.stopEvent(e)
