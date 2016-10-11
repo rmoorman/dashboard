@@ -25,7 +25,7 @@ interface Props {
   onCancel?: () => void
   // NOTE custom `onFocus` impl needed because overriding this property breaks the package
   onFocus?: () => void
-  onClickOutside?: (moment: any) => void
+  onClickOutside?: (moment: Moment) => void
   [key: string]: any
 }
 
@@ -49,51 +49,15 @@ export default class DatePicker extends React.Component<Props, State> {
       open: props.defaultOpen || false,
     }
 
-    this._onKeyDown = this._onKeyDown.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this._onKeyDown)
+    document.addEventListener('keydown', this.onKeyDown)
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this._onKeyDown)
-  }
-
-  _onKeyDown (e: any) {
-    // fake event data, as the document doesn't have a value ...
-    e.target.value = this.state.moment
-    this.props.onKeyDown(e)
-  }
-
-  _onChange (m: Moment) {
-    if (this.props.applyImmediately) {
-      this._applyChange(m)
-    } else {
-      this.setState({ moment: m } as State)
-    }
-  }
-
-  _applyChange (m: Moment) {
-    this.setState({ open: false } as State)
-    this.props.onChange(m)
-  }
-
-  _onCancel () {
-    this.setState({ open: false } as State)
-    if (this.props.onCancel) {
-      this.props.onCancel()
-    }
-  }
-
-  _markOpen () {
-    if (!this.state.open) {
-      this.setState({ open: true } as State)
-
-      if (this.props.onFocus) {
-        this.props.onFocus()
-      }
-    }
+    document.removeEventListener('keydown', this.onKeyDown)
   }
 
   render () {
@@ -109,7 +73,7 @@ export default class DatePicker extends React.Component<Props, State> {
     return (
       <div
         className={`${classes.root} ${this.props.className}`}
-        onClick={() => this._markOpen()}
+        onClick={() => this.markOpen()}
         ref='container'
       >
         <ClickOutside onClickOutside={() =>
@@ -120,17 +84,53 @@ export default class DatePicker extends React.Component<Props, State> {
             className={classes.datetime}
             dateFormat='YYYY-MM-DD'
             timeFormat='HH:mm:ssZZ'
-            onChange={(m) => this._onChange(m)}
+            onChange={(m) => this.onChange(m)}
             open={this.state.open}
           />
           {!this.props.applyImmediately && this.state.open &&
             <div className={classes.buttons}>
-              <span onClick={() => this._applyChange(this.state.moment)}>Ok</span>
-              <span onClick={() => this._onCancel()}>Cancel</span>
+              <span onClick={() => this.applyChange(this.state.moment)}>Ok</span>
+              <span onClick={() => this.onCancel()}>Cancel</span>
             </div>
           }
         </ClickOutside>
       </div>
     )
+  }
+
+  private onKeyDown (e: any) {
+    // fake event data, as the document doesn't have a value ...
+    e.target.value = this.state.moment
+    this.props.onKeyDown(e)
+  }
+
+  private onChange (m: Moment) {
+    if (this.props.applyImmediately) {
+      this.applyChange(m)
+    } else {
+      this.setState({ moment: m } as State)
+    }
+  }
+
+  private applyChange (m: Moment) {
+    this.setState({ open: false } as State)
+    this.props.onChange(m)
+  }
+
+  private onCancel () {
+    this.setState({ open: false } as State)
+    if (this.props.onCancel) {
+      this.props.onCancel()
+    }
+  }
+
+  private markOpen () {
+    if (!this.state.open) {
+      this.setState({ open: true } as State)
+
+      if (this.props.onFocus) {
+        this.props.onFocus()
+      }
+    }
   }
 }

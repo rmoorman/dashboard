@@ -1,8 +1,9 @@
 import * as React from 'react'
 import * as Immutable from 'immutable'
 import {InfiniteLoader, Grid} from 'react-virtualized'
-import {Model, Project} from '../../types/types'
+import {Model, Project, FieldWidths} from '../../types/types'
 import DataActionRow from '../../views/models/BrowserView/DataActionRow'
+import {GridPosition} from '../../types/databrowser/ui'
 
 interface Props {
   minimumBatchSize?: number
@@ -28,14 +29,16 @@ interface Props {
 
   headerHeight: number
   headerRenderer: (input: any) => JSX.Element | string
-  fieldColumnWidths: any
+  fieldColumnWidths: FieldWidths
 
   addRowHeight: number
 
-  hideNewRow: () => any
-  addNewNode: () => any
+  hideNewRow: () => void
+  addNewNode: () => void
 
   deleteSelectedNodes: () => any
+
+  selectedCell: GridPosition
 }
 
 export default class InfiniteTable extends React.Component<Props, {}> {
@@ -101,6 +104,7 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                 rowCount={this.props.rowCount}
                 cellRenderer={this.renderCell}
                 onSectionRendered={(section) => this.onGridRowsRendered(section, onRowsRendered)}
+                scrollToRow={this.props.selectedCell.row}
               />
             </div>
           )}

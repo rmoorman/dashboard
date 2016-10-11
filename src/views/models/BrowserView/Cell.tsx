@@ -9,10 +9,11 @@ import {CellRequirements, getEditCell} from './Cell/cellgenerator'
 import {TypedValue, ShowNotificationCallback} from '../../../types/utils'
 import {isNonScalarList} from '../../../utils/graphql'
 import {connect} from 'react-redux'
-import shallowCompare from 'react-addons-shallow-compare'
 import {
   nextCell, previousCell, nextRow, previousRow, stopEditCell, editCell, unselectCell, selectCell,
 } from '../../../actions/databrowser/ui'
+import {ReduxThunk, ReduxAction} from '../../../types/reducers'
+import {GridPosition} from '../../../types/databrowser/ui'
 const classes: any = require('./Cell.scss')
 
 export type UpdateCallback = (success: boolean) => void
@@ -36,24 +37,24 @@ interface Props {
   rowIndex: number
   editing: boolean
   selected: boolean
-  selectCell: (position: [number, string]) => any
-  unselectCell: () => any
-  editCell: (position: [number, string]) => any
-  stopEditCell: () => any
+  selectCell: (position: GridPosition) => ReduxAction
+  unselectCell: () => ReduxAction
+  editCell: (position: GridPosition) => ReduxAction
+  stopEditCell: () => ReduxAction
   newRowActive: boolean
 
-  nextCell: (fields: Field[]) => any
-  previousCell: (fields: Field[]) => any
-  nextRow: (fields: Field[]) => any
-  previousRow: (fields: Field[]) => any
+  nextCell: (fields: Field[]) => ReduxThunk
+  previousCell: (fields: Field[]) => ReduxThunk
+  nextRow: (fields: Field[]) => ReduxThunk
+  previousRow: (fields: Field[]) => ReduxThunk
 
-  position: [number, string]
+  position: GridPosition
   fields: Field[]
 
   loaded: boolean[]
 }
 
-class Cell extends React.Component<Props, {}> {
+class Cell extends React.PureComponent<Props, {}> {
 
   refs: {
     [key: string]: any
@@ -66,10 +67,6 @@ class Cell extends React.Component<Props, {}> {
     super(props)
 
     this.escaped = false
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
   }
 
   render(): JSX.Element {
@@ -90,7 +87,8 @@ class Cell extends React.Component<Props, {}> {
           overflow: 'visible',
         }}
         className={rootClassnames}
-        onClick={() => this.props.addnew ? this.startEditing() : this.props.selectCell(this.props.position)}
+        onClick={() => (this.props.addnew || this.props.selected)
+          ? this.startEditing() : this.props.selectCell(this.props.position)}
         onDoubleClick={() => this.startEditing()}
         ref='container'
       >
@@ -173,6 +171,12 @@ class Cell extends React.Component<Props, {}> {
     if (e.keyCode === 13 && e.shiftKey) {
       return
     }
+
+    // stopEvent is needed, as the event could bubble up to the keyDown listener we attached
+    // in the BrowserView
+    // for some events, stopImmediatePropagation is needed. But not all events provide that interface,
+    // as we get browser based events and synthetic React events
+    // so we have so check for the existence of the function
 
     switch (e.keyCode) {
       case 37:
@@ -318,7 +322,6 @@ export default Relay.createContainer(MappedCell, {
         isRequired
         isReadonly
         typeIdentifier
-        isReadonly
         enumValues
         relatedModel {
           ${NodeSelector.getFragment('relatedModel')}

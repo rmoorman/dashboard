@@ -25,7 +25,7 @@ import HeaderCell from './HeaderCell'
 import AddFieldCell from './AddFieldCell'
 import CheckboxCell from './CheckboxCell'
 import {getDefaultFieldValues, calculateFieldColumnWidths} from '../utils'
-import {Field, Model, Viewer, Project, OrderBy} from '../../../types/types'
+import {Field, Model, Viewer, Project, OrderBy, FieldWidths} from '../../../types/types'
 import ModelHeader from '../ModelHeader'
 import {showDonePopup, nextStep} from '../../../actions/gettingStarted'
 import {GettingStartedState} from '../../../types/gettingStarted'
@@ -37,12 +37,13 @@ import LoadingCell from './LoadingCell'
 import {getLokka, addNodes, deleteNode} from './../../../utils/relay'
 import ProgressIndicator from '../../../components/ProgressIndicator/ProgressIndicator'
 import {startProgress, incrementProgress} from '../../../actions/progressIndicator'
-import {StateTree} from '../../../types/reducers'
+import {StateTree, ReduxAction, ReduxThunk} from '../../../types/reducers'
 import cuid from 'cuid'
 const classes: any = require('./BrowserView.scss')
 import {
   nextCell, previousCell, nextRow, previousRow, editCell, setBrowserViewRef,
 } from '../../../actions/databrowser/ui'
+import {GridPosition} from '../../../types/databrowser/ui'
 
 interface Props {
   viewer: Viewer
@@ -55,47 +56,62 @@ interface Props {
   gettingStartedState: GettingStartedState
   showNotification: ShowNotificationCallback
   nextStep: () => void
-  startProgress: () => any
-  incrementProgress: () => any
-  showPopup: (popup: Popup) => any
-  closePopup: (id: string) => any
-  showDonePopup: () => any
+  startProgress: () => ReduxAction
+  incrementProgress: () => ReduxAction
+  showPopup: (popup: Popup) => ReduxAction
+  closePopup: (id: string) => ReduxAction
+  showDonePopup: () => ReduxAction
   newRowActive: boolean
-  toggleNewRow: () => any
-  hideNewRow: () => any
-  toggleFilter: () => any
-  setScrollTop: (scrollTop: number) => any
-  setLoading: (loading: boolean) => any
-  resetDataAndUI: () => any
-  clearNodeSelection: () => any
-  setBrowserViewRef: () => any
+  toggleNewRow: () => ReduxAction
+  hideNewRow: () => ReduxAction
+  toggleFilter: () => ReduxAction
+  setScrollTop: (scrollTop: number) => ReduxAction
+  setLoading: (loading: boolean) => ReduxAction
+  resetDataAndUI: () => ReduxAction
+  clearNodeSelection: () => ReduxAction
+  setBrowserViewRef: () => ReduxAction
 
-  nextCell: (fields: Field[]) => any
-  previousCell: (fields: Field[]) => any
-  nextRow: (fields: Field[]) => any
-  previousRow: (fields: Field[]) => any
+  nextCell: (fields: Field[]) => ReduxThunk
+  previousCell: (fields: Field[]) => ReduxThunk
+  nextRow: (fields: Field[]) => ReduxThunk
+  previousRow: (fields: Field[]) => ReduxThunk
 
-  editCell: (position: [number, string]) => any
-  setNodeSelection: (ids: Immutable.List<string>) => any
-  toggleNodeSelection: (id: string) => any
+  editCell: (position: GridPosition) => ReduxAction
+  setNodeSelection: (ids: Immutable.List<string>) => ReduxAction
+  toggleNodeSelection: (id: string) => ReduxAction
   filtersVisible: boolean
   selectedNodeIds: Immutable.List<string>
-  selectedCell: [number, string]
+  selectedCell: GridPosition
   loading: boolean
   scrollTop: number
   itemCount: number
   editing: boolean
-  setItemCount: (itemCount: number) => any
+  setItemCount: (itemCount: number) => ReduxAction
   filter: Immutable.Map<string, TypedValue>
   orderBy: OrderBy
-  setOrder: (orderBy: OrderBy) => any
+  setOrder: (orderBy: OrderBy) => ReduxAction
   nodes: Immutable.List<Immutable.Map<string, any>>
   loaded: Immutable.List<boolean>
-  setFilterAsync: (fieldName: string, value: TypedValue, lokka: any, modelNamePlural: string, fields: Field[]) => any
-  addNodeAsync: (lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }) => any
-  updateNodeAsync: (lokka: any, model: Model, fields: Field[], value: TypedValue, field: Field, callback, nodeId: string, index: number) => any // tslint:disable-line
-  reloadDataAsync: (lokka: any, modelNamePlural: string, fields: Field[], index?: number) => any
-  loadDataAsync: (lokka: any, modelNamePlural: string, field: Field[], first: number, skip: number) => any
+  setFilterAsync: (
+    fieldName: string,
+    value: TypedValue,
+    lokka: any,
+    modelNamePlural: string,
+    fields: Field[],
+  ) => ReduxThunk
+  addNodeAsync: (lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }) => ReduxThunk
+  updateNodeAsync: (
+    lokka: any,
+    model: Model,
+    fields: Field[],
+    value: TypedValue,
+    field: Field,
+    callback,
+    nodeId: string,
+    index: number,
+  ) => ReduxThunk
+  reloadDataAsync: (lokka: any, modelNamePlural: string, fields: Field[], index?: number) => ReduxThunk
+  loadDataAsync: (lokka: any, modelNamePlural: string, field: Field[], first: number, skip: number) => ReduxThunk
 }
 
 class BrowserView extends React.Component<Props, {}> {
@@ -103,7 +119,7 @@ class BrowserView extends React.Component<Props, {}> {
   shouldComponentUpdate: any
 
   private lokka: any
-  private fieldColumnWidths: any
+  private fieldColumnWidths: FieldWidths
 
   constructor(props: Props) {
     super(props)
@@ -178,7 +194,7 @@ class BrowserView extends React.Component<Props, {}> {
         </ModelHeader>
         <div className={`${classes.table} ${this.props.loading ? classes.loading : ''}`}>
           <div
-            className={classes.tableContainer} style={{ width: '100%' }}
+            className={`${classes.tableContainer} w-100`}
             ref={this.props.setBrowserViewRef}
             tabIndex={100}
           >
@@ -187,8 +203,10 @@ class BrowserView extends React.Component<Props, {}> {
                 if (this.props.loading) {
                   return
                 }
+                // 250 comes from the sidebar, 40 is the spacing left to the sidebar
                 return (
                   <InfiniteTable
+                    selectedCell={this.props.selectedCell}
                     loadedList={this.props.loaded}
                     minimumBatchSize={50}
                     width={this.props.fields.reduce((sum, {name}) => sum + this.fieldColumnWidths[name], 0) + 40 + 250}
@@ -266,7 +284,7 @@ class BrowserView extends React.Component<Props, {}> {
     Promise.all(promises).then(() => this.reloadData(0)).then(() => this.props.closePopup(id))
   }
 
-  private loadingCellRenderer = ({rowIndex, columnIndex}) => {
+  private loadingCellRenderer = ({columnIndex}) => {
     if (columnIndex === 0) {
       return (
         <CheckboxCell
@@ -274,7 +292,6 @@ class BrowserView extends React.Component<Props, {}> {
           disabled={true}
           checked={false}
           height={47}
-          id={`checkbox-${rowIndex}-${columnIndex}`}
         />
       )
     } else if (columnIndex === this.props.fields.length + 1) { // AddColumn
@@ -301,7 +318,6 @@ class BrowserView extends React.Component<Props, {}> {
           height={74}
           onChange={this.selectAllOnClick}
           checked={selectedNodeIds.size === nodes.size && nodes.size > 0}
-          id={`header-checkbox-0-${columnIndex}`}
         />
       )
     } else if (columnIndex === fields.length + 1) {
@@ -335,7 +351,6 @@ class BrowserView extends React.Component<Props, {}> {
           checked={this.isSelected(nodeId)}
           onChange={() => this.props.toggleNodeSelection(nodeId)}
           height={47}
-          id={`header-checkbox-top-${rowIndex}-${columnIndex}`}
         />
       )
     } else if (columnIndex === this.props.fields.length + 1) { // AddColumn
@@ -367,7 +382,7 @@ class BrowserView extends React.Component<Props, {}> {
     }
   }
 
-  private getColumnWidth = (fieldColumnWidths, {index}): number => {
+  private getColumnWidth = (fieldColumnWidths: FieldWidths, {index}): number => {
     if (index === 0) { // Checkbox
       return 40
     } else if (index === this.props.fields.length + 1) { // AddColumn
@@ -518,6 +533,7 @@ function mapDispatchToProps(dispatch) {
       reloadDataAsync,
       loadDataAsync,
 
+      // actions for tab and arrow navigation
       nextCell,
       previousCell,
       nextRow,

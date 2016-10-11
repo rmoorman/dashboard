@@ -11,18 +11,14 @@ interface Props {
   headerHeight: number
   model: Model
   project: Project
-  addNewNode: () => any
-  hideNewRow: () => any
+  addNewNode: () => void
+  hideNewRow: () => void
   actionRow: ActionRowState
-  deleteSelectedNodes: () => any
+  deleteSelectedNodes: () => void
   fieldColumnWidths: number
 }
 
-interface State {
-
-}
-
-class DataActionRow extends React.Component<Props, State> {
+class DataActionRow extends React.Component<Props, {}> {
   render() {
     const { actionRow } = this.props
 

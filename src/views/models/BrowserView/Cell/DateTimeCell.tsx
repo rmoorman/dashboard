@@ -25,7 +25,7 @@ export default class DateTimeCell extends React.Component<CellProps<Date>, {}> {
         defaultOpen={true}
         applyImmediately={false}
         onKeyDown={this.props.onKeyDown}
-        onClickOutside={moment => this.props.save(moment)}
+        onClickOutside={moment => this.props.save(moment.toDate())}
       />)
   }
 }

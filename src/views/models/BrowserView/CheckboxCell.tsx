@@ -7,7 +7,6 @@ interface Props {
   checked: boolean
   height: number
   disabled?: boolean
-  id: string
 }
 
 export default class CheckboxCell extends React.Component<Props, {}> {

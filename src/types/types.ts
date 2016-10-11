@@ -186,3 +186,5 @@ export interface OrderBy {
   fieldName: string
   order: 'ASC' | 'DESC'
 }
+
+export type FieldWidths = { [key: string]: number }

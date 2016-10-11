@@ -10,7 +10,7 @@ export interface DataBrowserUIState {
   actionRow: ActionRowState
   selectedCell: GridPosition
   editing: boolean
-  browserViewRef: any
+  browserViewRef: HTMLElement
   writing: boolean
 }
 

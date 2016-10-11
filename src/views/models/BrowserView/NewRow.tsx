@@ -11,6 +11,7 @@ import {Model, Field} from '../../../types/types'
 import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
 import Icon from '../../../components/Icon/Icon'
 import {classnames} from '../../../utils/classnames'
+import * as Immutable from 'immutable'
 const classes: any = require('./NewRow.scss')
 
 interface Props {
@@ -23,7 +24,7 @@ interface Props {
   nextStep: () => any
   width: number
   loading: boolean
-  loaded: any
+  loaded: Immutable.List<boolean>
   writing: boolean
 }
 
