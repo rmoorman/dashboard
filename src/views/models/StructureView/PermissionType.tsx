@@ -8,8 +8,6 @@ const classes: any = require('./PermissionType.scss')
 export interface DataCallbackProps {
   userType?: UserType
   userPath?: string[]
-  userRole?: string
-  useUserRole?: boolean
 }
 
 interface Props {
@@ -17,8 +15,6 @@ interface Props {
   dataCallback: (data: DataCallbackProps) => void
   userType: UserType
   userPath: string[]
-  userRole: string
-  useUserRole: boolean
   possibleRelatedPermissionPaths: Field[][]
   isValid: boolean
   router: ReactRouter.InjectedRouter
@@ -37,15 +33,6 @@ class PermissionType extends React.Component<Props, {}> {
     })
   }
 
-  // _onChangeUserRole (userRole: string) {
-  //   if (userRole === addRoleToken) {
-  //     this.props.router.push(`/${this.props.params.projectName}/models/User/structure/edit/roles`)
-  //
-  //     return
-  //   }
-  //   this.props.dataCallback({ userRole, useUserRole: true })
-  // }
-
   _isValid (userPath: string[]): boolean {
     return this.props.possibleRelatedPermissionPaths.findIndex((arr) => arr.map((f) => f.id).equals(userPath)) > -1
   }
@@ -60,44 +47,6 @@ class PermissionType extends React.Component<Props, {}> {
     const newUserPath = this.props.userPath.slice(0, level)
     this.props.dataCallback({ userPath: newUserPath })
   }
-
-  _disableUserRole () {
-    this.props.dataCallback({ useUserRole: false, userRole: null })
-  }
-
-  // _renderAuthenticated () {
-  //   const fontOptions = {
-  //     font: 'Open Sans',
-  //     fontSize: '13px',
-  //   }
-  //
-  //   const selectedText = this.props.userRole || 'Select Role...'
-  //   const selectWidth = calculateSize(selectedText, fontOptions).width
-  //
-  //   return (
-  //     <div className={`${classes.authenticated} ${this.props.useUserRole ? '' : classes.inactive}`}>
-  //       <span>Limit to</span>
-  //       <select
-  //         style={{ width: selectWidth }}
-  //         value={this.props.userRole || emptyRoleToken}
-  //         onChange={(e: any) => this._onChangeUserRole(e.target.value)}
-  //       >
-  //         <optgroup label='Actions'>
-  //           <option value={addRoleToken}>Create a new role...</option>
-  //         </optgroup>
-  //       </select>
-  //       {this.props.useUserRole &&
-  //         <div className={classes.delete} onClick={() => this._disableUserRole()}>
-  //           <Icon
-  //             width={15}
-  //             height={15}
-  //             src={require('assets/icons/close.svg')}
-  //           />
-  //         </div>
-  //       }
-  //     </div>
-  //   )
-  // }
 
   _renderRelatedLevel (level: number) {
     const fields = this.props.possibleRelatedPermissionPaths

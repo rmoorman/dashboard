@@ -5,7 +5,6 @@ interface Props {
   permissionId: string
   userType: UserType
   userPath: string[]
-  userRole: string
   description: string
   allowRead: boolean
   allowCreate: boolean

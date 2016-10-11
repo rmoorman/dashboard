@@ -5,7 +5,6 @@ interface Props {
   fieldId: string
   userType: UserType
   userPath: string[]
-  userRole: string
   description: string
   allowRead: boolean
   allowCreate: boolean
@@ -49,7 +48,6 @@ export default class AddPermissionMutation extends Relay.Mutation<Props, Respons
       fieldId: this.props.fieldId,
       userType: this.props.userType,
       userPath: this.props.userPath,
-      userRole: this.props.userRole,
       description: this.props.description,
       allowRead: this.props.allowRead,
       allowCreate: this.props.allowCreate,

@@ -88,7 +88,6 @@ export interface Permission {
   id: string
   userType: UserType
   userPath: string[]
-  userRole: string
   allowRead: boolean
   allowCreate: boolean
   allowUpdate: boolean

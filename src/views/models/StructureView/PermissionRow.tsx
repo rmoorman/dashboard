@@ -34,8 +34,6 @@ interface State {
   editDescription: boolean
   userType: UserType
   userPath: string[]
-  userRole: string
-  useUserRole: boolean
   allowRead: boolean
   allowCreate: boolean
   allowUpdate: boolean
@@ -51,7 +49,6 @@ class PermissionRow extends React.Component<Props, State> {
     const permission = props.permission || {
         userType: 'GUEST' as UserType,
         userPath: null,
-        userRole: null,
         allowRead: false,
         allowCreate: false,
         allowUpdate: false,
@@ -68,8 +65,6 @@ class PermissionRow extends React.Component<Props, State> {
       editDescription: false,
       userType: permission.userType,
       userPath,
-      userRole: permission.userRole,
-      useUserRole: !!permission.userRole,
       allowRead: permission.allowRead,
       allowCreate: permission.allowCreate,
       allowUpdate: permission.allowUpdate,
@@ -94,9 +89,7 @@ class PermissionRow extends React.Component<Props, State> {
           <PermissionType
             userType={this.state.userType}
             userPath={this.state.userPath}
-            userRole={this.state.userRole}
             isValid={this.state.isValid}
-            useUserRole={this.state.useUserRole}
             dataCallback={(data) => this.onPermissionTypeDataCallback(data)}
             possibleRelatedPermissionPaths={this.props.possibleRelatedPermissionPaths}
             params={this.props.params}
@@ -201,7 +194,6 @@ class PermissionRow extends React.Component<Props, State> {
         fieldId: this.props.fieldId,
         userType: this.state.userType,
         userPath: this.state.userPath,
-        userRole: this.state.useUserRole ? this.state.userRole : null,
         description: this.state.description,
         allowRead: this.state.allowRead,
         allowCreate: this.state.allowCreate,
@@ -235,7 +227,6 @@ class PermissionRow extends React.Component<Props, State> {
         permissionId: this.props.permission.id,
         userType: this.state.userType,
         userPath: this.state.userPath,
-        userRole: this.state.useUserRole ? this.state.userRole : null,
         description: this.state.description,
         allowRead: this.state.allowRead,
         allowCreate: this.state.allowCreate,
@@ -276,8 +267,6 @@ class PermissionRow extends React.Component<Props, State> {
         editDescription: false,
         userType: this.props.permission.userType,
         userPath,
-        userRole: this.props.permission.userRole,
-        useUserRole: !!this.props.permission.userRole,
         allowRead: this.props.permission.allowRead,
         allowCreate: this.props.permission.allowCreate,
         allowUpdate: this.props.permission.allowUpdate,
@@ -384,7 +373,6 @@ export default Relay.createContainer(MappedPermissionRow, {
         id
         userType
         userPath
-        userRole
         description
         allowRead
         allowCreate
