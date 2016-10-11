@@ -66,7 +66,7 @@ export function atomicValueToString(value: AtomicValue, field: Field, returnNull
 
   switch (type) {
     case 'DateTime':
-      return new Date(value).toISOString()
+      return new Date(value).toLocaleString()
     case 'Password':
       return '***************'
     case 'Json':

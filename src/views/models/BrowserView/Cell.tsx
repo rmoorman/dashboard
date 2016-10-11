@@ -58,7 +58,7 @@ class Cell extends React.PureComponent<Props, {}> {
 
   refs: {
     [key: string]: any
-    container: Element
+    container: any // needs to be any, as scrollIntoViewIfNeeded is not yet there
   }
 
   private escaped: boolean
@@ -99,7 +99,7 @@ class Cell extends React.PureComponent<Props, {}> {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selected === true && this.props.selected === false) {
-      this.refs.container.scrollIntoView(false)
+      this.refs.container.scrollIntoViewIfNeeded()
     }
   }
 

@@ -186,3 +186,9 @@ export interface OrderBy {
 }
 
 export type FieldWidths = { [key: string]: number }
+
+declare global {
+  interface Element {
+    scrollIntoViewIfNeeded(centerIfNeeded: boolean): void
+  }
+}
