@@ -185,7 +185,7 @@ export function nextRow(fields: Field[]): ReduxThunk {
     const { selectedCell, newRowActive } = getState().databrowser.ui
     const { nodes } = getState().databrowser.data
 
-    const rowIndex: number = ((selectedCell.row + 1 + 1) % nodes.size) - 1
+    const rowIndex: number = ((selectedCell.row + 1 + 1) % (nodes.size + 1)) - 1
 
     if (rowIndex === -1 && !newRowActive) {
       dispatch(toggleNewRow(fields))
