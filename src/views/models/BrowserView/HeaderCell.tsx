@@ -6,6 +6,7 @@ import {getFieldTypeName} from '../../../utils/valueparser'
 import {isScalar} from '../../../utils/graphql'
 import {Field} from '../../../types/types'
 import {debounce} from '../../../utils/utils'
+import {classnames} from '../../../utils/classnames'
 const classes: any = require('./HeaderCell.scss')
 
 interface Props {
@@ -46,7 +47,9 @@ class HeaderCell extends React.Component<Props, {}> {
         className={classes.root}
       >
         <div className={classes.row}>
-          <div className={classes.fieldName}>
+          <div className={classnames(classes.fieldName, {
+            [classes.nonsystem]: !field.isSystem,
+          })}>
             {field.name}
             <span className={classes.type}>{type}</span>
             {isScalar(field.typeIdentifier) && !field.isSystem &&
