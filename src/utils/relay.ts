@@ -146,9 +146,16 @@ function getFieldsProjection(fields: Field[], subNodeLimit: number = 3) {
     .join(' ')
 }
 
-export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[], skip: number = 0, first: number = 50,
-                           filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
-                           orderBy?: OrderBy, subNodeLimit: number = 3): Promise<any> {
+export function queryNodes(
+  lokka: any,
+  modelNamePlural: string,
+  fields: Field[],
+  skip: number = 0,
+  first: number = 50,
+  filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
+  orderBy?: OrderBy,
+  subNodeLimit: number = 3
+): Promise<any> {
 
   const fieldNames = getFieldsProjection(fields, subNodeLimit)
 

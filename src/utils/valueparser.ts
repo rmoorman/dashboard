@@ -72,7 +72,7 @@ export function atomicValueToString(value: AtomicValue, field: Field, returnNull
     case 'Json':
       return JSON.stringify(value)
     default:
-      if (typeof value === 'undefined') {
+      if (value === undefined) {
         return ''
       }
       return value.toString()

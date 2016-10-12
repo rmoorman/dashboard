@@ -100,7 +100,7 @@ class NodeSelector extends React.Component<Props, State> {
 
   private onKeyDown = (e: any) => {
     // filter enter, arrow up, arrow down
-    if ([38, 40, 13].indexOf(e.keyCode) > -1) {
+    if ([38, 40, 13].includes(e.keyCode)) {
       return
     }
 

@@ -10,7 +10,7 @@ import {showDonePopup, nextStep} from '../gettingStarted'
 import {showNotification} from '../notification'
 import {isNonScalarList} from '../../utils/graphql'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
-import * as Promise from 'bluebird'
+import * as bluebird from 'bluebird'
 import {GridPosition} from '../../types/databrowser/ui'
 
 export function setItemCount(count: number) {
@@ -133,11 +133,7 @@ export function addNodeAsync(lokka: any, model: Model, fields: Field[], fieldVal
 
     dispatch(hideNewRow())
 
-    const values = {}
-
-    Object.keys(fieldValues).forEach(key => {
-      values[key] = fieldValues[key].value
-    })
+    const values = Object.keys(fieldValues).mapToObject(key => key, key => fieldValues[key].value)
 
     dispatch(addNodeRequest(Immutable.Map<string, any>(values)))
 
@@ -207,7 +203,7 @@ export function deleteSelectedNodes(lokka: any, projectName: string, modelName: 
     dispatch(deleteNodes(ids))
     dispatch(clearNodeSelection())
 
-    Promise.map(ids, id => deleteNode(lokka, modelName, id), {
+    bluebird.map(ids, id => deleteNode(lokka, modelName, id), {
       concurrency: 5,
     })
       .then(() => {
