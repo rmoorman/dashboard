@@ -52,12 +52,21 @@ const reducers: StateTree = combineReducers({
     data: reduceDataBrowserData,
     ui: reduceDataBrowserUI,
   }),
+  lastAction: (state, action) => action || null,
 })
 
 const store = createStore(reducers, compose(
   applyMiddleware(thunk.default),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ))
+
+
+store.subscribe(() => {
+  const { lastAction } = store.getState()
+  console.log(lastAction)
+})
+
+
 store.dispatch(fetchGettingStartedState())
 
 ReactDOM.render(

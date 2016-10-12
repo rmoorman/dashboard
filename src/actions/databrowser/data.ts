@@ -93,6 +93,11 @@ export function loadDataAsync(lokka: any,
                               first: number): ReduxThunk {
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
     const {data} = getState().databrowser
+    // as we have optimistic ui updates, they trigger an unwanted reload to the InfiniteLoader
+    // so disable loading while doing the mutations
+    if (data.mutationActive) {
+      return Promise.reject({})
+    }
     return queryNodes(lokka, modelNamePlural, fields, skip, first, data.filter, data.orderBy)
       .then(results => {
         const newNodes = results.viewer[`all${modelNamePlural}`]
@@ -123,26 +128,43 @@ export function loadDataAsync(lokka: any,
 
 export function addNodeAsync(lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }): ReduxThunk { // tslint:disable-line
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
-    dispatch(setWriting(true))
-    return addRelayNode(lokka, model.name, fieldValues)
-      .then(() => dispatch(reloadDataAsync(lokka, model.namePlural, fields)))
-      .then(() => {
+    dispatch(mutationRequest())
+
+    dispatch(hideNewRow())
+
+    let values = {}
+
+    Object.keys(fieldValues).forEach(key => {
+      values[key] = fieldValues[key].value
+    })
+
+    dispatch(addNodeRequest(Immutable.Map<string, any>(values)))
+
+    return addRelayNode(lokka, model.name, fieldValues, fields)
+      .then(res => {
+        const node = res[`create${model.name}`][lowercaseFirstLetter(model.name)]
+        dispatch(addNodeSuccess(Immutable.Map<string,any>(node)))
+        dispatch(mutationSuccess())
+
         const { gettingStartedState } = getState().gettingStarted
         if (model.name === 'Post' && (
-          gettingStartedState.isCurrentStep('STEP3_CLICK_ENTER_DESCRIPTION') ||
-          gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE1') ||
-          gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE2')
-        )) {
+            gettingStartedState.isCurrentStep('STEP3_CLICK_ENTER_DESCRIPTION') ||
+            gettingStartedState.isCurrentStep('STEP3_CLICK_ENTER_DESCRIPTION') ||
+            gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE2')
+          )) {
           dispatch(showDonePopup())
           dispatch(nextStep())
         }
-        dispatch(setWriting(false))
-        dispatch(hideNewRow())
       })
       .catch((err) => {
+        dispatch(mutationError())
         err.rawError.forEach(error => dispatch(showNotification({ message: error.message, level: 'error' })))
       })
   }
+}
+
+function lowercaseFirstLetter(s: string) {
+  return s.charAt(0).toLowerCase() + s.slice(1);
 }
 
 export function updateNodeAsync(lokka: any,
@@ -177,3 +199,36 @@ function setWriting(payload: boolean) {
     payload,
   }
 }
+
+function mutationSuccess() {
+  return {
+    type: Constants.MUTATION_SUCCESS,
+  }
+}
+
+function mutationError() {
+  return {
+    type: Constants.MUTATION_ERROR,
+  }
+}
+
+function mutationRequest() {
+  return {
+    type: Constants.MUTATION_REQUEST,
+  }
+}
+
+function addNodeRequest(payload: Immutable.Map<string,any>) {
+  return {
+    type: Constants.ADD_NODE_REQUEST,
+    payload,
+  }
+}
+
+function addNodeSuccess(payload: Immutable.Map<string,any>) {
+  return {
+    type: Constants.ADD_NODE_SUCCESS,
+    payload,
+  }
+}
+

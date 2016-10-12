@@ -277,7 +277,7 @@ class BrowserView extends React.Component<Props, {}> {
     })
     for (let i = 0; i < total; i++) {
       promises.push(
-        addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
+        addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk), this.props.fields)
           .then(() => this.props.incrementProgress())
       )
     }
@@ -468,6 +468,7 @@ class BrowserView extends React.Component<Props, {}> {
 
   private selectAllOnClick = (checked: boolean) => {
     if (checked) {
+      debugger
       const selectedNodeIds = this.props.nodes.map(node => node.get('id')).toList()
       this.props.setNodeSelection(selectedNodeIds)
     } else {
