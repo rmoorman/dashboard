@@ -51,7 +51,17 @@ export interface Project {
   actionSchema: string
 }
 
-export type FieldType = 'Relation' | 'Int' | 'String' | 'Boolean' | 'Enum' | 'Float' | 'DateTime' | 'Password' | 'Json' | 'GraphQLID'
+export type FieldType =
+    'Relation'
+  | 'Int'
+  | 'String'
+  | 'Boolean'
+  | 'Enum'
+  | 'Float'
+  | 'DateTime'
+  | 'Password'
+  | 'Json'
+  | 'GraphQLID'
 
 export interface Field {
   id: string
