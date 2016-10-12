@@ -3,14 +3,15 @@ import {TypedValue} from '../../types/utils'
 import {OrderBy, Field, Model} from '../../types/types'
 import {StateTree} from '../../types/reducers'
 import Constants from '../../constants/databrowser/data'
-import UiConstants from '../../constants/databrowser/ui'
 import * as Immutable from 'immutable'
-import {addNode as addRelayNode, queryNodes, updateNode as updateRelayNode} from '../../utils/relay'
+import {addNode as addRelayNode, queryNodes, updateNode as updateRelayNode, deleteNode} from '../../utils/relay'
 import {hideNewRow, setLoading, clearNodeSelection} from './ui'
 import {showDonePopup, nextStep} from '../gettingStarted'
 import {showNotification} from '../notification'
 import {isNonScalarList} from '../../utils/graphql'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
+import * as bluebird from 'bluebird'
+import {GridPosition} from '../../types/databrowser/ui'
 
 export function setItemCount(count: number) {
   return {
@@ -93,6 +94,11 @@ export function loadDataAsync(lokka: any,
                               first: number): ReduxThunk {
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
     const {data} = getState().databrowser
+    // as we have optimistic ui updates, they trigger an unwanted reload to the InfiniteLoader
+    // so disable loading while doing the mutations
+    if (data.mutationActive) {
+      return Promise.reject({})
+    }
     return queryNodes(lokka, modelNamePlural, fields, skip, first, data.filter, data.orderBy)
       .then(results => {
         const newNodes = results.viewer[`all${modelNamePlural}`]
@@ -123,26 +129,39 @@ export function loadDataAsync(lokka: any,
 
 export function addNodeAsync(lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }): ReduxThunk { // tslint:disable-line
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
-    dispatch(setWriting(true))
-    return addRelayNode(lokka, model.name, fieldValues)
-      .then(() => dispatch(reloadDataAsync(lokka, model.namePlural, fields)))
-      .then(() => {
+    dispatch(mutationRequest())
+
+    dispatch(hideNewRow())
+
+    const values = Object.keys(fieldValues).mapToObject(key => key, key => fieldValues[key].value)
+
+    dispatch(addNodeRequest(Immutable.Map<string, any>(values)))
+
+    return addRelayNode(lokka, model.name, fieldValues, fields)
+      .then(res => {
+        const node = res[`create${model.name}`][lowercaseFirstLetter(model.name)]
+        dispatch(addNodeSuccess(Immutable.Map<string,any>(node)))
+        dispatch(mutationSuccess())
+
         const { gettingStartedState } = getState().gettingStarted
         if (model.name === 'Post' && (
-          gettingStartedState.isCurrentStep('STEP3_CLICK_ENTER_DESCRIPTION') ||
-          gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE1') ||
-          gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE2')
-        )) {
+            gettingStartedState.isCurrentStep('STEP3_CLICK_ENTER_DESCRIPTION') ||
+            gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE1') ||
+            gettingStartedState.isCurrentStep('STEP3_CLICK_ADD_NODE2')
+          )) {
           dispatch(showDonePopup())
           dispatch(nextStep())
         }
-        dispatch(setWriting(false))
-        dispatch(hideNewRow())
       })
       .catch((err) => {
+        dispatch(mutationError())
         err.rawError.forEach(error => dispatch(showNotification({ message: error.message, level: 'error' })))
       })
   }
+}
+
+function lowercaseFirstLetter(s: string) {
+  return s.charAt(0).toLowerCase() + s.slice(1)
 }
 
 export function updateNodeAsync(lokka: any,
@@ -152,28 +171,101 @@ export function updateNodeAsync(lokka: any,
                                 field: Field,
                                 callback,
                                 nodeId: string,
-                                index: number): ReduxThunk {
+                                rowIndex: number): ReduxThunk {
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
-    const { loaded } = getState().databrowser.data
-    dispatch(setWriting(true))
+    dispatch(mutationRequest())
+    dispatch(updateCell({
+      position: {
+        row: rowIndex,
+        field: field.name,
+      },
+      value,
+    }))
     return updateRelayNode(lokka, model.name, value, field, nodeId)
-      .then(() => dispatch(setLoaded(loaded.set(index, false))))
-      .then(() => dispatch(loadDataAsync(lokka, model.namePlural, fields, index, 1)))
       .then(() => {
+        dispatch(mutationSuccess())
         callback(true)
-        dispatch(setWriting(false))
       })
       .catch((err) => {
+        dispatch(mutationError())
         callback(false)
-        dispatch(setWriting(false))
         err.rawError.forEach((error) => dispatch(showNotification({message: error.message, level: 'error'})))
       })
   }
 }
 
-function setWriting(payload: boolean) {
+export function deleteSelectedNodes(lokka: any, projectName: string, modelName: string): ReduxThunk {
+  return (dispatch, getState) => {
+    const { selectedNodeIds } = getState().databrowser.ui
+    const ids = selectedNodeIds.toArray()
+
+    dispatch(mutationRequest())
+    dispatch(deleteNodes(ids))
+    dispatch(clearNodeSelection())
+
+    bluebird.map(ids, id => deleteNode(lokka, modelName, id), {
+      concurrency: 5,
+    })
+      .then(() => {
+        analytics.track('models/browser: deleted node', {
+          project: projectName,
+          model: modelName,
+        })
+        dispatch(mutationSuccess())
+      })
+      .catch((err) => {
+        dispatch(mutationError())
+        err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
+      })
+
+  }
+}
+
+function updateCell(payload: {
+  position: GridPosition,
+  value: TypedValue
+}) {
   return {
-    type: UiConstants.SET_WRITING,
+    type: Constants.UPDATE_CELL,
+    payload,
+  }
+}
+
+function mutationSuccess() {
+  return {
+    type: Constants.MUTATION_SUCCESS,
+  }
+}
+
+function mutationError() {
+  return {
+    type: Constants.MUTATION_ERROR,
+  }
+}
+
+function mutationRequest() {
+  return {
+    type: Constants.MUTATION_REQUEST,
+  }
+}
+
+function addNodeRequest(payload: Immutable.Map<string,any>) {
+  return {
+    type: Constants.ADD_NODE_REQUEST,
+    payload,
+  }
+}
+
+function addNodeSuccess(payload: Immutable.Map<string,any>) {
+  return {
+    type: Constants.ADD_NODE_SUCCESS,
+    payload,
+  }
+}
+
+function deleteNodes(payload: string[]) {
+  return {
+    type: Constants.DELETE_NODES,
     payload,
   }
 }

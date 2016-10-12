@@ -28,6 +28,7 @@
     ]
   },
   "dependencies": {
+    "@types/bluebird": "^3.0.35",
     "@types/cuid": "0.0.30",
     "@types/node": "^6.0.31",
     "@types/react": "^0.14.34",
@@ -36,6 +37,7 @@
     "@types/react-router": "^2.0.36",
     "@types/whatwg-fetch": "0.0.27",
     "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "bluebird": "^3.4.6",
     "calculate-size": "^0.2.0",
     "classnames": "^2.2.5",
     "cookiestore": "^1.0.3",

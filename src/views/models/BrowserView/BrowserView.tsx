@@ -10,7 +10,7 @@ import {
 import {resetDataAndUI} from '../../../actions/databrowser/shared'
 import {
   setItemCount, setFilterAsync, setOrder, addNodeAsync, updateNodeAsync,
-  reloadDataAsync, loadDataAsync,
+  reloadDataAsync, loadDataAsync, deleteSelectedNodes,
 } from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
 import * as Immutable from 'immutable'
@@ -34,7 +34,7 @@ import InfiniteTable from '../../../components/InfiniteTable/InfiniteTable'
 import {AutoSizer} from 'react-virtualized'
 import Cell from './Cell'
 import LoadingCell from './LoadingCell'
-import {getLokka, addNodes, deleteNode} from './../../../utils/relay'
+import {getLokka, addNodes} from './../../../utils/relay'
 import ProgressIndicator from '../../../components/ProgressIndicator/ProgressIndicator'
 import {startProgress, incrementProgress} from '../../../actions/progressIndicator'
 import {StateTree, ReduxAction, ReduxThunk} from '../../../types/reducers'
@@ -78,6 +78,7 @@ interface Props {
 
   editCell: (position: GridPosition) => ReduxAction
   setNodeSelection: (ids: Immutable.List<string>) => ReduxAction
+  deleteSelectedNodes: (lokka: any, projectName: string, modeName: string) => ReduxThunk
   toggleNodeSelection: (id: string) => ReduxAction
   filtersVisible: boolean
   selectedNodeIds: Immutable.List<string>
@@ -277,7 +278,7 @@ class BrowserView extends React.Component<Props, {}> {
     })
     for (let i = 0; i < total; i++) {
       promises.push(
-        addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk))
+        addNodes(this.lokka, this.props.params.modelName, values.slice(i * chunk, i * chunk + chunk), this.props.fields)
           .then(() => this.props.incrementProgress())
       )
     }
@@ -343,6 +344,13 @@ class BrowserView extends React.Component<Props, {}> {
 
   private cellRenderer = ({rowIndex, columnIndex}): JSX.Element | string => {
     const node = this.props.nodes.get(rowIndex)
+    if (!node) {
+      return (
+        <LoadingCell
+          backgroundColor='#fff'
+        />
+      )
+    }
     const nodeId = node.get('id')
     const field = this.props.fields[columnIndex - 1]
     if (columnIndex === 0) {
@@ -365,6 +373,7 @@ class BrowserView extends React.Component<Props, {}> {
       )
     } else {
       const value = node.get(field.name)
+
       return (
         <Cell
           rowSelected={this.isSelected(nodeId)}
@@ -454,8 +463,17 @@ class BrowserView extends React.Component<Props, {}> {
     this.props.reloadDataAsync(this.lokka, this.props.model.namePlural, this.props.fields, index)
   }
 
-  private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, index: number) => {
-    this.props.updateNodeAsync(this.lokka, this.props.model, this.props.fields, value, field, callback, nodeId, index)
+  private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, rowIndex: number) => {
+    this.props.updateNodeAsync(
+      this.lokka,
+      this.props.model,
+      this.props.fields,
+      value,
+      field,
+      callback,
+      nodeId,
+      rowIndex
+    )
   }
 
   private addNewNode = (fieldValues: { [key: string]: any }): any => {
@@ -477,21 +495,7 @@ class BrowserView extends React.Component<Props, {}> {
 
   private deleteSelectedNodes = () => {
     if (confirm(`Do you really want to delete ${this.props.selectedNodeIds.size} node(s)?`)) {
-      // only reload once after all the deletions
-
-      this.props.setLoading(true)
-      Promise.all(this.props.selectedNodeIds.toArray()
-        .map((nodeId) => deleteNode(this.lokka, this.props.params.modelName, nodeId)))
-        .then(analytics.track('models/browser: deleted node', {
-          project: this.props.params.projectName,
-          model: this.props.params.modelName,
-        }))
-        .then(() => this.props.setLoading(false))
-        .then(() => this.reloadData())
-        .catch((err) => {
-          err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
-        })
-      this.props.clearNodeSelection()
+      this.props.deleteSelectedNodes(this.lokka, this.props.params.projectName, this.props.params.modelName)
     }
   }
 }
@@ -540,6 +544,7 @@ function mapDispatchToProps(dispatch) {
       updateNodeAsync,
       reloadDataAsync,
       loadDataAsync,
+      deleteSelectedNodes,
 
       // actions for tab and arrow navigation
       nextCell,

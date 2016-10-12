@@ -60,31 +60,44 @@ function getInputString(fieldValues: {[key: string]: any}): string {
     .join(' ')
 }
 
-function getAddMutation(modelName: string, fieldValues: {[key: string]: any}) {
+function getAddMutation(modelName: string, fieldValues: {[key: string]: any}, fields: Field[]) {
   const inputString = getInputString(fieldValues)
 
   const inputArgumentsString = `(input: {${inputString} clientMutationId: "a"})`
+
+  const fieldNames = getFieldsProjection(fields)
+
   return `
     create${modelName}${inputArgumentsString} {
       ${camelCase(modelName)} {
-        id
+        ${fieldNames}
       }
     }
   `
 }
 
-export function addNode(lokka: any, modelName: string, fieldValues: { [key: string]: any }): Promise<any> {
+export function addNode(
+  lokka: any,
+  modelName: string,
+  fieldValues: { [key: string]: any },
+  fields: Field[]
+): Promise<any> {
 
   const mutation = `
     {
-      ${getAddMutation(modelName, fieldValues)}
+      ${getAddMutation(modelName, fieldValues, fields)}
     }
   `
   return lokka.mutate(mutation)
 }
 
-export function addNodes(lokka: any, modelName: string, fieldValueArray: {[key: string]: any}[]): Promise<any> {
-  const mutations = fieldValueArray.map((value, index) => `add${index}: ${getAddMutation(modelName, value)}`)
+export function addNodes(
+  lokka: any,
+  modelName: string,
+  fieldValueArray: {[key: string]: any}[],
+  fields: Field[]
+): Promise<any> {
+  const mutations = fieldValueArray.map((value, index) => `add${index}: ${getAddMutation(modelName, value, fields)}`)
   return lokka.mutate(`{${mutations.join('\n')}}`)
 }
 
@@ -124,16 +137,27 @@ export function deleteNode(lokka: any, modelName: string, nodeId: string): Promi
   return lokka.mutate(mutation)
 }
 
-export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[], skip: number = 0, first: number = 50,
-                           filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
-                           orderBy?: OrderBy, subNodeLimit: number = 3): Promise<any> {
-
-  const fieldNames = fields
+function getFieldsProjection(fields: Field[], subNodeLimit: number = 3) {
+  return fields
     .map((field) => isScalar(field.typeIdentifier)
       ? field.name : field.isList
       ? `${field.name} (first: ${subNodeLimit}) { edges { node { id } } }`
       : `${field.name} { id }`)
     .join(' ')
+}
+
+export function queryNodes(
+  lokka: any,
+  modelNamePlural: string,
+  fields: Field[],
+  skip: number = 0,
+  first: number = 50,
+  filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
+  orderBy?: OrderBy,
+  subNodeLimit: number = 3
+): Promise<any> {
+
+  const fieldNames = getFieldsProjection(fields, subNodeLimit)
 
   const filterQuery = filters
     .filter((v) => v !== null)

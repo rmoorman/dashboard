@@ -70,7 +70,7 @@ class NodeSelector extends React.Component<Props, State> {
         style={{ width: '100%' }}
       >
         <div
-          onKeyDown={this.props.onKeyDown}
+          onKeyDown={this.onKeyDown}
         >
             <Autocomplete
               wrapperProps={{className: classes.wrapper}}
@@ -96,6 +96,15 @@ class NodeSelector extends React.Component<Props, State> {
         </div>
       </ClickOutside>
     )
+  }
+
+  private onKeyDown = (e: any) => {
+    // filter enter, arrow up, arrow down
+    if ([38, 40, 13].includes(e.keyCode)) {
+      return
+    }
+
+    this.props.onKeyDown(e)
   }
 
   private renderNode = (node, isHighlighted) => {
