@@ -146,34 +146,56 @@ function getFieldsProjection(fields: Field[], subNodeLimit: number = 3) {
     .join(' ')
 }
 
+function addSlashes( str ) {
+  return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0')
+}
+
 export function queryNodes(
   lokka: any,
   modelNamePlural: string,
   fields: Field[],
   skip: number = 0,
   first: number = 50,
-  filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
+  searchQuery: string,
   orderBy?: OrderBy,
   subNodeLimit: number = 3
 ): Promise<any> {
 
   const fieldNames = getFieldsProjection(fields, subNodeLimit)
 
-  const filterQuery = filters
-    .filter((v) => v !== null)
-    .map((value, fieldName) => {
-      const identifier = fields.find(x => x.name === fieldName).typeIdentifier
+  let filterQuery = ''
 
-      // there is no Json filter yet
-      if (identifier === 'Json') {
-        return ''
-      }
+  const isNumber = !isNaN(parseFloat(searchQuery))
 
-      return ['String', 'GraphQLID'].includes(identifier)
-        ? `${fieldName}_contains: ${value}`
-        : `${fieldName}: ${value}`
-    })
-    .join(' ')
+  if (searchQuery.length > 0) {
+    filterQuery = fields
+      .filter(field => {
+        const identifier = field.typeIdentifier
+
+        if (isNumber) {
+          return ['Int', 'Float'].includes(identifier)
+        }
+
+        return ['String', 'GraphQLID'].includes(identifier)
+      })
+      .map(field => {
+        const fieldName = field.name
+
+        const sanitized = addSlashes(searchQuery)
+
+        if (isNumber) {
+          return `${fieldName}: ${sanitized}`
+        }
+
+        return `${fieldName}_contains: "${sanitized}"`
+      })
+      .map(query => {
+        return `{ ${query} }`
+      })
+      .join(', ')
+
+    filterQuery = `OR: [${filterQuery}]`
+  }
 
   const filter = filterQuery !== '' ? `filter: { ${filterQuery} }` : ''
   const orderByQuery = orderBy ? `orderBy: ${orderBy.fieldName}_${orderBy.order}` : ''

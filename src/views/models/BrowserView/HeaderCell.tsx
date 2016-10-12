@@ -14,7 +14,6 @@ interface Props {
   sortOrder?: string
   toggleSortOrder: () => void
   updateFilter: (value: string) => void
-  filterVisible: boolean
   params: any
 }
 
@@ -76,11 +75,6 @@ class HeaderCell extends React.Component<Props, {}> {
           </div>
           }
         </div>
-        {this.props.filterVisible &&
-        <div className={classes.row}>
-          {this.renderFilter()}
-        </div>
-        }
       </div>
     )
   }
@@ -104,62 +98,6 @@ class HeaderCell extends React.Component<Props, {}> {
   private toggleSortOrder = () => {
     if (isScalar(this.props.field.typeIdentifier)) {
       this.props.toggleSortOrder()
-    }
-  }
-
-  private renderFilter() {
-    switch (this.props.field.typeIdentifier) {
-      case 'Relation':
-        return (
-          <div className={classes.noFilter}>
-            Filters are not available for Relations
-          </div>
-        )
-      case 'Int':
-        return (
-          <input
-            type='number'
-            placeholder={`Filter by ${this.props.field.name}`}
-            onChange={(e: any) => this.onFilterChangeNumber(e.target.value)}
-          />
-        )
-      case 'Float':
-        return (
-          <input
-            type='number'
-            step='any'
-            placeholder={`Filter by ${this.props.field.name}`}
-            onChange={(e: any) => this.onFilterChangeNumber(e.target.value)}
-          />
-        )
-      case 'Boolean':
-        return (
-          <select
-            onChange={(e: any) => this.onFilterChangeBoolean(e.target.value)}>
-            <option value={''}>{`Filter by ${this.props.field.name}`}</option>
-            <option value={'true'}>true</option>
-            <option value={'false'}>false</option>
-          </select>
-        )
-      case 'Enum':
-        return (
-          <select
-            onChange={(e: any) => this.onFilterChangeEnum(e.target.value)}
-          >
-            <option value={''}>{`Filter by ${this.props.field.name}`}</option>
-            {this.props.field.enumValues.map((enumValue) => (
-              <option key={enumValue}>{enumValue}</option>
-            ))}
-          </select>
-        )
-      default:
-        return (
-          <input
-            type='text'
-            placeholder={`Filter by ${this.props.field.name}`}
-            onChange={(e: any) => this.onFilterChangeString(e.target.value)}
-          />
-        )
     }
   }
 

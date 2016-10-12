@@ -79,9 +79,9 @@ export function setLoading(loading: boolean): ReduxAction {
   }
 }
 
-export function toggleFilter(): ReduxAction {
+export function toggleSearch(): ReduxAction {
   return {
-    type: Constants.TOGGLE_FILTER,
+    type: Constants.TOGGLE_SEARCH,
   }
 }
 

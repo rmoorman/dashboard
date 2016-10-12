@@ -2,7 +2,7 @@ import * as Immutable from 'immutable'
 import {ActionRowState} from './actionrow'
 
 export interface DataBrowserUIState {
-  filtersVisible: boolean
+  searchVisible: boolean
   newRowActive: boolean
   selectedNodeIds: Immutable.List<string>
   scrollTop: number
@@ -12,6 +12,7 @@ export interface DataBrowserUIState {
   editing: boolean
   browserViewRef: HTMLElement
   writing: boolean
+  searchQuery: string
 }
 
 export interface GridPosition {
