@@ -14,7 +14,7 @@ const initialState: DataBrowserDataState =  {
   filter: Immutable.Map<string, any>(),
   itemCount: 0,
   loaded: Immutable.List<boolean>(),
-  mutationActive: false
+  mutationActive: false,
 }
 
 export function reduceData(state: DataBrowserDataState = initialState, action: ReduxAction): DataBrowserDataState {
@@ -61,6 +61,7 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
     case Constants.ADD_NODE_REQUEST:
       return Object.assign({}, state, {
         nodes: state.nodes.unshift(action.payload),
+        loaded: state.loaded.unshift(true),
         itemCount: state.itemCount + 1,
       })
     case Constants.ADD_NODE_SUCCESS:
@@ -68,9 +69,12 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
         nodes: state.nodes.set(0, action.payload),
       })
     case Constants.DELETE_NODES:
-      return Object.assign({}, state, {
-        nodes: state.nodes.takeWhile((node, index) => action.payload.indexOf(index) === -1),
+      const newState = Object.assign({}, state, {
+        nodes: state.nodes.filter((node, index) => action.payload.indexOf(node.get('id')) === -1),
+        itemCount: state.itemCount - action.payload.length,
+        loaded: state.loaded.slice(0, state.loaded.size - action.payload.length),
       })
+      return newState
     case Constants.SET_CELL:
       // use block as we would redefine `value` in the same block again
       const { position } = action.payload

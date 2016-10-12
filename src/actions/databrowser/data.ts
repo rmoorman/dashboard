@@ -5,12 +5,13 @@ import {StateTree} from '../../types/reducers'
 import Constants from '../../constants/databrowser/data'
 import UiConstants from '../../constants/databrowser/ui'
 import * as Immutable from 'immutable'
-import {addNode as addRelayNode, queryNodes, updateNode as updateRelayNode} from '../../utils/relay'
+import {addNode as addRelayNode, queryNodes, updateNode as updateRelayNode, deleteNode} from '../../utils/relay'
 import {hideNewRow, setLoading, clearNodeSelection} from './ui'
 import {showDonePopup, nextStep} from '../gettingStarted'
 import {showNotification} from '../notification'
 import {isNonScalarList} from '../../utils/graphql'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
+import * as Promise from 'bluebird'
 
 export function setItemCount(count: number) {
   return {
@@ -193,6 +194,34 @@ export function updateNodeAsync(lokka: any,
   }
 }
 
+export function deleteSelectedNodes(lokka: any, projectName: string, modelName: string): ReduxThunk {
+  return (dispatch, getState) => {
+    const { selectedNodeIds } = getState().databrowser.ui
+    const ids = selectedNodeIds.toArray()
+
+    dispatch(mutationRequest())
+    dispatch(deleteNodes(ids))
+    dispatch(clearNodeSelection())
+
+
+    Promise.map(ids, id => deleteNode(lokka, modelName, id), {
+      concurrency: 5,
+    })
+      .then(() => {
+        analytics.track('models/browser: deleted node', {
+          project: projectName,
+          model: modelName,
+        })
+        dispatch(mutationSuccess())
+      })
+      .catch((err) => {
+        dispatch(mutationError())
+        err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
+      })
+
+  }
+}
+
 function setWriting(payload: boolean) {
   return {
     type: UiConstants.SET_WRITING,
@@ -228,6 +257,13 @@ function addNodeRequest(payload: Immutable.Map<string,any>) {
 function addNodeSuccess(payload: Immutable.Map<string,any>) {
   return {
     type: Constants.ADD_NODE_SUCCESS,
+    payload,
+  }
+}
+
+function deleteNodes(payload: string[]) {
+  return {
+    type: Constants.DELETE_NODES,
     payload,
   }
 }

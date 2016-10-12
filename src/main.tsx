@@ -62,8 +62,8 @@ const store = createStore(reducers, compose(
 
 
 store.subscribe(() => {
-  const { lastAction } = store.getState()
-  console.log(lastAction)
+  const { lastAction, databrowser: { data } } = store.getState()
+  // console.log(lastAction, data.nodes)
 })
 
 

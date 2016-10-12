@@ -98,7 +98,7 @@ export default class DatePicker extends React.Component<Props, State> {
     )
   }
 
-  private onKeyDown (e: any) {
+  private onKeyDown = (e: any) => {
     // fake event data, as the document doesn't have a value ...
     e.target.value = this.state.moment
     this.props.onKeyDown(e)
