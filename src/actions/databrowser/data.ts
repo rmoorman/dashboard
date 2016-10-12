@@ -12,6 +12,7 @@ import {showNotification} from '../notification'
 import {isNonScalarList} from '../../utils/graphql'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
 import * as Promise from 'bluebird'
+import {GridPosition} from '../../types/databrowser/ui'
 
 export function setItemCount(count: number) {
   return {
@@ -175,20 +176,24 @@ export function updateNodeAsync(lokka: any,
                                 field: Field,
                                 callback,
                                 nodeId: string,
-                                index: number): ReduxThunk {
+                                rowIndex: number): ReduxThunk {
   return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
-    const { loaded } = getState().databrowser.data
-    dispatch(setWriting(true))
+    dispatch(mutationRequest())
+    dispatch(updateCell({
+      position: {
+        row: rowIndex,
+        field: field.name,
+      },
+      value,
+    }))
     return updateRelayNode(lokka, model.name, value, field, nodeId)
-      .then(() => dispatch(setLoaded(loaded.set(index, false))))
-      .then(() => dispatch(loadDataAsync(lokka, model.namePlural, fields, index, 1)))
       .then(() => {
+        dispatch(mutationSuccess())
         callback(true)
-        dispatch(setWriting(false))
       })
       .catch((err) => {
+        dispatch(mutationError())
         callback(false)
-        dispatch(setWriting(false))
         err.rawError.forEach((error) => dispatch(showNotification({message: error.message, level: 'error'})))
       })
   }
@@ -219,6 +224,16 @@ export function deleteSelectedNodes(lokka: any, projectName: string, modelName: 
         err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
       })
 
+  }
+}
+
+function updateCell(payload: {
+  position: GridPosition,
+  value: TypedValue
+}) {
+  return {
+    type: Constants.UPDATE_CELL,
+    payload,
   }
 }
 

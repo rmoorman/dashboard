@@ -75,7 +75,7 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
         loaded: state.loaded.slice(0, state.loaded.size - action.payload.length),
       })
       return newState
-    case Constants.SET_CELL:
+    case Constants.UPDATE_CELL:
       // use block as we would redefine `value` in the same block again
       const { position } = action.payload
       const cellValue = action.payload.value

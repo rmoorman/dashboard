@@ -463,8 +463,8 @@ class BrowserView extends React.Component<Props, {}> {
     this.props.reloadDataAsync(this.lokka, this.props.model.namePlural, this.props.fields, index)
   }
 
-  private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, index: number) => {
-    this.props.updateNodeAsync(this.lokka, this.props.model, this.props.fields, value, field, callback, nodeId, index)
+  private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, rowIndex: number) => {
+    this.props.updateNodeAsync(this.lokka, this.props.model, this.props.fields, value, field, callback, nodeId, rowIndex)
   }
 
   private addNewNode = (fieldValues: { [key: string]: any }): any => {
