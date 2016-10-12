@@ -76,7 +76,12 @@ function getAddMutation(modelName: string, fieldValues: {[key: string]: any}, fi
   `
 }
 
-export function addNode(lokka: any, modelName: string, fieldValues: { [key: string]: any }, fields: Field[]): Promise<any> {
+export function addNode(
+  lokka: any,
+  modelName: string,
+  fieldValues: { [key: string]: any },
+  fields: Field[]
+): Promise<any> {
 
   const mutation = `
     {
@@ -86,7 +91,12 @@ export function addNode(lokka: any, modelName: string, fieldValues: { [key: stri
   return lokka.mutate(mutation)
 }
 
-export function addNodes(lokka: any, modelName: string, fieldValueArray: {[key: string]: any}[], fields: Field[]): Promise<any> {
+export function addNodes(
+  lokka: any,
+  modelName: string,
+  fieldValueArray: {[key: string]: any}[],
+  fields: Field[]
+): Promise<any> {
   const mutations = fieldValueArray.map((value, index) => `add${index}: ${getAddMutation(modelName, value, fields)}`)
   return lokka.mutate(`{${mutations.join('\n')}}`)
 }

@@ -3,7 +3,6 @@ import {TypedValue} from '../../types/utils'
 import {OrderBy, Field, Model} from '../../types/types'
 import {StateTree} from '../../types/reducers'
 import Constants from '../../constants/databrowser/data'
-import UiConstants from '../../constants/databrowser/ui'
 import * as Immutable from 'immutable'
 import {addNode as addRelayNode, queryNodes, updateNode as updateRelayNode, deleteNode} from '../../utils/relay'
 import {hideNewRow, setLoading, clearNodeSelection} from './ui'
@@ -166,7 +165,7 @@ export function addNodeAsync(lokka: any, model: Model, fields: Field[], fieldVal
 }
 
 function lowercaseFirstLetter(s: string) {
-  return s.charAt(0).toLowerCase() + s.slice(1);
+  return s.charAt(0).toLowerCase() + s.slice(1)
 }
 
 export function updateNodeAsync(lokka: any,
@@ -208,7 +207,6 @@ export function deleteSelectedNodes(lokka: any, projectName: string, modelName: 
     dispatch(deleteNodes(ids))
     dispatch(clearNodeSelection())
 
-
     Promise.map(ids, id => deleteNode(lokka, modelName, id), {
       concurrency: 5,
     })
@@ -233,13 +231,6 @@ function updateCell(payload: {
 }) {
   return {
     type: Constants.UPDATE_CELL,
-    payload,
-  }
-}
-
-function setWriting(payload: boolean) {
-  return {
-    type: UiConstants.SET_WRITING,
     payload,
   }
 }
@@ -282,4 +273,3 @@ function deleteNodes(payload: string[]) {
     payload,
   }
 }
-

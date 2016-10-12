@@ -24,7 +24,7 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
     case Constants.SET_FILTER:
       const {fieldName, value} = action.payload
       return Object.assign({}, state, {
-        filter: state.filter.set(fieldName, value)
+        filter: state.filter.set(fieldName, value),
       })
     case Constants.SET_ITEMCOUNT:
       return Object.assign({}, state, {

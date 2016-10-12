@@ -52,7 +52,7 @@ const reducers: StateTree = combineReducers({
     data: reduceDataBrowserData,
     ui: reduceDataBrowserUI,
   }),
-  lastAction: (state, action) => action || null,
+  // lastAction: (state, action) => action || null,
 })
 
 const store = createStore(reducers, compose(
@@ -60,12 +60,10 @@ const store = createStore(reducers, compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ))
 
-
-store.subscribe(() => {
-  const { lastAction, databrowser: { data } } = store.getState()
-  console.log(lastAction, data.nodes)
-})
-
+// store.subscribe(() => {
+//   const { lastAction, databrowser: { data } } = store.getState()
+  // console.log(lastAction, data.nodes)
+// })
 
 store.dispatch(fetchGettingStartedState())
 

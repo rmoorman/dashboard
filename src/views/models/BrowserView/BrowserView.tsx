@@ -34,7 +34,7 @@ import InfiniteTable from '../../../components/InfiniteTable/InfiniteTable'
 import {AutoSizer} from 'react-virtualized'
 import Cell from './Cell'
 import LoadingCell from './LoadingCell'
-import {getLokka, addNodes, deleteNode} from './../../../utils/relay'
+import {getLokka, addNodes} from './../../../utils/relay'
 import ProgressIndicator from '../../../components/ProgressIndicator/ProgressIndicator'
 import {startProgress, incrementProgress} from '../../../actions/progressIndicator'
 import {StateTree, ReduxAction, ReduxThunk} from '../../../types/reducers'
@@ -464,7 +464,16 @@ class BrowserView extends React.Component<Props, {}> {
   }
 
   private updateEditingNode = (value: TypedValue, field: Field, callback, nodeId: string, rowIndex: number) => {
-    this.props.updateNodeAsync(this.lokka, this.props.model, this.props.fields, value, field, callback, nodeId, rowIndex)
+    this.props.updateNodeAsync(
+      this.lokka,
+      this.props.model,
+      this.props.fields,
+      value,
+      field,
+      callback,
+      nodeId,
+      rowIndex
+    )
   }
 
   private addNewNode = (fieldValues: { [key: string]: any }): any => {
@@ -477,7 +486,6 @@ class BrowserView extends React.Component<Props, {}> {
 
   private selectAllOnClick = (checked: boolean) => {
     if (checked) {
-      debugger
       const selectedNodeIds = this.props.nodes.map(node => node.get('id')).toList()
       this.props.setNodeSelection(selectedNodeIds)
     } else {

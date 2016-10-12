@@ -137,7 +137,9 @@ export function calculateFieldColumnWidths (width: number,
       const lowerLimit = 150
       const upperLimit = 400
 
-      return maxWidth > upperLimit ? upperLimit : (maxWidth < lowerLimit ? lowerLimit : maxWidth)
+      const idExtra = field.name === 'id' ? 50 : 0
+
+      return (maxWidth > upperLimit ? upperLimit : (maxWidth < lowerLimit ? lowerLimit : maxWidth)) + idExtra
     }
   )
 
