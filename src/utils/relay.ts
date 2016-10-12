@@ -5,7 +5,6 @@ import {Lokka} from 'lokka'
 import {Transport} from 'lokka-transport-http'
 import {toGQL} from '../views/models/utils'
 import {isScalar, isNonScalarList} from './graphql'
-import * as Immutable from 'immutable'
 import {Field, OrderBy} from '../types/types'
 import {TypedValue} from '../types/utils'
 
@@ -167,23 +166,27 @@ export function queryNodes(
 
   const isNumber = !isNaN(parseFloat(searchQuery))
 
+  const numberTypes = ['Int', 'Float']
+  const stringTypes = ['String', 'GraphQLID']
+
   if (searchQuery.length > 0) {
     filterQuery = fields
       .filter(field => {
         const identifier = field.typeIdentifier
 
         if (isNumber) {
-          return ['Int', 'Float'].includes(identifier)
+          return numberTypes.concat(stringTypes).includes(identifier)
         }
 
-        return ['String', 'GraphQLID'].includes(identifier)
+        return stringTypes.includes(identifier)
       })
       .map(field => {
         const fieldName = field.name
+        const identifier = field.typeIdentifier
 
         const sanitized = addSlashes(searchQuery)
 
-        if (isNumber) {
+        if (numberTypes.includes(identifier)) {
           return `${fieldName}: ${sanitized}`
         }
 

@@ -79,22 +79,6 @@ class HeaderCell extends React.Component<Props, {}> {
     )
   }
 
-  private onFilterChangeString(value: string) {
-    this.delayedUpdateFilter(value !== '' ? `"${value}"` : null)
-  }
-
-  private onFilterChangeEnum(value: string) {
-    this.delayedUpdateFilter(value !== '' ? `${value}` : null)
-  }
-
-  private onFilterChangeNumber(value: string) {
-    this.delayedUpdateFilter(value !== '' ? value : null)
-  }
-
-  private onFilterChangeBoolean(value: any) {
-    this.props.updateFilter(value !== '' ? value.toString() : null)
-  }
-
   private toggleSortOrder = () => {
     if (isScalar(this.props.field.typeIdentifier)) {
       this.props.toggleSortOrder()
