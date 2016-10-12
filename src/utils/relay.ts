@@ -161,11 +161,18 @@ export function queryNodes(
 
   const filterQuery = filters
     .filter((v) => v !== null)
-    // TODO uncomment this when the count bug is fixed
-    .map((value, fieldName) => fields.find(x => x.name === fieldName).typeIdentifier === 'String'
-      ? `${fieldName}_contains: ${value}`
-      : `${fieldName}: ${value}`)
-    .map((value, fieldName) => `${fieldName}: ${value}`)
+    .map((value, fieldName) => {
+      const identifier = fields.find(x => x.name === fieldName).typeIdentifier
+
+      // there is no Json filter yet
+      if (identifier === 'Json') {
+        return ''
+      }
+
+      return ['String', 'GraphQLID'].includes(identifier)
+        ? `${fieldName}_contains: ${value}`
+        : `${fieldName}: ${value}`
+    })
     .join(' ')
 
   const filter = filterQuery !== '' ? `filter: { ${filterQuery} }` : ''
