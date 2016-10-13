@@ -99,7 +99,7 @@ export function loadDataAsync(lokka: any,
     if (data.mutationActive) {
       return Promise.reject({})
     }
-    return queryNodes(lokka, modelNamePlural, fields, skip, first, data.filter, data.orderBy)
+    return queryNodes(lokka, modelNamePlural, fields, skip, first, data.searchQuery, data.orderBy)
       .then(results => {
         const newNodes = results.viewer[`all${modelNamePlural}`]
           .edges.map(({node}) => {
@@ -221,6 +221,14 @@ export function deleteSelectedNodes(lokka: any, projectName: string, modelName: 
   }
 }
 
+export function search(e: any, lokka: any, modelNamePlural: string, fields: Field[], index: number = 0): ReduxThunk {
+  return (dispatch) => {
+    const value = e.target.value
+    dispatch(setSearchQuery(value))
+    dispatch(reloadDataAsync(lokka, modelNamePlural, fields, index))
+  }
+}
+
 function updateCell(payload: {
   position: GridPosition,
   value: TypedValue
@@ -266,6 +274,13 @@ function addNodeSuccess(payload: Immutable.Map<string,any>) {
 function deleteNodes(payload: string[]) {
   return {
     type: Constants.DELETE_NODES,
+    payload,
+  }
+}
+
+function setSearchQuery(payload: string) {
+  return {
+    type: Constants.SET_SEARCH_QUERY,
     payload,
   }
 }

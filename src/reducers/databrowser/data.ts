@@ -15,6 +15,7 @@ const initialState: DataBrowserDataState =  {
   itemCount: 0,
   loaded: Immutable.List<boolean>(),
   mutationActive: false,
+  searchQuery: '',
 }
 
 export function reduceData(state: DataBrowserDataState = initialState, action: ReduxAction): DataBrowserDataState {
@@ -29,6 +30,10 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
     case Constants.SET_ITEMCOUNT:
       return Object.assign({}, state, {
         itemCount: action.payload,
+      })
+    case Constants.SET_SEARCH_QUERY:
+      return Object.assign({}, state, {
+        searchQuery: action.payload,
       })
     case Constants.SET_DATA:
       const {nodes, loaded} = action.payload

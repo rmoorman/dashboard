@@ -6,7 +6,7 @@ import {DataBrowserUIState} from '../../types/databrowser/ui'
 import {ActionRowState} from '../../types/databrowser/actionrow'
 
 const initialState: DataBrowserUIState = {
-  filtersVisible: false,
+  searchVisible: false,
   newRowActive: false,
   selectedNodeIds: Immutable.List<string>(),
   scrollTop: 0,
@@ -19,6 +19,7 @@ const initialState: DataBrowserUIState = {
   },
   editing: false,
   browserViewRef: null,
+  searchQuery: null,
 }
 
 export function reduceUI(state: DataBrowserUIState = initialState, action: ReduxAction): DataBrowserUIState {
@@ -31,9 +32,9 @@ export function reduceUI(state: DataBrowserUIState = initialState, action: Redux
       return Object.assign({}, state, {
         newRowActive: !state.newRowActive,
       })
-    case Constants.TOGGLE_FILTER:
+    case Constants.TOGGLE_SEARCH:
       return Object.assign({}, state, {
-        filtersVisible: !state.filtersVisible,
+        searchVisible: !state.searchVisible,
       })
     case Constants.SET_NODE_SELECTION:
       return Object.assign({}, state, {

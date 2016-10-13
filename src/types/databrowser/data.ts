@@ -9,4 +9,5 @@ export interface DataBrowserDataState {
   itemCount: number
   loaded: Immutable.List<boolean>
   mutationActive: boolean
+  searchQuery: string
 }

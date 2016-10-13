@@ -5,12 +5,12 @@ import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
 import {
   toggleNodeSelection, clearNodeSelection, setNodeSelection, setScrollTop, setLoading,
-  toggleNewRow, hideNewRow, toggleFilter,
+  toggleNewRow, hideNewRow, toggleSearch,
 } from '../../../actions/databrowser/ui'
 import {resetDataAndUI} from '../../../actions/databrowser/shared'
 import {
   setItemCount, setFilterAsync, setOrder, addNodeAsync, updateNodeAsync,
-  reloadDataAsync, loadDataAsync, deleteSelectedNodes,
+  reloadDataAsync, loadDataAsync, deleteSelectedNodes, search,
 } from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
 import * as Immutable from 'immutable'
@@ -44,6 +44,7 @@ import {
   nextCell, previousCell, nextRow, previousRow, editCell, setBrowserViewRef,
 } from '../../../actions/databrowser/ui'
 import {GridPosition} from '../../../types/databrowser/ui'
+import {classnames} from '../../../utils/classnames'
 
 interface Props {
   viewer: Viewer
@@ -64,7 +65,7 @@ interface Props {
   newRowActive: boolean
   toggleNewRow: () => ReduxAction
   hideNewRow: () => ReduxAction
-  toggleFilter: () => ReduxAction
+  toggleSearch: () => ReduxAction
   setScrollTop: (scrollTop: number) => ReduxAction
   setLoading: (loading: boolean) => ReduxAction
   resetDataAndUI: () => ReduxAction
@@ -80,7 +81,7 @@ interface Props {
   setNodeSelection: (ids: Immutable.List<string>) => ReduxAction
   deleteSelectedNodes: (lokka: any, projectName: string, modeName: string) => ReduxThunk
   toggleNodeSelection: (id: string) => ReduxAction
-  filtersVisible: boolean
+  searchVisible: boolean
   selectedNodeIds: Immutable.List<string>
   selectedCell: GridPosition
   loading: boolean
@@ -113,6 +114,8 @@ interface Props {
   ) => ReduxThunk
   reloadDataAsync: (lokka: any, modelNamePlural: string, fields: Field[], index?: number) => ReduxThunk
   loadDataAsync: (lokka: any, modelNamePlural: string, field: Field[], first: number, skip: number) => ReduxThunk
+  search: (e: any, lokka: any, modelNamePlural: string, fields: Field[], index: number) => ReduxThunk
+  searchQuery: string
 }
 
 class BrowserView extends React.Component<Props, {}> {
@@ -162,7 +165,7 @@ class BrowserView extends React.Component<Props, {}> {
   render() {
     return (
       <div
-        className={`${classes.root} ${this.props.filtersVisible ? classes.filtersVisible : ''}`}
+        className={classes.root}
         onKeyDown={this.onKeyDown}
       >
         <ModelHeader
@@ -171,25 +174,52 @@ class BrowserView extends React.Component<Props, {}> {
           viewer={this.props.viewer}
           project={this.props.project}
         >
-          <input type='file' onChange={this.handleImport} id='fileselector' className='dn'/>
-          <label htmlFor='fileselector' className={classes.button}>
-            Import JSON
-          </label>
           <div
-            className={`${classes.button} ${this.props.filtersVisible ? classes.blue : ''}`}
-            onClick={this.props.toggleFilter}
+            className={classnames(classes.button, classes.search, {
+              [classes.active]: this.props.searchVisible,
+            })}
           >
             <Icon
               width={16}
               height={16}
-              src={require('assets/icons/search.svg')}
+              src={require('assets/new_icons/search.svg')}
+              onClick={this.props.toggleSearch}
+              className={classes.searchicon}
             />
+            {this.props.searchVisible && (
+              <input
+                type='text'
+                className={classes.input}
+                autoFocus
+                value={this.props.searchQuery || ''}
+                onChange={(e) => {
+                  this.props.search(e, this.lokka, this.props.model.namePlural, this.props.fields, 0)
+                }}
+              />
+            )}
+            {this.props.searchVisible && (
+              <Icon
+                width={16}
+                height={16}
+                src={require('assets/new_icons/close.svg')}
+                className={classes.closeicon}
+                onClick={this.props.toggleSearch}
+              />
+            )}
           </div>
+          <input type='file' onChange={this.handleImport} id='fileselector' className='dn'/>
+          <label htmlFor='fileselector' className={classes.button}>
+            <Icon
+              width={16}
+              height={16}
+              src={require('assets/new_icons/down.svg')}
+            />
+          </label>
           <div className={classes.button} onClick={() => this.reloadData(Math.floor(this.props.scrollTop / 47))}>
             <Icon
               width={16}
               height={16}
-              src={require('assets/icons/refresh.svg')}
+              src={require('assets/new_icons/reload.svg')}
             />
           </div>
         </ModelHeader>
@@ -335,7 +365,6 @@ class BrowserView extends React.Component<Props, {}> {
           sortOrder={orderBy.fieldName === field.name ? orderBy.order : null}
           toggleSortOrder={() => this.setSortOrder(field)}
           updateFilter={(value) => this.props.setFilterAsync(field.name, value, this.lokka, model.namePlural, fields)}
-          filterVisible={this.props.filtersVisible}
           params={params}
         />
       )
@@ -504,12 +533,13 @@ const mapStateToProps = (state: StateTree) => {
   return {
     gettingStartedState: state.gettingStarted.gettingStartedState,
     newRowActive: state.databrowser.ui.newRowActive,
-    filtersVisible: state.databrowser.ui.filtersVisible,
     selectedNodeIds: state.databrowser.ui.selectedNodeIds,
     selectedCell: state.databrowser.ui.selectedCell,
     scrollTop: state.databrowser.ui.scrollTop,
+    searchVisible: state.databrowser.ui.searchVisible,
     loading: state.databrowser.ui.loading,
     editing: state.databrowser.ui.editing,
+    searchQuery: state.databrowser.data.searchQuery,
     itemCount: state.databrowser.data.itemCount,
     filter: state.databrowser.data.filter,
     orderBy: state.databrowser.data.orderBy,
@@ -523,7 +553,7 @@ function mapDispatchToProps(dispatch) {
     {
       toggleNewRow,
       hideNewRow,
-      toggleFilter,
+      toggleSearch,
       setNodeSelection,
       clearNodeSelection,
       toggleNodeSelection,
@@ -545,6 +575,7 @@ function mapDispatchToProps(dispatch) {
       reloadDataAsync,
       loadDataAsync,
       deleteSelectedNodes,
+      search,
 
       // actions for tab and arrow navigation
       nextCell,

@@ -11,12 +11,46 @@ $tableHeadExpanded: 100px;
 }
 
 .button {
-  @include button;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-left: 10px;
+  cursor: pointer;
+  transition: .3s all;
+
+  &.search {
+    display: flex;
+    &.active {
+      height: 50px;
+      width: 360px;
+    }
+
+    .input {
+      border: none;
+      flex: 1;
+    }
+    .searchicon, .closeicon {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .closeicon {
+      svg {
+        fill: rgba(0,0,0,0.4);
+      }
+    }
+  }
 
   label {
     cursor: pointer;
   }
+
 
   &.green {
     border-color: $accent;
