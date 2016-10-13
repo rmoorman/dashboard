@@ -77,7 +77,7 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
           nodes: Immutable.List<Immutable.Map<string, any>>(),
           itemCount: 0,
           loaded: Immutable.List<boolean>(),
-        }
+        },
       })
     case Constants.ADD_NODE_REQUEST:
       return Object.assign({}, state, {

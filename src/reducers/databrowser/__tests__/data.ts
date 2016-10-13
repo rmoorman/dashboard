@@ -91,21 +91,30 @@ describe('databrowser reducer', () => {
   })
 
   it('should backup and delete the backup when mutation success after delete mutation', () => {
-    reduceAndSnapshot(initialState, reduceData, [
-      mockNodes(),
-      mutationRequest(),
-      deleteNodes(['asd', 'asd2']),
-      mutationSuccess(),
-    ], [0, 1])
+    reduceAndSnapshot(
+      initialState,
+      reduceData,
+      [
+        mockNodes(),
+        mutationRequest(),
+        deleteNodes(['asd', 'asd2']),
+        mutationSuccess(),
+      ],
+      [0, 1])
   })
 
   it('should backup and restore when mutation fail after delete mutation', () => {
-    reduceAndSnapshot(initialState, reduceData, [
-      mockNodes(),
-      mutationRequest(),
-      deleteNodes(['asd', 'asd2']),
-      mutationError(),
-    ], [0, 1])
+    reduceAndSnapshot(
+      initialState,
+      reduceData,
+      [
+        mockNodes(),
+        mutationRequest(),
+        deleteNodes(['asd', 'asd2']),
+        mutationError(),
+      ],
+      [0, 1],
+    )
   })
 
   it('should execute the update cell action', () => {
