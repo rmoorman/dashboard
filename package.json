@@ -10,10 +10,7 @@
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
-    "testFileExtensions": [
-      "ts",
-      "js"
-    ],
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
     "moduleFileExtensions": [
       "ts",
       "js"
@@ -21,10 +18,10 @@
     "testPathIgnorePatterns": [
       "/lib/"
     ],
-    "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/react/",
-      "<rootDir>/node_modules/react-dom/",
-      "<rootDir>/node_modules/react-addons-test-utils/"
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "!**/__tests__/**"
     ]
   },
   "dependencies": {
@@ -96,13 +93,14 @@
     "extract-text-webpack-plugin": "^2.0.0-beta.3",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
-    "jest-cli": "^14.0.0",
+    "jest-cli": "^16.0.1",
     "json-loader": "^0.5.4",
     "netlify-cli": "^1.0.3",
     "node-noop": "^1.0.0",
     "node-sass": "^3.8.0",
     "postcss-loader": "^0.9.1",
     "raw-loader": "^0.5.1",
+    "react-test-renderer": "^15.3.2",
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",
     "svgo-loader": "^1.1.0",

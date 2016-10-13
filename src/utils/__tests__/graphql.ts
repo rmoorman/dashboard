@@ -1,6 +1,3 @@
-jest.unmock('../graphql')
-jest.unmock('../../types/types')
-
 import {Field} from '../../types/types'
 import {isScalar, isNonScalarList} from '../graphql'
 import '../polyfils'
