@@ -47,7 +47,7 @@ export function setData(nodes: Immutable.List<Immutable.Map<string, any>>, loade
   }
 }
 
-export function setNodes(nodes: Immutable.List<Immutable.Map<string, any>>, loaded: Immutable.List<boolean>) {
+export function setNodes(nodes: Immutable.List<Immutable.Map<string, any>>) {
   return {
     type: Constants.SET_NODES,
     payload: nodes,
@@ -229,7 +229,7 @@ export function search(e: any, lokka: any, modelNamePlural: string, fields: Fiel
   }
 }
 
-function updateCell(payload: {
+export function updateCell(payload: {
   position: GridPosition,
   value: TypedValue
 }) {
@@ -239,46 +239,46 @@ function updateCell(payload: {
   }
 }
 
-function mutationSuccess() {
+export function mutationSuccess() {
   return {
     type: Constants.MUTATION_SUCCESS,
   }
 }
 
-function mutationError() {
+export function mutationError() {
   return {
     type: Constants.MUTATION_ERROR,
   }
 }
 
-function mutationRequest() {
+export function mutationRequest() {
   return {
     type: Constants.MUTATION_REQUEST,
   }
 }
 
-function addNodeRequest(payload: Immutable.Map<string,any>) {
+export function addNodeRequest(payload: Immutable.Map<string,any>) {
   return {
     type: Constants.ADD_NODE_REQUEST,
     payload,
   }
 }
 
-function addNodeSuccess(payload: Immutable.Map<string,any>) {
+export function addNodeSuccess(payload: Immutable.Map<string,any>) {
   return {
     type: Constants.ADD_NODE_SUCCESS,
     payload,
   }
 }
 
-function deleteNodes(payload: string[]) {
+export function deleteNodes(payload: string[]) {
   return {
     type: Constants.DELETE_NODES,
     payload,
   }
 }
 
-function setSearchQuery(payload: string) {
+export function setSearchQuery(payload: string) {
   return {
     type: Constants.SET_SEARCH_QUERY,
     payload,

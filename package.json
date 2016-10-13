@@ -11,12 +11,19 @@
   "jest": {
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
+    "moduleNameMapper": {
+      "^.+\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
+      "^.+\\.(css|scss)$": "identity-obj-proxy"
+    },
     "moduleFileExtensions": [
       "ts",
-      "js"
+      "js",
+      "tsx"
     ],
     "testPathIgnorePatterns": [
-      "/lib/"
+      "/lib/",
+      "/.*scss$/",
+      "/.*css$/"
     ],
     "collectCoverageFrom": [
       "src/**/*.ts",
@@ -74,7 +81,7 @@
     "tachyons": "^4.5.2"
   },
   "devDependencies": {
-    "@types/jest": "^0.9.27",
+    "@types/jest": "^15.1.32",
     "awesome-typescript-loader": "^2.2.4",
     "babel-cli": "^6.11.4",
     "babel-jest": "^14.0.0",
@@ -93,6 +100,7 @@
     "extract-text-webpack-plugin": "^2.0.0-beta.3",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
+    "identity-obj-proxy": "^3.0.0",
     "jest-cli": "^16.0.1",
     "json-loader": "^0.5.4",
     "netlify-cli": "^1.0.3",
