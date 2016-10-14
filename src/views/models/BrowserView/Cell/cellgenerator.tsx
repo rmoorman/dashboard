@@ -72,6 +72,7 @@ function getNonScalarEditCell(reqs: CellRequirements): JSX.Element {
       relatedModel={reqs.field.relatedModel}
       projectId={reqs.projectId}
       value={reqs.value ? reqs.value.id : null}
+      onKeyDown={reqs.methods.onKeyDown}
       save={reqs.methods.save}
       cancel={reqs.methods.cancel}
     />
@@ -113,6 +114,7 @@ export function getScalarEditCell(reqs: CellRequirements): JSX.Element {
         <BooleanCell
           value={reqs.value}
           save={reqs.methods.save}
+          onKeyDown={reqs.methods.onKeyDown}
           field={reqs.field}
           cancel={reqs.methods.cancel}
         />
@@ -151,6 +153,7 @@ export function getScalarEditCell(reqs: CellRequirements): JSX.Element {
       return (
         <DateTimeCell
           cancel={reqs.methods.cancel}
+          onKeyDown={reqs.methods.onKeyDown}
           save={reqs.methods.save}
           value={reqs.value}
           field={reqs.field}

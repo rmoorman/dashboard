@@ -5,7 +5,6 @@ import {Lokka} from 'lokka'
 import {Transport} from 'lokka-transport-http'
 import {toGQL} from '../views/models/utils'
 import {isScalar, isNonScalarList} from './graphql'
-import * as Immutable from 'immutable'
 import {Field, OrderBy} from '../types/types'
 import {TypedValue} from '../types/utils'
 
@@ -60,31 +59,44 @@ function getInputString(fieldValues: {[key: string]: any}): string {
     .join(' ')
 }
 
-function getAddMutation(modelName: string, fieldValues: {[key: string]: any}) {
+function getAddMutation(modelName: string, fieldValues: {[key: string]: any}, fields: Field[]) {
   const inputString = getInputString(fieldValues)
 
   const inputArgumentsString = `(input: {${inputString} clientMutationId: "a"})`
+
+  const fieldNames = getFieldsProjection(fields)
+
   return `
     create${modelName}${inputArgumentsString} {
       ${camelCase(modelName)} {
-        id
+        ${fieldNames}
       }
     }
   `
 }
 
-export function addNode(lokka: any, modelName: string, fieldValues: { [key: string]: any }): Promise<any> {
+export function addNode(
+  lokka: any,
+  modelName: string,
+  fieldValues: { [key: string]: any },
+  fields: Field[]
+): Promise<any> {
 
   const mutation = `
     {
-      ${getAddMutation(modelName, fieldValues)}
+      ${getAddMutation(modelName, fieldValues, fields)}
     }
   `
   return lokka.mutate(mutation)
 }
 
-export function addNodes(lokka: any, modelName: string, fieldValueArray: {[key: string]: any}[]): Promise<any> {
-  const mutations = fieldValueArray.map((value, index) => `add${index}: ${getAddMutation(modelName, value)}`)
+export function addNodes(
+  lokka: any,
+  modelName: string,
+  fieldValueArray: {[key: string]: any}[],
+  fields: Field[]
+): Promise<any> {
+  const mutations = fieldValueArray.map((value, index) => `add${index}: ${getAddMutation(modelName, value, fields)}`)
   return lokka.mutate(`{${mutations.join('\n')}}`)
 }
 
@@ -124,25 +136,69 @@ export function deleteNode(lokka: any, modelName: string, nodeId: string): Promi
   return lokka.mutate(mutation)
 }
 
-export function queryNodes(lokka: any, modelNamePlural: string, fields: Field[], skip: number = 0, first: number = 50,
-                           filters: Immutable.Map<string, any> = Immutable.Map<string, any>(),
-                           orderBy?: OrderBy, subNodeLimit: number = 3): Promise<any> {
-
-  const fieldNames = fields
+function getFieldsProjection(fields: Field[], subNodeLimit: number = 3) {
+  return fields
     .map((field) => isScalar(field.typeIdentifier)
       ? field.name : field.isList
       ? `${field.name} (first: ${subNodeLimit}) { edges { node { id } } }`
       : `${field.name} { id }`)
     .join(' ')
+}
 
-  const filterQuery = filters
-    .filter((v) => v !== null)
-    // TODO uncomment this when the count bug is fixed
-    // .map((value, fieldName) => fields.find(x => x.name === fieldName).typeIdentifier === 'String'
-    //   ? `${fieldName}_contains: ${value}`
-    //   : `${fieldName}: ${value}`)
-    .map((value, fieldName) => `${fieldName}: ${value}`)
-    .join(' ')
+function addSlashes( str ) {
+  return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0')
+}
+
+export function queryNodes(
+  lokka: any,
+  modelNamePlural: string,
+  fields: Field[],
+  skip: number = 0,
+  first: number = 50,
+  searchQuery: string,
+  orderBy?: OrderBy,
+  subNodeLimit: number = 3
+): Promise<any> {
+
+  const fieldNames = getFieldsProjection(fields, subNodeLimit)
+
+  let filterQuery = ''
+
+  const isNumber = !isNaN(parseFloat(searchQuery))
+
+  const numberTypes = ['Int', 'Float']
+  const stringTypes = ['String', 'GraphQLID']
+
+  if (searchQuery.length > 0) {
+    filterQuery = fields
+      .filter(field => {
+        const identifier = field.typeIdentifier
+
+        if (isNumber) {
+          return numberTypes.concat(stringTypes).includes(identifier)
+        }
+
+        return stringTypes.includes(identifier)
+      })
+      .map(field => {
+        const fieldName = field.name
+        const identifier = field.typeIdentifier
+
+        const sanitized = addSlashes(searchQuery)
+
+        if (numberTypes.includes(identifier)) {
+          return `${fieldName}: ${sanitized}`
+        }
+
+        return `${fieldName}_contains: "${sanitized}"`
+      })
+      .map(query => {
+        return `{ ${query} }`
+      })
+      .join(', ')
+
+    filterQuery = `OR: [${filterQuery}]`
+  }
 
   const filter = filterQuery !== '' ? `filter: { ${filterQuery} }` : ''
   const orderByQuery = orderBy ? `orderBy: ${orderBy.fieldName}_${orderBy.order}` : ''

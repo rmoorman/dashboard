@@ -51,7 +51,17 @@ export interface Project {
   actionSchema: string
 }
 
-export type FieldType = 'Relation' | 'Int' | 'String' | 'Boolean' | 'Enum' | 'Float' | 'DateTime' | 'Password' | 'Json'
+export type FieldType =
+    'Relation'
+  | 'Int'
+  | 'String'
+  | 'Boolean'
+  | 'Enum'
+  | 'Float'
+  | 'DateTime'
+  | 'Password'
+  | 'Json'
+  | 'GraphQLID'
 
 export interface Field {
   id: string
@@ -88,7 +98,6 @@ export interface Permission {
   id: string
   userType: UserType
   userPath: string[]
-  userRole: string
   allowRead: boolean
   allowCreate: boolean
   allowUpdate: boolean
@@ -183,4 +192,12 @@ export interface AuthProviderDigits {
 export interface OrderBy {
   fieldName: string
   order: 'ASC' | 'DESC'
+}
+
+export type FieldWidths = { [key: string]: number }
+
+declare global {
+  interface Element {
+    scrollIntoViewIfNeeded(centerIfNeeded: boolean): void
+  }
 }

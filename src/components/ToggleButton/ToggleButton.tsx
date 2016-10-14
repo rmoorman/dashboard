@@ -12,6 +12,7 @@ interface Props {
   rightText: string
   onChange?: (ToggleSide) => void
   onClickOutside?: (ToggleSide) => void
+  onKeyDown?: (e: any) => void
   onBlur?: (e: any) => void
 }
 
@@ -32,19 +33,26 @@ export default class ToggleButton extends React.Component<Props, State> {
     this.state = {
       currentSide: this.props.side,
     }
+
   }
 
   componentDidMount() {
     document.addEventListener('click', this.handle, true)
+    document.addEventListener('keydown', this.onKeyDown)
   }
 
   componentWillUnmount() {
     document.removeEventListener('click', this.handle, true)
+    document.removeEventListener('keydown', this.onKeyDown)
   }
 
   render() {
     return (
-      <div className={classes.root} ref='container' onBlur={this.props.onBlur}>
+      <div
+        className={classes.root}
+        ref='container'
+        onBlur={this.props.onBlur}
+      >
         <span
           className={classes.label}
           onClick={() => this.onUpdateSide(ToggleSide.Left)}
@@ -71,6 +79,12 @@ export default class ToggleButton extends React.Component<Props, State> {
     if (!this.refs.container.contains(e.target) && this.props.onClickOutside) {
       this.props.onClickOutside(this.state.currentSide)
     }
+  }
+
+  private onKeyDown = (e: any) => {
+    // fake event data, as the document doesn't have a value ...
+    e.target.value = this.state.currentSide === ToggleSide.Left ? 'false' : 'true' // tslint:disable-line
+    this.props.onKeyDown(e)
   }
 
   private onUpdateSide (side) {

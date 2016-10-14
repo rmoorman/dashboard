@@ -66,12 +66,15 @@ export function atomicValueToString(value: AtomicValue, field: Field, returnNull
 
   switch (type) {
     case 'DateTime':
-      return new Date(value).toISOString()
+      return new Date(value).toLocaleString()
     case 'Password':
       return '***************'
     case 'Json':
       return JSON.stringify(value)
     default:
+      if (value === undefined) {
+        return ''
+      }
       return value.toString()
   }
 }

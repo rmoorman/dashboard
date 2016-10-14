@@ -1,6 +1,9 @@
 import * as React from 'react'
 import * as Immutable from 'immutable'
 import {InfiniteLoader, Grid} from 'react-virtualized'
+import {Model, Project, FieldWidths} from '../../types/types'
+import DataActionRow from '../../views/models/BrowserView/DataActionRow'
+import {GridPosition} from '../../types/databrowser/ui'
 
 interface Props {
   minimumBatchSize?: number
@@ -13,6 +16,9 @@ interface Props {
   loadMoreRows: (input: any) => Promise<any>
   addNew: boolean
   onScroll?: (input: any) => void
+  model: Model
+  project: Project
+  newRowActive: boolean
 
   loadedList: Immutable.List<boolean>
 
@@ -23,9 +29,16 @@ interface Props {
 
   headerHeight: number
   headerRenderer: (input: any) => JSX.Element | string
+  fieldColumnWidths: FieldWidths
 
   addRowHeight: number
-  addCellRenderer: (input: any) => JSX.Element | string
+
+  hideNewRow: () => void
+  addNewNode: () => void
+
+  deleteSelectedNodes: () => any
+
+  selectedCell: GridPosition
 }
 
 export default class InfiniteTable extends React.Component<Props, {}> {
@@ -41,7 +54,9 @@ export default class InfiniteTable extends React.Component<Props, {}> {
           isRowLoaded={({index}) => this.props.loadedList.get(index)}
           >
           {({onRowsRendered, registerChild}) => (
-            <div style={{display: 'flex', flexDirection: 'row', height: '100%', position: 'relative'}}>
+            <div
+              style={{display: 'flex', flexDirection: 'row', height: '100%', position: 'relative'}}
+            >
               <Grid
                 columnWidth={this.props.columnWidth}
                 columnCount={this.props.columnCount}
@@ -53,46 +68,43 @@ export default class InfiniteTable extends React.Component<Props, {}> {
                 style={{overflowX: 'visible', overflowY: 'visible', width: 'auto', position: 'relative'}}
                 width={this.props.width}
               />
-              {this.props.addNew &&
-              <Grid
-                ref={registerChild}
+              <DataActionRow
                 width={this.props.width}
-                height={this.props.addRowHeight}
-                style={{
-                  overflow: 'visible',
-                  position: 'absolute',
-                  left: 0,
-                  width: 'auto',
-                  top: this.props.headerHeight,
-                }}
-                cellStyle={{position: 'absolute'}}
-                rowHeight={this.props.addRowHeight}
-                columnCount={1}
-                columnWidth={this.props.width}
-                rowCount={1}
-                cellRenderer={this.props.addCellRenderer}
+                height={47}
+                headerHeight={this.props.headerHeight}
+                model={this.props.model}
+                project={this.props.project}
+                addNewNode={this.props.addNewNode}
+                hideNewRow={this.props.hideNewRow}
+                fieldColumnWidths={this.props.fieldColumnWidths}
+                deleteSelectedNodes={this.props.deleteSelectedNodes}
+                ref={registerChild}
               />
-              }
               <Grid
                 ref={registerChild}
                 width={this.props.width}
-                height={this.props.height - this.props.headerHeight - (this.props.addNew ? this.props.addRowHeight : 0)}
+                height={this.props.height - this.props.headerHeight - this.props.addRowHeight}
                 style={{
                   overflow: 'scroll',
                   position: 'absolute',
                   width: 'auto',
                   left: 0,
-                  top: this.props.headerHeight + (this.props.addNew ? this.props.addRowHeight : 0),
+
+                  // -1 as we have don't want to have a double border
+                  top: this.props.headerHeight + this.props.addRowHeight,
+                  transform: `translate3d(0px, ${(this.props.newRowActive &&
+                    this.props.loadedList.size > 0) ? 10 : 0}px, 0px)`,
+                  transition: '.3s all',
                 }}
-                scrollTop={this.props.scrollTop ? this.props.scrollTop : null}
-                onScroll={this.props.onScroll}
                 cellStyle={{position: 'absolute'}}
                 rowHeight={this.props.rowHeight}
                 columnCount={this.props.columnCount}
                 columnWidth={this.props.columnWidth}
+                overscanRowCount={10}
                 rowCount={this.props.rowCount}
                 cellRenderer={this.renderCell}
                 onSectionRendered={(section) => this.onGridRowsRendered(section, onRowsRendered)}
+                scrollToRow={this.props.selectedCell.row}
               />
             </div>
           )}

@@ -9,6 +9,9 @@ import Cell from './Cell'
 import {TypedValue} from '../../../types/utils'
 import {Model, Field} from '../../../types/types'
 import {getFirstInputFieldIndex, getDefaultFieldValues} from '../utils'
+import Icon from '../../../components/Icon/Icon'
+import {classnames} from '../../../utils/classnames'
+import * as Immutable from 'immutable'
 const classes: any = require('./NewRow.scss')
 
 interface Props {
@@ -19,6 +22,10 @@ interface Props {
   cancel: () => void
   gettingStarted: GettingStartedState
   nextStep: () => any
+  width: number
+  loading: boolean
+  loaded: Immutable.List<boolean>
+  writing: boolean
 }
 
 interface State {
@@ -36,53 +43,84 @@ class NewRow extends React.Component<Props, State> {
     }
   }
 
+  keyDown = (e: any) => {
+    if (e.keyCode === 13) {
+      this.add()
+    }
+  }
+
   render() {
     const fields = this.props.model.fields.edges
       .map((edge) => edge.node)
+
       // .sort(compareFields) // TODO remove this once field ordering is implemented
     const inputIndex = getFirstInputFieldIndex(fields)
+    const loading = this.props.writing
 
     return (
-      <div className={classes.root}>
-        <div className={classes.empty}/>
+      <div
+        className={classnames(classes.root, {
+          [classes.loading]: loading,
+        })}
+        style={{
+          width: this.props.width - 250 - 40,
+          border: '4px solid ' + this.props.loading ? 'red' : 'transparent',
+        }}
+        onKeyDown={this.keyDown}
+      >
         {fields.map((field, index) => {
           return (
           <div
             key={field.id}
             style={{width: this.props.columnWidths[field.name]}}
-            onKeyDown={this.handleKeyDown}
           >
               <Cell
                 needsFocus={this.state.shouldFocus ? index === inputIndex : false}
                 addnew={true}
                 field={field}
+                fields={fields}
                 width={this.props.columnWidths[field.name]}
                 update={this.update}
                 value={this.state.fieldValues[field.name] ? this.state.fieldValues[field.name].value : ''}
                 cancel={this.props.cancel}
                 projectId={this.props.projectId}
                 reload={() => null}
+                rowIndex={-1}
               />
             </div>
           )
         })}
-        <div className={classes.buttons}>
-          <button onClick={this.add}>Add</button>
-          <button onClick={this.props.cancel}>Cancel</button>
+        <div
+          className={classnames(classes.buttons, {
+            [classes.loading]: loading,
+          })}
+        >
+          <button onClick={this.props.cancel}>
+            <Icon
+              width={24}
+              height={24}
+              src={require('assets/new_icons/remove.svg')}
+              className={classes.cancel}
+            />
+          </button>
+          <button onClick={this.add}>
+            <Icon
+              width={24}
+              height={24}
+              src={require('assets/new_icons/check.svg')}
+              className={classes.add}
+            />
+          </button>
         </div>
       </div>
     )
   }
 
-  private handleKeyDown = (e) => {
-    if (e.keyCode === 13) {
-      this.add()
-    } else if (e.keyCode === 27) {
-      this.props.cancel()
-    }
-  }
-
   private add = () => {
+    // don't add when we're loading already new data
+    if (this.props.writing) {
+      return
+    }
     const allRequiredFieldsGiven = this.state.fieldValues
       .mapToArray((fieldName, obj) => obj)
       .reduce((acc, {field, value}) => acc && (value !== null || !field.isRequired), true)
@@ -106,7 +144,10 @@ class NewRow extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: StateTree) => {
-  return { gettingStarted: state.gettingStarted.gettingStartedState }
+  return {
+    gettingStarted: state.gettingStarted.gettingStartedState,
+    writing: state.databrowser.ui.writing,
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {

@@ -1,5 +1,5 @@
 import {isScalar} from '../../utils/graphql'
-import {Field} from '../../types/types'
+import {Field, FieldWidths} from '../../types/types'
 import {TypedValue, NonScalarValue, ScalarValue} from '../../types/utils'
 import {stringToValue, valueToString, getFieldTypeName} from '../../utils/valueparser'
 import calculateSize from 'calculate-size'
@@ -111,7 +111,7 @@ export function getDefaultFieldValues(fields: Field[]): { [key: string]: any } {
 export function calculateFieldColumnWidths (width: number,
                                             fields: Field[],
                                             nodes: Immutable.List<Immutable.Map<string, any>>
-                                           ): any {
+                                           ): FieldWidths {
   const cellFontOptions = {
     font: 'Open Sans',
     fontSize: '12px',
@@ -137,7 +137,9 @@ export function calculateFieldColumnWidths (width: number,
       const lowerLimit = 150
       const upperLimit = 400
 
-      return maxWidth > upperLimit ? upperLimit : (maxWidth < lowerLimit ? lowerLimit : maxWidth)
+      const idExtra = field.name === 'id' ? 50 : 0
+
+      return (maxWidth > upperLimit ? upperLimit : (maxWidth < lowerLimit ? lowerLimit : maxWidth)) + idExtra
     }
   )
 
