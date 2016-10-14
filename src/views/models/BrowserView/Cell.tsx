@@ -152,12 +152,14 @@ class Cell extends React.PureComponent<Props, {}> {
       return
     }
 
+    if (keepEditing) {
+      this.props.editCell(this.props.position)
+    } else {
+      this.props.stopEditCell()
+    }
+
     this.props.update(value, this.props.field, () => {
-      if (keepEditing) {
-        this.props.editCell(this.props.position)
-      } else {
-        this.props.stopEditCell()
-      }
+      //
     })
   }
 
