@@ -77,17 +77,22 @@ describe('databrowser reducer', () => {
   })
 
   it('should be able to modify the created node after optimistic create', () => {
-    reduceAndSnapshot(initialState, reduceData, [
-      mockNodes(),
-      mutationRequest(),
-      addNodeRequest(Immutable.Map({
-        name: 'a4',
-      })),
-      addNodeSuccess(Immutable.Map({
-        id: 'asd4',
-        name: 'a4',
-      })),
-    ], [0, 1])
+    reduceAndSnapshot(
+      initialState,
+      reduceData,
+      [
+        mockNodes(),
+        mutationRequest(),
+        addNodeRequest(Immutable.Map({
+          name: 'a4',
+        })),
+        addNodeSuccess(Immutable.Map({
+          id: 'asd4',
+          name: 'a4',
+        })),
+      ],
+      [0, 1]
+    )
   })
 
   it('should backup and delete the backup when mutation success after delete mutation', () => {
