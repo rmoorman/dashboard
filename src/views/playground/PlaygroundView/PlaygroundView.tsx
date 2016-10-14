@@ -22,6 +22,8 @@ import {GettingStartedState} from '../../../types/gettingStarted'
 import {nextStep} from '../../../actions/gettingStarted'
 const classes: any = require('./PlaygroundView.scss')
 
+import {particles} from 'graphcool-styles'
+
 require('graphiql/graphiql.css')
 
 const DASHBOARD_ADMIN = {
@@ -202,7 +204,7 @@ class PlaygroundView extends React.Component<Props, State> {
           params={this.props.params}
           project={this.props.viewer.project}
         >
-          <div>Playground</div>
+          <div className={particles.primary}>Playground</div>
         </Header>
         <div className={classes.head}>
           <div

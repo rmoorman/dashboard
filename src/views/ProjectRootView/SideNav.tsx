@@ -1,3 +1,4 @@
+
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as Relay from 'react-relay'
@@ -8,7 +9,7 @@ import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import mapProps from '../../components/MapProps/MapProps'
 import {validateModelName} from '../../utils/nameValidator'
 import ScrollBox from '../../components/ScrollBox/ScrollBox'
-import Icon from '../../components/Icon/Icon'
+import Icon from 'graphcool-styles/components/Icon/Icon'
 import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
@@ -20,8 +21,8 @@ import {ShowNotificationCallback} from '../../types/utils'
 import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
-//import {classnames} from '../../utils/classnames'
-import * as classnames from 'classnames'
+import * as cx from 'classnames'
+import {particles, variables} from 'graphcool-styles'
 
 const classes: any = require('./SideNav.scss')
 
@@ -82,9 +83,17 @@ export class SideNav extends React.Component<Props, State> {
 
     return (
       <div
-        className={classes.root}
+        className={cx(
+          particles.relative,
+          particles.w100,
+          particles.h100,
+          particles.white,
+          particles.bgDarkBlue,
+          particles.f14,
+          classes.root,
+        )}
         onMouseLeave={() => this.setState({forceShowModels: false} as State)}>
-        <div className={classes.container}>
+        <div className={cx(particles.h100)}>
           <ScrollBox>
             {this.renderModels()}
             {this.renderRelations()}
@@ -92,7 +101,7 @@ export class SideNav extends React.Component<Props, State> {
             {this.renderPlayground()}
           </ScrollBox>
         </div>
-        <Link className={classes.foot} to={`/${this.props.project.name}/settings`}>
+        <Link className={cx(particles.bgDarkerBlue, classes.foot)} to={`/${this.props.project.name}/settings`}>
           <Icon
             width={20} height={20}
             src={require('assets/icons/gear.svg')}
@@ -112,10 +121,14 @@ export class SideNav extends React.Component<Props, State> {
     }
 
     return (
-      <div className={`${classes.listBlock} ${playgroundPageActive ? classes.active : ''}`}>
+      <div className={cx(
+        classes.listBlock, {
+          [classes.active]: playgroundPageActive,
+        }
+      )}>
           <Link
             to={`/${this.props.params.projectName}/playground`}
-            className={`${classes.head} ${playgroundPageActive ? classes.active : ''}`}
+            className={classes.head}
             onClick={showGettingStartedOnboardingPopup}
           >
             <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
@@ -139,7 +152,11 @@ export class SideNav extends React.Component<Props, State> {
   private renderActions = () => {
     const actionsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/actions`)
     return (
-      <div className={`${classes.listBlock} ${actionsPageActive ? classes.active : ''}`}>
+      <div className={cx(
+        classes.listBlock, {
+          [classes.active]: actionsPageActive,
+        }
+      )}>
         <Link
           to={`/${this.props.params.projectName}/actions`}
           className={`${classes.head} ${actionsPageActive ? classes.active : ''}`}
@@ -154,7 +171,11 @@ export class SideNav extends React.Component<Props, State> {
   private renderRelations = () => {
     const relationsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/relations`)
     return (
-      <div className={`${classes.listBlock} ${relationsPageActive ? classes.active : ''}`}>
+      <div className={cx(
+        classes.listBlock, {
+          [classes.active]: relationsPageActive,
+         }
+      )}>
         <Link
           to={`/${this.props.params.projectName}/relations`}
           className={`${classes.head} ${relationsPageActive ? classes.active : ''}`}
@@ -176,12 +197,16 @@ export class SideNav extends React.Component<Props, State> {
     const showsModels = modelsPageActive || this.state.forceShowModels
 
     return (
-      <div className={classnames(classes.listBlock, { [classes.active]: showsModels })}>
+      <div className={cx(
+        particles.relative,
+        particles.pt38,
+        particles.bgDarkerBlue,
+        classes.listBlock,
+      )}>
         <Link
           to={`/${this.props.params.projectName}/models`}
           className={`${classes.head} ${modelsPageActive ? classes.active : ''}`}
         >
-          <Icon width={19} height={19} src={require('assets/icons/model.svg')}/>
           <span>Models</span>
         </Link>
         <div className={`${classes.list} ${showsModels ? classes.active : classes.inactive}`}>
@@ -197,7 +222,7 @@ export class SideNav extends React.Component<Props, State> {
             </Link>
           ))}
         </div>
-        <div className={classnames(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
+        <div className={cx(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
           {this.props.models.length > 3 && !showsModels &&
           <div
             className={classes.listElement}
@@ -206,11 +231,11 @@ export class SideNav extends React.Component<Props, State> {
             ...
           </div>
           }
-          <div className={classnames(classes.newModelContainer, this.state.addingNewModel ? '' : classes.notToggled)}>
+          <div className={cx(classes.newModelContainer, this.state.addingNewModel ? '' : classes.notToggled)}>
             <input
               ref='newModelInput'
               disabled={!this.state.addingNewModel}
-              className={classnames(
+              className={cx(
                 this.state.newModelIsValid ? '' : classes.invalid,
                 classes.newModelBox,
                 this.state.addingNewModel ? '' : classes.notToggled
@@ -222,7 +247,16 @@ export class SideNav extends React.Component<Props, State> {
           </div>
         </div>
         <div
-          className={classnames(classes.add, this.state.addingNewModel ? classes.addActive : '')}
+          className={cx(
+            particles.absolute,
+
+            particles.pa4,
+            particles.lhSolid,
+            particles.ba,
+            particles.brPill,
+            particles.bWhite60,
+            particles.pointer,
+            classes.add, this.state.addingNewModel ? classes.addActive : '')}
           onClick={this.toggleAddModelInput}
         >
           <Tether
@@ -234,7 +268,8 @@ export class SideNav extends React.Component<Props, State> {
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={350}
           >
-            <div>+ Add model</div>
+            <Icon width={10} height={10} stroke color={variables.blue} src={require('graphcool-styles/icons/stroke/search.svg')}/>
+
           </Tether>
         </div>
       </div>
