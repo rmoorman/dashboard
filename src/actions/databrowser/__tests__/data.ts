@@ -51,8 +51,8 @@ describe('async data actions', () => {
           skipped: true,
           step: 'STEP6_CLOSED',
         }),
-      }
-    }
+      },
+    },
   })
 
   const fields = [
