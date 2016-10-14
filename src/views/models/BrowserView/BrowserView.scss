@@ -21,6 +21,7 @@ $tableHeadExpanded: 100px;
   margin-left: 10px;
   cursor: pointer;
   transition: .3s all;
+  overflow: hidden;
 
   &.search {
     display: flex;
