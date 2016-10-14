@@ -28,6 +28,9 @@ declare module 'react-toggle-button'
 declare module 'react-virtualized'
 declare module 'react-addons-shallow-compare'
 declare module 'react-test-renderer'
+declare module 'redux-mock-store'
+declare module 'nock'
+declare module 'identity-obj-proxy'
 declare var Smooch: any
 declare var analytics: any
 declare var __BACKEND_ADDR__: any

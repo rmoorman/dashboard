@@ -4,7 +4,7 @@ import SharedConstants from '../../constants/databrowser/shared'
 import * as Immutable from 'immutable'
 import {DataBrowserDataState} from '../../types/databrowser/data'
 
-export const initialState: DataBrowserDataState =  {
+export const initialState: DataBrowserDataState = {
   nodes: Immutable.List<Immutable.Map<string, any>>(),
   backup: {
     nodes: Immutable.List<Immutable.Map<string, any>>(),

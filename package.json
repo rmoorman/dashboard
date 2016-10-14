@@ -20,15 +20,18 @@
       "js",
       "tsx"
     ],
+    "mocksPattern": ".*src.*(?:[\\/]|^)__mocks__[\\/]",
     "testPathIgnorePatterns": [
-      "/lib/",
-      "/.*scss$/",
-      "/.*css$/"
+      "/lib/"
     ],
     "collectCoverageFrom": [
       "src/**/*.ts",
       "src/**/*.tsx",
       "!**/__tests__/**"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest-setup.js",
+      "<rootDir>/src/utils/polyfils.ts"
     ]
   },
   "dependencies": {
@@ -104,11 +107,13 @@
     "jest-cli": "^16.0.1",
     "json-loader": "^0.5.4",
     "netlify-cli": "^1.0.3",
+    "nock": "^8.1.0",
     "node-noop": "^1.0.0",
     "node-sass": "^3.8.0",
     "postcss-loader": "^0.9.1",
     "raw-loader": "^0.5.1",
     "react-test-renderer": "^15.3.2",
+    "redux-mock-store": "^1.2.1",
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",
     "svgo-loader": "^1.1.0",

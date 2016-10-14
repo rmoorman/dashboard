@@ -21,7 +21,7 @@ class NewRowInactive extends React.Component<Props, {}> {
 
     return (
       <div className={classes.root} onClick={() => this.props.toggleNewRow(fields)}>
-        {fields.map(function(field, index)  {
+        {fields.map(function(field, index) {
           return (
             <div
               key={field.id}

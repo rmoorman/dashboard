@@ -9,7 +9,7 @@ import {
 } from '../../../actions/databrowser/ui'
 import {resetDataAndUI} from '../../../actions/databrowser/shared'
 import {
-  setItemCount, setFilterAsync, setOrder, addNodeAsync, updateNodeAsync,
+  setItemCount, setOrder, addNodeAsync, updateNodeAsync,
   reloadDataAsync, loadDataAsync, deleteSelectedNodes, search,
 } from '../../../actions/databrowser/data'
 import {Popup} from '../../../types/popup'
@@ -94,13 +94,6 @@ interface Props {
   setOrder: (orderBy: OrderBy) => ReduxAction
   nodes: Immutable.List<Immutable.Map<string, any>>
   loaded: Immutable.List<boolean>
-  setFilterAsync: (
-    fieldName: string,
-    value: TypedValue,
-    lokka: any,
-    modelNamePlural: string,
-    fields: Field[],
-  ) => ReduxThunk
   addNodeAsync: (lokka: any, model: Model, fields: Field[], fieldValues: { [key: string]: any }) => ReduxThunk
   updateNodeAsync: (
     lokka: any,
@@ -342,7 +335,7 @@ class BrowserView extends React.Component<Props, {}> {
   }
 
   private headerRenderer = ({columnIndex}): JSX.Element | string => {
-    const {model, fields, orderBy, selectedNodeIds, nodes, params} = this.props
+    const {fields, orderBy, selectedNodeIds, nodes, params} = this.props
     if (columnIndex === 0) {
       return (
         <CheckboxCell
@@ -364,7 +357,6 @@ class BrowserView extends React.Component<Props, {}> {
           field={field}
           sortOrder={orderBy.fieldName === field.name ? orderBy.order : null}
           toggleSortOrder={() => this.setSortOrder(field)}
-          updateFilter={(value) => this.props.setFilterAsync(field.name, value, this.lokka, model.namePlural, fields)}
           params={params}
         />
       )
@@ -568,7 +560,6 @@ function mapDispatchToProps(dispatch) {
       incrementProgress,
       showNotification,
       setItemCount,
-      setFilterAsync,
       setOrder,
       addNodeAsync,
       updateNodeAsync,
