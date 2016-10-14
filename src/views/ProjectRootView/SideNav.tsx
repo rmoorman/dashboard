@@ -20,7 +20,8 @@ import {ShowNotificationCallback} from '../../types/utils'
 import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
-import {classnames} from '../../utils/classnames'
+//import {classnames} from '../../utils/classnames'
+import * as classnames from 'classnames'
 
 const classes: any = require('./SideNav.scss')
 
@@ -175,7 +176,7 @@ export class SideNav extends React.Component<Props, State> {
     const showsModels = modelsPageActive || this.state.forceShowModels
 
     return (
-      <div className={`${classes.listBlock} ${showsModels ? classes.active : ''}`}>
+      <div className={classnames(classes.listBlock, { [classes.active]: showsModels })}>
         <Link
           to={`/${this.props.params.projectName}/models`}
           className={`${classes.head} ${modelsPageActive ? classes.active : ''}`}
