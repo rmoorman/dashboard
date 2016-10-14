@@ -30,6 +30,7 @@
   "dependencies": {
     "@types/bluebird": "^3.0.35",
     "@types/cuid": "0.0.30",
+    "@types/history": "^2.0.39",
     "@types/node": "^6.0.31",
     "@types/react": "^0.14.34",
     "@types/react-addons-pure-render-mixin": "^0.14.13",

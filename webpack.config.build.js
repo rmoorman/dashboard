@@ -38,6 +38,7 @@ const vendor = [
 module.exports = {
   entry: {
     app: './src/main',
+    styles: 'graphcool-styles/dist/styles.css',
     vendor,
   },
   output: {
@@ -52,13 +53,13 @@ module.exports = {
       loader: 'tslint',
       exclude: /node_modules/,
     }, {
-      test: /\.json/, // TODO check if still needed
+      test: /\.json$/, // TODO check if still needed
       loader: 'json',
     }, {
-      test: /\.css/,
+      test: /\.css$/,
       loader: 'style!css',
     }, {
-      test: /\.scss/,
+      test: /\.scss$/,
       loader: 'style!css?modules&importLoaders=1!postcss!sass',
     }, {
       test: /\.ts(x?)$/,
