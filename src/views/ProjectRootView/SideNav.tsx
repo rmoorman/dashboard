@@ -23,8 +23,6 @@ import styled from 'styled-components'
 import * as cx from 'classnames'
 import {particles, variables, Icon} from 'graphcool-styles'
 
-const classes: any = require('./SideNav.scss')
-
 interface Props {
   params: any
   project: Project
@@ -120,6 +118,7 @@ const FooterSection = styled(Link)`
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 1px;
+  color: ${variables.white60};
   transition: color ${variables.duration} linear;
   
   > div {
@@ -205,11 +204,11 @@ export class SideNav extends React.Component<Props, State> {
           )}
           style={{ height: '70px' }}
         >
-          <FooterSection>
+          <FooterSection to="/">
             <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/endpoints.svg')} />
             <div>Endpoints</div>
           </FooterSection>
-          <FooterSection>
+          <FooterSection to="/">
             <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/docs.svg')} />
             <div>Docs</div>
           </FooterSection>
