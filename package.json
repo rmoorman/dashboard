@@ -10,7 +10,7 @@
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleNameMapper": {
       "^.+\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
       "^.+\\.(css|scss)$": "identity-obj-proxy"
@@ -18,7 +18,8 @@
     "moduleFileExtensions": [
       "ts",
       "js",
-      "tsx"
+      "tsx",
+      "json"
     ],
     "mocksPattern": ".*src.*(?:[\\/]|^)__mocks__[\\/]",
     "testPathIgnorePatterns": [
@@ -85,6 +86,7 @@
   },
   "devDependencies": {
     "@types/jest": "^15.1.32",
+    "@types/react-addons-test-utils": "^0.14.15",
     "awesome-typescript-loader": "^2.2.4",
     "babel-cli": "^6.11.4",
     "babel-jest": "^14.0.0",
@@ -100,6 +102,8 @@
     "babel-runtime": "^6.11.6",
     "css-loader": "^0.23.1",
     "cssnano": "^3.7.3",
+    "enzyme": "^2.4.1",
+    "enzyme-to-json": "^1.1.4",
     "extract-text-webpack-plugin": "^2.0.0-beta.3",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
@@ -112,6 +116,7 @@
     "node-sass": "^3.8.0",
     "postcss-loader": "^0.9.1",
     "raw-loader": "^0.5.1",
+    "react-addons-test-utils": "^15.3.2",
     "react-test-renderer": "^15.3.2",
     "redux-mock-store": "^1.2.1",
     "sass-loader": "^4.0.0",

@@ -1,0 +1,91 @@
+exports[`test ScalarListCell renders 1`] = `
+<Popup
+  height="80%"
+  onClickOutside={[Function]}>
+  <div
+    className="root">
+    <div
+      className="header">
+      <div
+        className="filter">
+        <Icon
+          height={30}
+          src="test-file-stub"
+          width={30} />
+        <input
+          onChange={[Function]}
+          placeholder="Filter..."
+          type="text"
+          value="" />
+        <Icon
+          className="setNull"
+          height={30}
+          onClick={[Function]}
+          src="test-file-stub"
+          width={30} />
+      </div>
+    </div>
+    <div
+      className="list">
+      <div
+        className="item addBox"
+        onClick={[Function]}>
+        <span
+          className="addNewText">
+          Add new item ...
+        </span>
+        <Icon
+          className="disabled"
+          height={14}
+          onClick={[Function]}
+          src="test-file-stub"
+          width={14} />
+      </div>
+      <div
+        className="item existing"
+        onClick={[Function]}>
+        <div>
+          1
+        </div>
+        <Icon
+          height={14}
+          onClick={[Function]}
+          src="test-file-stub"
+          width={14} />
+      </div>
+      <div
+        className="item existing"
+        onClick={[Function]}>
+        <div>
+          2
+        </div>
+        <Icon
+          height={14}
+          onClick={[Function]}
+          src="test-file-stub"
+          width={14} />
+      </div>
+      <div
+        className="item existing"
+        onClick={[Function]}>
+        <div>
+          3
+        </div>
+        <Icon
+          height={14}
+          onClick={[Function]}
+          src="test-file-stub"
+          width={14} />
+      </div>
+    </div>
+    <div
+      className="footer">
+      <div
+        className="close"
+        onClick={[Function]}>
+        Close
+      </div>
+    </div>
+  </div>
+</Popup>
+`;

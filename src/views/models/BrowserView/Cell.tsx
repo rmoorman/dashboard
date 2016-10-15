@@ -54,7 +54,7 @@ interface Props {
   loaded: boolean[]
 }
 
-class Cell extends React.PureComponent<Props, {}> {
+export class Cell extends React.PureComponent<Props, {}> {
 
   refs: {
     [key: string]: any

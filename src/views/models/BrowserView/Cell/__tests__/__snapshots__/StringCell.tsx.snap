@@ -1,0 +1,32 @@
+exports[`test StringCell renders 1`] = `
+<Connect(Tether)
+  offsetX={-35}
+  offsetY={5}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  steps={
+    Array [
+      Object {
+        "buttonText": "Copy example value",
+        "copyText": "http://i.imgur.com/5ACuqm4.jpg",
+        "step": "STEP3_CLICK_ENTER_IMAGEURL",
+        "title": "Enter an image url such this one.",
+      },
+      Object {
+        "buttonText": "Copy example value",
+        "copyText": "#graphcool",
+        "description": "We\'re gonna put \"#graphcool\" in the description.",
+        "step": "STEP3_CLICK_ENTER_DESCRIPTION",
+        "title": "Now enter a cool description.",
+      },
+    ]
+  }
+  width={300}>
+  <textarea
+    autoFocus={true}
+    defaultValue="some string"
+    onBlur={[Function]}
+    onKeyDown={[Function]}
+    type="text" />
+</Connect(Tether)>
+`;
