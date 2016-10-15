@@ -23,7 +23,6 @@ import styled from 'styled-components'
 import * as cx from 'classnames'
 import {particles, variables, Icon} from 'graphcool-styles'
 
-
 const classes: any = require('./SideNav.scss')
 
 interface Props {
@@ -48,6 +47,98 @@ interface State {
   newModelName: string
   newModelIsValid: boolean
 }
+
+// Section (Models, Relations, Permissions, etc.)
+
+const Section = styled.div`
+  padding: ${variables.size38} 0 0;
+  
+  &:last-child {
+    margin-bottom: ${variables.size38}
+  }
+`
+
+// Section Heads
+
+const activeHead = `
+  color: ${variables.white};
+  
+  svg path {
+    fill: ${variables.white};
+    stroke: none !important;
+  }
+  
+  &:hover {
+    color: inherit;
+    
+    svg path {
+      fill: ${variables.white};
+      stroke: none !important;
+    }
+  }
+  
+`
+
+const Head = styled(Link)`
+  letter-spacing: 1px;
+  line-height: 1;
+  padding: 0 ${variables.size25};
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: ${variables.white60};
+  transition: color ${variables.duration} linear;
+  
+  &:hover {
+    color: ${variables.white80};
+    
+    svg path {
+      fill: ${variables.white80};
+      stroke: none !important;
+    }
+  }
+
+  > div {
+    line-height: 1;
+    margin-left: ${variables.size10};
+  }
+
+  svg path {
+    fill: ${variables.white60};
+    stroke: none !important;
+    transition: fill ${variables.duration} linear;
+  }
+  
+  ${props => props.active && activeHead}
+`
+
+const FooterSection = styled(Link)`
+  display: flex;
+  align-items: center;
+  padding: ${variables.size25};
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: color ${variables.duration} linear;
+  
+  > div {
+    margin-left: ${variables.size10};
+  }
+  
+  svg {
+    fill: ${variables.white60};
+    transition: fill ${variables.duration} linear
+
+  }
+  
+  &:hover {
+    color: ${variables.white80};
+    svg {
+      fill: ${variables.white80};
+    }
+  }
+`
 
 export class SideNav extends React.Component<Props, State> {
 
@@ -90,13 +181,13 @@ export class SideNav extends React.Component<Props, State> {
           particles.white,
           particles.bgDarkBlue,
           particles.f14,
-          classes.root,
         )}
         onMouseLeave={() => this.setState({forceShowModels: false} as State)}>
-        <div className={cx(particles.h100)}>
+        <div className={cx(particles.h100)} style={{ paddingBottom: '70px' }}>
           <ScrollBox>
             {this.renderModels()}
             {this.renderRelations()}
+            {this.renderPermissions()}
             {this.renderActions()}
             {this.renderPlayground()}
           </ScrollBox>
@@ -110,17 +201,18 @@ export class SideNav extends React.Component<Props, State> {
             particles.itemsCenter,
             particles.justifyBetween,
             particles.bgDarkerBlue,
-            particles.pa25,
             particles.white60,
-            classes.footer,
           )}
+          style={{ height: '70px' }}
         >
-          <div className={cx(
-
-          )}>
-            Endpoints
-          </div>
-          <div>Docs</div>
+          <FooterSection>
+            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/endpoints.svg')} />
+            <div>Endpoints</div>
+          </FooterSection>
+          <FooterSection>
+            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/docs.svg')} />
+            <div>Docs</div>
+          </FooterSection>
         </div>
       </div>
     )
@@ -135,17 +227,17 @@ export class SideNav extends React.Component<Props, State> {
     }
 
     return (
-      <div className={cx(
-        classes.listBlock, {
-          [classes.active]: playgroundPageActive,
-        }
-      )}>
-        <Link
+      <Section>
+        <Head
           to={`/${this.props.params.projectName}/playground`}
-          className={classes.head}
+          active={playgroundPageActive}
           onClick={showGettingStartedOnboardingPopup}
         >
-          <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
+          <Icon
+            width={20}
+            height={20}
+            src={require('graphcool-styles/icons/fill/playground.svg')}
+          />
           <Tether
             side='top'
             steps={[{
@@ -156,48 +248,87 @@ export class SideNav extends React.Component<Props, State> {
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={280}
           >
-            <span>Playground</span>
+            <div>Playground</div>
           </Tether>
-        </Link>
-      </div>
+        </Head>
+      </Section>
     )
   }
 
   private renderActions = () => {
     const actionsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/actions`)
     return (
-      <div className={cx(
-        classes.listBlock, {
-          [classes.active]: actionsPageActive,
-        }
-      )}>
-        <Link
+      <Section>
+        <Head
           to={`/${this.props.params.projectName}/actions`}
-          className={`${classes.head} ${actionsPageActive ? classes.active : ''}`}
+          active={actionsPageActive}
         >
           <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/actions.svg')}/>
-          <span>Actions</span>
-        </Link>
-      </div>
+          <div>Actions</div>
+        </Head>
+      </Section>
+    )
+  }
+
+  private renderPermissions = () => {
+    const permissionsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/permissions`)
+    return (
+      <Section>
+        <Head
+          to={`/${this.props.params.projectName}/permissions`}
+          active={permissionsPageActive}
+        >
+          <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/permissions.svg')}/>
+          <div>Permissions</div>
+        </Head>
+      </Section>
     )
   }
 
   private renderRelations = () => {
     const relationsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/relations`)
+
+    const activeRelationsHead = `
+      svg path {
+        fill: none;
+        stroke: ${variables.white} !important;
+      }
+      
+      &:hover {
+        svg path {
+          stroke: ${variables.white} !important;
+        }
+      }
+    `
+
+    const RelationsHead = styled(Head)`
+      svg path {
+        fill: none;
+        stroke: ${variables.white60} !important;
+        stroke-width: 4px !important;
+        transition: stroke ${variables.duration} linear;
+      }
+      
+      &:hover {
+        svg path {
+          fill: none;
+          stroke: ${variables.white80} !important;
+        }
+      }
+      
+      ${props => props.active && activeRelationsHead}
+    `
+
     return (
-      <div className={cx(
-        classes.listBlock, {
-          [classes.active]: relationsPageActive,
-         }
-      )}>
-        <Link
+      <Section>
+        <RelationsHead
           to={`/${this.props.params.projectName}/relations`}
-          className={`${classes.head} ${relationsPageActive ? classes.active : ''}`}
+          active={relationsPageActive}
         >
-          <Icon width={19} height={19} stroke src={require('graphcool-styles/icons/stroke/relationsSmall.svg')}/>
-          <span>Relations</span>
-        </Link>
-      </div>
+          <Icon width={20} height={20} stroke src={require('graphcool-styles/icons/stroke/relationsSmall.svg')}/>
+          <div>Relations</div>
+        </RelationsHead>
+      </Section>
     )
   }
 
@@ -210,9 +341,26 @@ export class SideNav extends React.Component<Props, State> {
     const modelsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/models`)
     const showsModels = modelsPageActive || this.state.forceShowModels
 
+    const ModelsHead = styled(Head)`
+      &:hover {
+        color: ${variables.white60};
+        cursor: default;
+      }
+    `
+
+    const AddModel = styled.div`
+      margin: -3px -4px 0 0;
+    
+      svg path {
+        stroke: ${variables.white};
+        stroke-width: 4px;
+      }
+    `
+
     const activeListElement = `
-      color: #FFF;
+      color: ${variables.white} !important;
       background: ${variables.white07};
+      cursor: default;
 
       &:before {
         content: "";
@@ -224,9 +372,13 @@ export class SideNav extends React.Component<Props, State> {
         background: ${variables.green};
         border-radius: 0 2px 2px 0;
       }
+      
+      &:hover {
+        color: inherit;
+      }
     `
     const ListElement = styled(Link)`
-      transition: color 0.1s linear;
+      transition: color ${variables.duration} linear;
 
       &:hover {
          color: ${variables.white60};
@@ -236,31 +388,12 @@ export class SideNav extends React.Component<Props, State> {
     `
 
     return (
-      <div className={cx(
-        particles.relative,
-        particles.bgDarkerBlue,
-        particles.pb38,
-        classes.listBlock,
-      )}>
-        <Link
-          to={`/${this.props.params.projectName}/models`}
-          className={cx(
-            classes.head,
-            classes.modelsHead, {
-              [classes.active]: modelsPageActive,
-            }
-          )}
-        >
-          <span>Models</span>
-        </Link>
+      <Section className={cx(particles.relative, particles.bgDarkerBlue, particles.pb38)}>
+        <ModelsHead to={`/${this.props.params.projectName}/models`}>
+          Models
+        </ModelsHead>
         <div
-          className={cx(
-            particles.flex,
-            particles.flexColumn,
-            particles.pt16, {
-              [classes.active]: showsModels,
-            }
-          )}>
+          className={cx(particles.flex, particles.flexColumn, particles.pt16 )}>
           {this.props.models &&
           this.props.models.map((model) => (
             <ListElement
@@ -275,25 +408,23 @@ export class SideNav extends React.Component<Props, State> {
                 particles.flex,
                 particles.justifyBetween,
               )}>
-              <span className={cx(particles.pl6)}>{model.name}</span>
-              <span className={classes.itemCount}>{model.itemCount}</span>
+              <div className={cx(particles.pl6)}>{model.name}</div>
+              <div>{model.itemCount}</div>
             </ListElement>
           ))}
         </div>
 
-        <div
+        <AddModel
           className={cx(
             particles.absolute,
             particles.top38,
             particles.right25,
-            particles.pa4,
             particles.lhSolid,
             particles.ba,
             particles.brPill,
-            particles.bWhite60,
+            particles.bWhite,
             particles.pointer,
-            classes.add,
-            this.state.addingNewModel ? classes.addActive : '',
+            particles.o60
            )}
           onClick={this.toggleAddModelInput}
         >
@@ -306,11 +437,11 @@ export class SideNav extends React.Component<Props, State> {
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={350}
           >
-            <Icon width={10} height={10} src={require('assets/icons/add.svg')}/>
+            <Icon width={18} height={18} stroke src={require('graphcool-styles/icons/stroke/add.svg')}/>
 
           </Tether>
-        </div>
-      </div>
+        </AddModel>
+      </Section>
     )
   }
 
@@ -442,8 +573,6 @@ export default Relay.createContainer(MappedSideNav, {
     `,
   },
 })
-
-
 
 // <div className={cx(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
 // {this.props.models.length > 3 && !showsModels &&
