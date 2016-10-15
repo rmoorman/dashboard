@@ -7,6 +7,7 @@ const vendor = [
   'calculate-size',
   'classnames',
   'graphiql',
+  'graphcool-styles',
   'immutable',
   'js-cookie',
   'lokka',

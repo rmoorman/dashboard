@@ -1,4 +1,3 @@
-
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as Relay from 'react-relay'
@@ -9,7 +8,6 @@ import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import mapProps from '../../components/MapProps/MapProps'
 import {validateModelName} from '../../utils/nameValidator'
 import ScrollBox from '../../components/ScrollBox/ScrollBox'
-import Icon from 'graphcool-styles/components/Icon/Icon'
 import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
@@ -22,7 +20,7 @@ import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
 import * as cx from 'classnames'
-import {particles, variables} from 'graphcool-styles'
+import {particles, variables, Icon} from 'graphcool-styles'
 
 const classes: any = require('./SideNav.scss')
 

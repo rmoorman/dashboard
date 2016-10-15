@@ -10,23 +10,27 @@ interface Props {
 }
 
 interface State {
+  id: string
 }
 
 export default class FloatingLabel extends React.Component<Props, State> {
 
+  state = {
+    id: randomString(5),
+  }
+
   render() {
-    const id = randomString(5)
     const restProps = Object.assign({}, this.props)
     delete restProps.labelClassName
 
     return (
       <div className={classes.root}>
         <input
-          id={id}
+          id={this.state.id}
           {...restProps}
         />
         <label
-          htmlFor={id}
+          htmlFor={this.state.id}
           className={this.props.labelClassName}
         >
           {this.props.label}
