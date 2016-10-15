@@ -22,6 +22,7 @@ import {GettingStartedState} from '../../types/gettingStarted'
 import * as cx from 'classnames'
 import {particles, variables, Icon} from 'graphcool-styles'
 
+
 const classes: any = require('./SideNav.scss')
 
 interface Props {
@@ -99,13 +100,27 @@ export class SideNav extends React.Component<Props, State> {
             {this.renderPlayground()}
           </ScrollBox>
         </div>
-        <Link className={cx(particles.bgDarkerBlue, classes.foot)} to={`/${this.props.project.name}/settings`}>
-          <Icon
-            width={20} height={20}
-            src={require('assets/icons/gear.svg')}
-          />
-          <span>Project Settings</span>
-        </Link>
+        <div
+          className={cx(
+            particles.absolute,
+            particles.w100,
+            particles.bottom0,
+            particles.flex,
+            particles.itemsCenter,
+            particles.justifyBetween,
+            particles.bgDarkerBlue,
+            particles.pa25,
+            particles.white60,
+            classes.footer,
+          )}
+        >
+          <div className={cx(
+
+          )}>
+            Endpoints
+          </div>
+          <div>Docs</div>
+        </div>
       </div>
     )
   }
@@ -124,25 +139,25 @@ export class SideNav extends React.Component<Props, State> {
           [classes.active]: playgroundPageActive,
         }
       )}>
-          <Link
-            to={`/${this.props.params.projectName}/playground`}
-            className={classes.head}
-            onClick={showGettingStartedOnboardingPopup}
-          >
-            <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
-            <Tether
-              side='top'
-              steps={[{
+        <Link
+          to={`/${this.props.params.projectName}/playground`}
+          className={classes.head}
+          onClick={showGettingStartedOnboardingPopup}
+        >
+          <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
+          <Tether
+            side='top'
+            steps={[{
                 step: 'STEP4_CLICK_PLAYGROUND',
                 title: 'Open the Playground',
                 description: 'Now that we have defined our data model and added example data it\'s time to send some queries to our backend!', // tslint:disable-line
               }]}
-              offsetY={this.state.addingNewModel ? -75 : -5}
-              width={280}
-            >
-              <span>Playground</span>
-            </Tether>
-          </Link>
+            offsetY={this.state.addingNewModel ? -75 : -5}
+            width={280}
+          >
+            <span>Playground</span>
+          </Tether>
+        </Link>
       </div>
     )
   }
@@ -159,7 +174,7 @@ export class SideNav extends React.Component<Props, State> {
           to={`/${this.props.params.projectName}/actions`}
           className={`${classes.head} ${actionsPageActive ? classes.active : ''}`}
         >
-          <Icon width={19} height={19} src={require('assets/icons/flash.svg')}/>
+          <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/actions.svg')}/>
           <span>Actions</span>
         </Link>
       </div>
@@ -178,7 +193,7 @@ export class SideNav extends React.Component<Props, State> {
           to={`/${this.props.params.projectName}/relations`}
           className={`${classes.head} ${relationsPageActive ? classes.active : ''}`}
         >
-          <Icon width={19} height={19} src={require('assets/new_icons/relation-arrows.svg')}/>
+          <Icon width={19} height={19} stroke src={require('graphcool-styles/icons/stroke/relationsSmall.svg')}/>
           <span>Relations</span>
         </Link>
       </div>
@@ -197,64 +212,65 @@ export class SideNav extends React.Component<Props, State> {
     return (
       <div className={cx(
         particles.relative,
-        particles.pt38,
         particles.bgDarkerBlue,
+        particles.pb38,
         classes.listBlock,
       )}>
         <Link
           to={`/${this.props.params.projectName}/models`}
-          className={`${classes.head} ${modelsPageActive ? classes.active : ''}`}
+          className={cx(
+            classes.head,
+            classes.modelsHead, {
+              [classes.active]: modelsPageActive
+            }
+          )}
         >
           <span>Models</span>
         </Link>
-        <div className={`${classes.list} ${showsModels ? classes.active : classes.inactive}`}>
+        <div
+          className={cx(
+            particles.flex,
+            particles.flexColumn,
+            particles.pt16, {
+              [classes.active]: showsModels,
+            }
+          )}>
           {this.props.models &&
           this.props.models.map((model) => (
             <Link
               key={model.name}
               to={`/${this.props.params.projectName}/models/${model.name}`}
-              className={`${classes.listElement} ${modelActive(model) ? classes.active : ''}`}
-            >
-              {model.name}
+              className={cx(
+                particles.relative,
+                particles.pv10,
+                particles.white30,
+                particles.ph25,
+                particles.flex,
+                particles.justifyBetween,
+                classes.listElement, {
+                  [classes.active]: modelActive(model),
+                }
+              )}>
+              <span className={cx(particles.pl6)}>{model.name}</span>
               <span className={classes.itemCount}>{model.itemCount}</span>
             </Link>
           ))}
         </div>
-        <div className={cx(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
-          {this.props.models.length > 3 && !showsModels &&
-          <div
-            className={classes.listElement}
-            onClick={() => this.setState({forceShowModels: true} as State)}
-          >
-            ...
-          </div>
-          }
-          <div className={cx(classes.newModelContainer, this.state.addingNewModel ? '' : classes.notToggled)}>
-            <input
-              ref='newModelInput'
-              disabled={!this.state.addingNewModel}
-              className={cx(
-                this.state.newModelIsValid ? '' : classes.invalid,
-                classes.newModelBox,
-                this.state.addingNewModel ? '' : classes.notToggled
-              )}
-              value={this.state.newModelName}
-              onChange={this.handleNewModelChange}
-              onKeyDown={this.handleNewModelKeyDown}
-            />
-          </div>
-        </div>
+
         <div
           className={cx(
             particles.absolute,
-
+            particles.top38,
+            particles.right25,
             particles.pa4,
             particles.lhSolid,
             particles.ba,
             particles.brPill,
             particles.bWhite60,
             particles.pointer,
-            classes.add, this.state.addingNewModel ? classes.addActive : '')}
+            classes.add,
+            this.state.addingNewModel ? classes.addActive : '',
+           )}
           onClick={this.toggleAddModelInput}
         >
           <Tether
@@ -266,7 +282,7 @@ export class SideNav extends React.Component<Props, State> {
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={350}
           >
-            <Icon width={10} height={10} stroke color={variables.blue} src={require('graphcool-styles/icons/stroke/search.svg')}/>
+            <Icon width={10} height={10} src={require('assets/icons/add.svg')}/>
 
           </Tether>
         </div>
@@ -402,3 +418,34 @@ export default Relay.createContainer(MappedSideNav, {
     `,
   },
 })
+
+
+
+// <div className={cx(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
+// {this.props.models.length > 3 && !showsModels &&
+// <div
+//   className={classes.listElement}
+//   onClick={() => this.setState({forceShowModels: true} as State)}
+// >
+//   <div className={cx(classes.showMore)}>
+//     <div className={cx(
+//                 classes.showMoreIcon,
+//               )}/>
+//   </div>
+// </div>
+// }
+// <div className={cx(classes.newModelContainer, this.state.addingNewModel ? '' : classes.notToggled)}>
+//   <input
+//     ref='newModelInput'
+//     disabled={!this.state.addingNewModel}
+//     className={cx(
+//                 this.state.newModelIsValid ? '' : classes.invalid,
+//                 classes.newModelBox,
+//                 this.state.addingNewModel ? '' : classes.notToggled
+//               )}
+//     value={this.state.newModelName}
+//     onChange={this.handleNewModelChange}
+//     onKeyDown={this.handleNewModelKeyDown}
+//   />
+// </div>
+// </div>

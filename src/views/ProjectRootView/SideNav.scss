@@ -1,25 +1,13 @@
 @import '~styles/variables';
 
-//.root {
-//  a {
-//    color: $white30;
-//    font-weight: 400
-//  }
-//}
-
 .container {
   padding-bottom: 62px;
 }
 
 .listBlock {
-  padding: 0 0 $size38;
-
-  //&.active {
-  //  .head {
-  //
-  //  }
-  //}
+  padding: $size38 0 0;
 }
+
 
 .newModelContainer {
 
@@ -33,7 +21,6 @@
   &:hover {
     background: none;
   }
-  @extend .listStructure;
 
   .newModelBox {
     border-radius: 5px;
@@ -57,26 +44,33 @@
 
 .head {
   letter-spacing: 1px;
+  line-height: 1;
   padding: 0 $size25;
   display: flex;
   align-items: center;
   text-transform: uppercase;
   font-weight: 600;
   color: $white60;
+  transition: color $duration linear;
 
-  svg {
-    fill: $white60;
+  span {
+    line-height: 1;
+    margin-left: $size10;
   }
 
-  //a {
-  //  color: $white30;
-  //  font-weight: 400;
-  //}
+  svg path {
+    stroke: $white60 !important;
+    stroke-width: 4px !important;
+    //transition: fill $duration linear;
+  }
 
-  //span {
-  //  margin-left ;
+  //&:hover {
+  //  color: $white80;
+  //  svg {
+  //    stroke: $white80;
+  //  }
   //}
-
+  //
   //&.active {
   //  color: #fff;
   //  svg {
@@ -85,153 +79,44 @@
   //}
 }
 
-.list {
-  padding: 33px 0 0 0;
-
-  &.active {
-    :nth-child(n+4) {
-      animation: expand .5s forwards;
-    }
+.modelsHead {
+  span {
+    margin-left: 0;
   }
-
-  &.inactive {
-    :nth-child(n+4) {
-      animation: shrink .5s forwards;
-    }
-  }
-}
-
-@keyframes shrink {
-  from {
-    display: flex;
-    opacity: 1;
-    height: 33px;
-  }
-
-  99% {
-    opacity: 0;
-    height: 0px;
-  }
-
-  to {
-    opacity: 0;
-    height: 0px;
-    display: none;
-  }
-}
-
-@keyframes expand {
-  from {
-    display: none;
-    opacity: 0;
-    height: 0px;
-  }
-
-  1% {
-    display: flex;
-  }
-
-  to {
-    opacity: 1;
-    height: 33px;
-  }
-}
-
-.separator {
-  transition: padding 0.2s ease;
-  padding: 0 0 33px 0;
-
-  &.notToggled {
-    padding: 0;
-  }
-}
-
-.listStructure {
-  width: 100%;
-  height: 33px;
-  display: flex;
-  font-size: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 26px 0 70px;
-  font-weight: 300;
-  cursor: hand;
-  cursor: pointer;
 }
 
 .listElement {
 
-  @extend .listStructure;
-  
+  transition: color $duration linear;
+
   &:hover {
-    background: rgba(255, 255, 255, 0.09);
+     color: $white60
   }
 
   &.active {
-    font-weight: 400;
-    padding-left: 66px;
     color: #FFF;
-    border-left: 4px solid $accent;
-    .itemCount {
-      color: #FFF;
-    }
-  }
+    background: $white07;
 
-  .itemCount {
-    color: $grey4;
-    font-weight: 400;
+    &:before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      bottom: -1px;
+      left: 0;
+      width: $size06;
+      background: $green;
+      border-radius: 0 2px 2px 0;
+    }
   }
 }
 
-.gettingStarted {
-  background: #238F50;
-  padding: 30px 0;
-  font-size: 14px;
-  color: white;
-
-  .gettingStartedTitle {
-    @extend .head;
-    color: white;
-  }
-
-  .gettingStartedList {
-    padding: 20px 70px 0;
-  }
-
-  .gettingStartedStepDisabled, .gettingStartedStepActive, .gettingStartedStepDone {
-    margin: 11px 0;
-  }
-
-  .gettingStartedStepDisabled a {
-    color: rgba(255, 255, 255, 0.5);
-    cursor: default;
-  }
-
-  .gettingStartedStepActive a {
-    font-weight: 600;
-    color: white;
-  }
-
-  .gettingStartedStepDone a {
-    text-decoration: line-through;
-  }
-
-  .gettingStartedSkip {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 9px 12px;
-    text-align: center;
-    text-transform: uppercase;
-    margin-top: 30px;
-    font-size: 12px;
-    border-radius: 5px;
-    cursor: pointer;
-
-    &:hover {
-      background: #fff;
-      color: $accent;
-    }
-  }
+.showMore {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+width: 100%;
+          background: linear-gradient(to bottom, opacify($darkerBlue, 0) 0%, $darkerBlue 80%);
+height: $size60;
 }
 
 .add {
@@ -246,24 +131,13 @@
   }
 }
 
-.foot {
-  position: absolute;
-  width: 100%;
-  height: 62px;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  //background: $grey6;
-  //
-  //&:hover {
-  //  background: #363E3E;
-  //}
+.footer {
 
-  span {
+  > div {
     text-transform: uppercase;
-    font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 1px;
+
   }
 
   svg {
