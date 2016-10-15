@@ -4,7 +4,7 @@ import SharedConstants from '../../constants/databrowser/shared'
 import * as Immutable from 'immutable'
 import {DataBrowserDataState} from '../../types/databrowser/data'
 
-const initialState: DataBrowserDataState =  {
+const initialState: DataBrowserDataState = {
   nodes: Immutable.List<Immutable.Map<string, any>>(),
   oldNodes: Immutable.List<Immutable.Map<string, any>>(),
   orderBy: {

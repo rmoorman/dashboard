@@ -103,7 +103,7 @@ class PlaygroundView extends React.Component<Props, State> {
 
   componentDidUpdate (nextProps: Props) {
     if (this.props.gettingStartedState.step !== nextProps.gettingStartedState.step) {
-      if (nextProps.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2')  ||
+      if (nextProps.gettingStartedState.isCurrentStep('STEP4_WAITING_PART2') ||
           nextProps.gettingStartedState.isCurrentStep('STEP4_CLICK_TEASER_PART2')) {
         this.setState({
           query: ONBOARDING_QUERY_PART1,
