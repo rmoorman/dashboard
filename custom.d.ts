@@ -27,6 +27,7 @@ declare module 'react-notification-system'
 declare module 'react-toggle-button'
 declare module 'react-virtualized'
 declare module 'react-addons-shallow-compare'
+declare module 'styled-components' // https://github.com/styled-components/styled-components/issues/89
 declare var Smooch: any
 declare var analytics: any
 declare var __BACKEND_ADDR__: any

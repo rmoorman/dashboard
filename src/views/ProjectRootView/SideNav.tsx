@@ -19,6 +19,7 @@ import {ShowNotificationCallback} from '../../types/utils'
 import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
+import styled from 'styled-components'
 import * as cx from 'classnames'
 import {particles, variables, Icon} from 'graphcool-styles'
 
@@ -209,6 +210,31 @@ export class SideNav extends React.Component<Props, State> {
     const modelsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/models`)
     const showsModels = modelsPageActive || this.state.forceShowModels
 
+    const activeListElement = `
+      color: #FFF;
+      background: ${variables.white07};
+
+      &:before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        bottom: -1px;
+        left: 0;
+        width: ${variables.size06};
+        background: ${variables.green};
+        border-radius: 0 2px 2px 0;
+      }
+    `
+    const ListElement = styled(Link)`
+      transition: color 0.1s linear;
+
+      &:hover {
+         color: ${variables.white60};
+      }
+      
+      ${props => props.active && activeListElement}
+    `
+
     return (
       <div className={cx(
         particles.relative,
@@ -221,7 +247,7 @@ export class SideNav extends React.Component<Props, State> {
           className={cx(
             classes.head,
             classes.modelsHead, {
-              [classes.active]: modelsPageActive
+              [classes.active]: modelsPageActive,
             }
           )}
         >
@@ -237,9 +263,10 @@ export class SideNav extends React.Component<Props, State> {
           )}>
           {this.props.models &&
           this.props.models.map((model) => (
-            <Link
+            <ListElement
               key={model.name}
               to={`/${this.props.params.projectName}/models/${model.name}`}
+              active={modelActive(model)}
               className={cx(
                 particles.relative,
                 particles.pv10,
@@ -247,13 +274,10 @@ export class SideNav extends React.Component<Props, State> {
                 particles.ph25,
                 particles.flex,
                 particles.justifyBetween,
-                classes.listElement, {
-                  [classes.active]: modelActive(model),
-                }
               )}>
               <span className={cx(particles.pl6)}>{model.name}</span>
               <span className={classes.itemCount}>{model.itemCount}</span>
-            </Link>
+            </ListElement>
           ))}
         </div>
 

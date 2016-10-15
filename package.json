@@ -77,6 +77,7 @@
     "redux": "^3.5.2",
     "redux-actions": "^0.12.0",
     "redux-thunk": "^2.1.0",
+    "styled-components": "^1.0.5",
     "tachyons": "^4.5.2"
   },
   "devDependencies": {
