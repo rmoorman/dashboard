@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom'
 import * as Relay from 'react-relay'
 import {withRouter, Link} from 'react-router'
 import {connect} from 'react-redux'
+import cuid from 'cuid'
 import {bindActionCreators} from 'redux'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import mapProps from '../../components/MapProps/MapProps'
@@ -19,6 +20,7 @@ import {ShowNotificationCallback} from '../../types/utils'
 import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
+import EndpointPopup from './EndpointPopup'
 import styled from 'styled-components'
 import * as cx from 'classnames'
 import {particles, variables, Icon} from 'graphcool-styles'
@@ -111,7 +113,7 @@ const Head = styled(Link)`
   ${props => props.active && activeHead}
 `
 
-const FooterSection = styled(Link)`
+const footerSectionStyle = `
   display: flex;
   align-items: center;
   padding: ${variables.size25};
@@ -138,6 +140,8 @@ const FooterSection = styled(Link)`
     }
   }
 `
+const FooterSection = styled.div`${footerSectionStyle}`
+const FooterLink = styled.a`${footerSectionStyle}`
 
 export class SideNav extends React.Component<Props, State> {
 
@@ -204,14 +208,14 @@ export class SideNav extends React.Component<Props, State> {
           )}
           style={{ height: '70px' }}
         >
-          <FooterSection to="/">
-            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/endpoints.svg')} />
-            <div>Endpoints</div>
+          <FooterSection>
+            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/endpoints.svg')}/>
+            <div onClick={this.showEndpoints}>Endpoints</div>
           </FooterSection>
-          <FooterSection to="/">
-            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/docs.svg')} />
+          <FooterLink href='https://docs.graph.cool' target='_blank'>
+            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/docs.svg')}/>
             <div>Docs</div>
-          </FooterSection>
+          </FooterLink>
         </div>
       </div>
     )
@@ -472,7 +476,7 @@ export class SideNav extends React.Component<Props, State> {
           particles.itemsCenter,
           particles.pointer,
         )}
-        turned={true}
+                    turned={true}
 
         >
           <Icon
@@ -565,6 +569,14 @@ export class SideNav extends React.Component<Props, State> {
         }
       )
     }
+  }
+
+  private showEndpoints = () => {
+    const id = cuid()
+    this.props.showPopup({
+      element: <EndpointPopup id={id}/>,
+      id,
+    })
   }
 }
 
