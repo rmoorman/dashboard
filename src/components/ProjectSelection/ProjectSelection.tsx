@@ -58,17 +58,20 @@ export default class ProjectSelection extends React.Component<Props, State> {
 
     const turnedArrow = `
       transform: rotate(180deg);
+      background: ${variables.gray20};
+      svg {
+        position: relative;
+        top: 1px;
+      }
     `
 
     const Arrow = styled.div`
-      svg path {
+      svg {
         stroke: ${variables.white};
         stroke-width: 4px;
       }
-      
-      transition: transform ${variables.duration} ease;
-      
-      ${props => !props.turned && turnedArrow }
+            
+      ${props => props.turned && turnedArrow }
     `
 
     const SettingsLink = styled.div`
@@ -143,7 +146,7 @@ export default class ProjectSelection extends React.Component<Props, State> {
     const AddProject = styled.div`
       margin: -3px -4px 0 0;
     
-      svg path {
+      svg {
         stroke: ${variables.white};
         stroke-width: 4px;
       }
@@ -222,7 +225,6 @@ export default class ProjectSelection extends React.Component<Props, State> {
                 width={18}
                 height={18}
                 src={require('graphcool-styles/icons/stroke/arrowDown.svg')}
-                color='#fff'
               />
             </Arrow>
           </div>

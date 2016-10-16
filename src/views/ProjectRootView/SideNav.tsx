@@ -61,7 +61,7 @@ const Section = styled.div`
 const activeHead = `
   color: ${variables.white};
   
-  svg path {
+  svg {
     fill: ${variables.white};
     stroke: none !important;
   }
@@ -69,7 +69,7 @@ const activeHead = `
   &:hover {
     color: inherit;
     
-    svg path {
+    svg {
       fill: ${variables.white};
       stroke: none !important;
     }
@@ -91,7 +91,7 @@ const Head = styled(Link)`
   &:hover {
     color: ${variables.white80};
     
-    svg path {
+    svg {
       fill: ${variables.white80};
       stroke: none !important;
     }
@@ -102,7 +102,7 @@ const Head = styled(Link)`
     margin-left: ${variables.size10};
   }
 
-  svg path {
+  svg {
     fill: ${variables.white60};
     stroke: none !important;
     transition: fill ${variables.duration} linear;
@@ -288,20 +288,20 @@ export class SideNav extends React.Component<Props, State> {
     const relationsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/relations`)
 
     const activeRelationsHead = `
-      svg path {
+      svg {
         fill: none;
         stroke: ${variables.white} !important;
       }
       
       &:hover {
-        svg path {
+        svg {
           stroke: ${variables.white} !important;
         }
       }
     `
 
     const RelationsHead = styled(Head)`
-      svg path {
+      svg {
         fill: none;
         stroke: ${variables.white60} !important;
         stroke-width: 4px !important;
@@ -309,7 +309,7 @@ export class SideNav extends React.Component<Props, State> {
       }
       
       &:hover {
-        svg path {
+        svg {
           fill: none;
           stroke: ${variables.white80} !important;
         }
@@ -350,10 +350,32 @@ export class SideNav extends React.Component<Props, State> {
     const AddModel = styled.div`
       margin: -3px -4px 0 0;
     
-      svg path {
+      svg {
         stroke: ${variables.white};
         stroke-width: 4px;
       }
+    `
+
+    const turnedToggleMore = `
+      i {
+        transform: rotate(180deg) !important;
+        svg {
+          position: relative;
+          top: 1px;
+        }
+      }
+    `
+
+    const ToggleMore = styled.div`
+      height: ${variables.size60};
+      background: linear-gradient(to bottom, ${variables.darkerBlue0} 0%, ${variables.darkerBlue} 80%);
+      
+      svg {
+        stroke-width: 4px;
+        fill: none;
+      }
+      
+      ${props => props.turned && turnedToggleMore}
     `
 
     const activeListElement = `
@@ -402,6 +424,7 @@ export class SideNav extends React.Component<Props, State> {
               className={cx(
                 particles.relative,
                 particles.pv10,
+                particles.fw6,
                 particles.white30,
                 particles.ph25,
                 particles.flex,
@@ -437,9 +460,33 @@ export class SideNav extends React.Component<Props, State> {
             width={350}
           >
             <Icon width={18} height={18} stroke src={require('graphcool-styles/icons/stroke/add.svg')}/>
-
           </Tether>
         </AddModel>
+        <ToggleMore className={cx(
+          particles.absolute,
+          particles.bottom0,
+          particles.left0,
+          particles.w100,
+          particles.flex,
+          particles.justifyCenter,
+          particles.itemsCenter,
+          particles.pointer,
+        )}
+        turned={true}
+
+        >
+          <Icon
+            width={18}
+            height={18}
+            stroke
+            color={variables.white}
+            src={require('graphcool-styles/icons/stroke/arrowDown.svg')}
+            className={cx(
+              particles.brPill,
+              particles.bgDarkBlue
+            )}
+          />
+        </ToggleMore>
       </Section>
     )
   }
