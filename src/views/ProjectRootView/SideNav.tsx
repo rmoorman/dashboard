@@ -409,7 +409,7 @@ export class SideNav extends React.Component<Props, State> {
     `
 
     return (
-      <Section className={cx(particles.relative, particles.bgDarkerBlue, particles.pb38)}>
+      <Section className={cx(particles.relative, particles.bgDarkerBlue, particles.pb60)}>
         <ModelsHead to={`/${this.props.params.projectName}/models`}>
           Models
         </ModelsHead>
