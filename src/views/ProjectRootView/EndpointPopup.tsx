@@ -156,7 +156,7 @@ class EndpointPopup extends React.Component<Props, State> {
               <Icon
                 width={25}
                 height={25}
-                color={variables.gray20}
+                color={variables.gray30}
                 stroke
                 strokeWidth={3}
                 src={require('graphcool-styles/icons/stroke/cross.svg')}

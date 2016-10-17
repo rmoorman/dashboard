@@ -63,7 +63,7 @@ class AddModelPopup extends React.Component<Props, State> {
     `
 
     const SaveButton = styled(Button)`
-      background: ${variables.blue};
+      background: ${variables.green};
       color: ${variables.white};
       
       &:hover {
