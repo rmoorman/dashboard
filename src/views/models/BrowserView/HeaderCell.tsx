@@ -5,7 +5,6 @@ import {Link} from 'react-router'
 import {getFieldTypeName} from '../../../utils/valueparser'
 import {isScalar} from '../../../utils/graphql'
 import {Field} from '../../../types/types'
-import {debounce} from '../../../utils/utils'
 import {classnames} from '../../../utils/classnames'
 const classes: any = require('./HeaderCell.scss')
 
@@ -13,18 +12,13 @@ interface Props {
   field: Field
   sortOrder?: string
   toggleSortOrder: () => void
-  updateFilter: (value: string) => void
   params: any
 }
 
 class HeaderCell extends React.Component<Props, {}> {
 
-  delayedUpdateFilter: any
-
   constructor(props) {
     super(props)
-
-    this.delayedUpdateFilter = debounce(this.props.updateFilter, 150)
   }
 
   render() {

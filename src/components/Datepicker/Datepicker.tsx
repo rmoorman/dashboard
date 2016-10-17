@@ -7,9 +7,12 @@ import Datetime from 'react-datetime'
 const classes: any = require('./Datepicker.scss')
 
 // TODO remove once closed: https://github.com/YouCanBookMe/react-datetime/issues/44
-Datetime.prototype.componentWillReceiveProps = function (nextProps) {
-  if (this.props.open !== nextProps.open) {
-    this.setState({ open: nextProps.open })
+
+if (Datetime) {
+  Datetime.prototype.componentWillReceiveProps = function (nextProps) {
+    if (this.props.open !== nextProps.open) {
+      this.setState({ open: nextProps.open })
+    }
   }
 }
 

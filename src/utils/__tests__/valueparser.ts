@@ -1,7 +1,4 @@
 /// <reference path="../../../node_modules/@types/jest/index.d.ts"/>
-jest.unmock('../valueparser')
-jest.unmock('../graphql')
-jest.unmock('../../types/types')
 
 import {NonScalarValue} from '../../types/utils'
 import {Field} from '../../types/types'
@@ -13,6 +10,7 @@ const testField: Field = {
   name: '',
   description: '',
   isRequired: true,
+  isReadonly: true,
   isList: false,
   isUnique: false,
   isSystem: false,

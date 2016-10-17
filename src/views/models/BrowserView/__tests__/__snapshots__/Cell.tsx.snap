@@ -1,0 +1,66 @@
+exports[`test Cell renders and runs selectCell 1`] = `
+<div
+  className="root"
+  onClick={[Function]}
+  onDoubleClick={[Function]}
+  style={
+    Object {
+      "alignItems": "center",
+      "justifyContent": "center",
+      "overflow": "visible",
+    }
+  }>
+  <span
+    className="value"
+    onKeyDown={[Function]}
+    style={
+      Object {
+        "cursor": "auto",
+      }
+    }>
+    some string
+  </span>
+</div>
+`;
+
+exports[`test Cell renders in edit mode 1`] = `
+<div
+  className="root editing"
+  onClick={[Function]}
+  onDoubleClick={[Function]}
+  style={
+    Object {
+      "alignItems": "center",
+      "justifyContent": "center",
+      "overflow": "visible",
+    }
+  }>
+  <NullableCell
+    cell={
+      <function StringCell() {
+              var _this = _super.apply(this, arguments) || this;
+              _this.state = {
+                  mouseOverTether: false
+              };
+              return _this;
+          }
+        cancel={[Function]}
+        field={
+          Object {
+            "description": "",
+            "id": "cip3p48sj001e1jsmghwkdt2k",
+            "isList": false,
+            "isReadonly": true,
+            "isSystem": true,
+            "name": "description",
+            "relatedModel": null,
+            "typeIdentifier": "String",
+          }
+        }
+        onKeyDown={[Function]}
+        save={[Function]}
+        value="some string" />
+    }
+    save={[Function]} />
+</div>
+`;

@@ -1,0 +1,19 @@
+exports[`test EnumCell renders 1`] = `
+<select
+  autoFocus={true}
+  onBlur={[Function]}
+  onChange={[Function]}
+  onKeyDown={[Function]}
+  value="asd">
+  <option
+    disabled={true}>
+    Select an Enum ▾
+  </option>
+  <option>
+    asd
+  </option>
+  <option>
+    def
+  </option>
+</select>
+`;
