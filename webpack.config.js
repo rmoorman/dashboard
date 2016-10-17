@@ -7,6 +7,7 @@ const vendor = [
   'calculate-size',
   'classnames',
   'graphiql',
+  'graphcool-styles',
   'immutable',
   'js-cookie',
   'lokka',
@@ -39,6 +40,7 @@ module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: {
     app: './src/main',
+    styles: 'graphcool-styles/dist/styles.css',
     vendor,
   },
   output: {
@@ -52,13 +54,13 @@ module.exports = {
       loader: 'tslint',
       exclude: /node_modules/,
     }, {
-      test: /\.json/, // TODO check if still needed
+      test: /\.json$/, // TODO check if still needed
       loader: 'json',
     }, {
-      test: /\.css/,
+      test: /\.css$/,
       loader: 'style!css',
     }, {
-      test: /\.scss/,
+      test: /\.scss$/,
       // loader: 'style!css?modules&sourceMap&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap',
       loader: 'style!css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass',
       exclude: /node_modules/,

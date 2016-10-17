@@ -25,7 +25,6 @@ interface Props {
   params: any
   model: Model
   possibleRelatedPermissionPaths: Field[][]
-  availableUserRoles: string[]
   showNotification: ShowNotificationCallback
 }
 
@@ -129,7 +128,6 @@ class FieldRow extends React.Component<Props, State> {
             field={field}
             params={this.props.params}
             possibleRelatedPermissionPaths={this.props.possibleRelatedPermissionPaths}
-            availableUserRoles={this.props.availableUserRoles}
           />
         }
         {this.state.detailsState === 'CONSTRAINTS' &&

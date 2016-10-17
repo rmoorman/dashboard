@@ -333,7 +333,6 @@ export default Relay.createContainer(MappedStructureView, {
                 project: projectByName(projectName: $projectName) {
                     id
                     name
-                    availableUserRoles
                     models(first: 1000) {
                         edges {
                             node {

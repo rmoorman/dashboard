@@ -3,12 +3,12 @@ import * as ReactDOM from 'react-dom'
 import * as Relay from 'react-relay'
 import {withRouter, Link} from 'react-router'
 import {connect} from 'react-redux'
+import cuid from 'cuid'
 import {bindActionCreators} from 'redux'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import mapProps from '../../components/MapProps/MapProps'
 import {validateModelName} from '../../utils/nameValidator'
 import ScrollBox from '../../components/ScrollBox/ScrollBox'
-import Icon from '../../components/Icon/Icon'
 import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
 import {sideNavSyncer} from '../../utils/sideNavSyncer'
@@ -20,9 +20,10 @@ import {ShowNotificationCallback} from '../../types/utils'
 import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
-import {classnames} from '../../utils/classnames'
-
-const classes: any = require('./SideNav.scss')
+import EndpointPopup from './EndpointPopup'
+import styled from 'styled-components'
+import * as cx from 'classnames'
+import {particles, variables, Icon} from 'graphcool-styles'
 
 interface Props {
   params: any
@@ -46,6 +47,101 @@ interface State {
   newModelName: string
   newModelIsValid: boolean
 }
+
+// Section (Models, Relations, Permissions, etc.)
+
+const Section = styled.div`
+  padding: ${variables.size38} 0 0;
+  
+  &:last-child {
+    margin-bottom: ${variables.size38}
+  }
+`
+
+// Section Heads
+
+const activeHead = `
+  color: ${variables.white};
+  
+  svg {
+    fill: ${variables.white};
+    stroke: none !important;
+  }
+  
+  &:hover {
+    color: inherit;
+    
+    svg {
+      fill: ${variables.white};
+      stroke: none !important;
+    }
+  }
+  
+`
+
+const Head = styled(Link)`
+  letter-spacing: 1px;
+  line-height: 1;
+  padding: 0 ${variables.size25};
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: ${variables.white60};
+  transition: color ${variables.duration} linear;
+  
+  &:hover {
+    color: ${variables.white80};
+    
+    svg {
+      fill: ${variables.white80};
+      stroke: none !important;
+    }
+  }
+
+  > div {
+    line-height: 1;
+    margin-left: ${variables.size10};
+  }
+
+  svg {
+    fill: ${variables.white60};
+    stroke: none !important;
+    transition: fill ${variables.duration} linear;
+  }
+  
+  ${props => props.active && activeHead}
+`
+
+const footerSectionStyle = `
+  display: flex;
+  align-items: center;
+  padding: ${variables.size25};
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: ${variables.white60};
+  transition: color ${variables.duration} linear;
+  
+  > div {
+    margin-left: ${variables.size10};
+  }
+  
+  svg {
+    fill: ${variables.white60};
+    transition: fill ${variables.duration} linear
+
+  }
+  
+  &:hover {
+    color: ${variables.white80};
+    svg {
+      fill: ${variables.white80};
+    }
+  }
+`
+const FooterSection = styled.div`${footerSectionStyle}`
+const FooterLink = styled.a`${footerSectionStyle}`
 
 export class SideNav extends React.Component<Props, State> {
 
@@ -81,23 +177,46 @@ export class SideNav extends React.Component<Props, State> {
 
     return (
       <div
-        className={classes.root}
+        className={cx(
+          particles.relative,
+          particles.w100,
+          particles.h100,
+          particles.white,
+          particles.bgDarkBlue,
+          particles.f14,
+        )}
         onMouseLeave={() => this.setState({forceShowModels: false} as State)}>
-        <div className={classes.container}>
+        <div className={cx(particles.h100)} style={{ paddingBottom: '70px' }}>
           <ScrollBox>
             {this.renderModels()}
             {this.renderRelations()}
+            {this.renderPermissions()}
             {this.renderActions()}
             {this.renderPlayground()}
           </ScrollBox>
         </div>
-        <Link className={classes.foot} to={`/${this.props.project.name}/settings`}>
-          <Icon
-            width={20} height={20}
-            src={require('assets/icons/gear.svg')}
-          />
-          <span>Project Settings</span>
-        </Link>
+        <div
+          className={cx(
+            particles.absolute,
+            particles.w100,
+            particles.bottom0,
+            particles.flex,
+            particles.itemsCenter,
+            particles.justifyBetween,
+            particles.bgDarkerBlue,
+            particles.white60,
+          )}
+          style={{ height: '70px' }}
+        >
+          <FooterSection>
+            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/endpoints.svg')}/>
+            <div onClick={this.showEndpoints}>Endpoints</div>
+          </FooterSection>
+          <FooterLink href='https://docs.graph.cool' target='_blank'>
+            <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/docs.svg')}/>
+            <div>Docs</div>
+          </FooterLink>
+        </div>
       </div>
     )
   }
@@ -111,57 +230,108 @@ export class SideNav extends React.Component<Props, State> {
     }
 
     return (
-      <div className={`${classes.listBlock} ${playgroundPageActive ? classes.active : ''}`}>
-          <Link
-            to={`/${this.props.params.projectName}/playground`}
-            className={`${classes.head} ${playgroundPageActive ? classes.active : ''}`}
-            onClick={showGettingStartedOnboardingPopup}
-          >
-            <Icon width={19} height={19} src={require('assets/icons/play.svg')}/>
-            <Tether
-              side='top'
-              steps={[{
+      <Section>
+        <Head
+          to={`/${this.props.params.projectName}/playground`}
+          active={playgroundPageActive}
+          onClick={showGettingStartedOnboardingPopup}
+        >
+          <Icon
+            width={20}
+            height={20}
+            src={require('graphcool-styles/icons/fill/playground.svg')}
+          />
+          <Tether
+            side='top'
+            steps={[{
                 step: 'STEP4_CLICK_PLAYGROUND',
                 title: 'Open the Playground',
                 description: 'Now that we have defined our data model and added example data it\'s time to send some queries to our backend!', // tslint:disable-line
               }]}
-              offsetY={this.state.addingNewModel ? -75 : -5}
-              width={280}
-            >
-              <span>Playground</span>
-            </Tether>
-          </Link>
-      </div>
+            offsetY={this.state.addingNewModel ? -75 : -5}
+            width={280}
+          >
+            <div>Playground</div>
+          </Tether>
+        </Head>
+      </Section>
     )
   }
 
   private renderActions = () => {
     const actionsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/actions`)
     return (
-      <div className={`${classes.listBlock} ${actionsPageActive ? classes.active : ''}`}>
-        <Link
+      <Section>
+        <Head
           to={`/${this.props.params.projectName}/actions`}
-          className={`${classes.head} ${actionsPageActive ? classes.active : ''}`}
+          active={actionsPageActive}
         >
-          <Icon width={19} height={19} src={require('assets/icons/flash.svg')}/>
-          <span>Actions</span>
-        </Link>
-      </div>
+          <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/actions.svg')}/>
+          <div>Actions</div>
+        </Head>
+      </Section>
+    )
+  }
+
+  private renderPermissions = () => {
+    const permissionsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/permissions`)
+    return (
+      <Section>
+        <Head
+          to={`/${this.props.params.projectName}/permissions`}
+          active={permissionsPageActive}
+        >
+          <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/permissions.svg')}/>
+          <div>Permissions</div>
+        </Head>
+      </Section>
     )
   }
 
   private renderRelations = () => {
     const relationsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/relations`)
+
+    const activeRelationsHead = `
+      svg {
+        fill: none;
+        stroke: ${variables.white} !important;
+      }
+      
+      &:hover {
+        svg {
+          stroke: ${variables.white} !important;
+        }
+      }
+    `
+
+    const RelationsHead = styled(Head)`
+      svg {
+        fill: none;
+        stroke: ${variables.white60} !important;
+        stroke-width: 4px !important;
+        transition: stroke ${variables.duration} linear;
+      }
+      
+      &:hover {
+        svg {
+          fill: none;
+          stroke: ${variables.white80} !important;
+        }
+      }
+      
+      ${props => props.active && activeRelationsHead}
+    `
+
     return (
-      <div className={`${classes.listBlock} ${relationsPageActive ? classes.active : ''}`}>
-        <Link
+      <Section>
+        <RelationsHead
           to={`/${this.props.params.projectName}/relations`}
-          className={`${classes.head} ${relationsPageActive ? classes.active : ''}`}
+          active={relationsPageActive}
         >
-          <Icon width={19} height={19} src={require('assets/new_icons/relation-arrows.svg')}/>
-          <span>Relations</span>
-        </Link>
-      </div>
+          <Icon width={20} height={20} stroke src={require('graphcool-styles/icons/stroke/relationsSmall.svg')}/>
+          <div>Relations</div>
+        </RelationsHead>
+      </Section>
     )
   }
 
@@ -174,54 +344,114 @@ export class SideNav extends React.Component<Props, State> {
     const modelsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/models`)
     const showsModels = modelsPageActive || this.state.forceShowModels
 
+    const ModelsHead = styled(Head)`
+      &:hover {
+        color: ${variables.white60};
+        cursor: default;
+      }
+    `
+
+    const AddModel = styled.div`
+      margin: -3px -4px 0 0;
+    
+      svg {
+        stroke: ${variables.white};
+        stroke-width: 4px;
+      }
+    `
+
+    const turnedToggleMore = `
+      i {
+        transform: rotate(180deg) !important;
+        svg {
+          position: relative;
+          top: 1px;
+        }
+      }
+    `
+
+    const ToggleMore = styled.div`
+      height: ${variables.size60};
+      background: linear-gradient(to bottom, ${variables.darkerBlue0} 0%, ${variables.darkerBlue} 80%);
+      
+      svg {
+        stroke-width: 4px;
+        fill: none;
+      }
+      
+      ${props => props.turned && turnedToggleMore}
+    `
+
+    const activeListElement = `
+      color: ${variables.white} !important;
+      background: ${variables.white07};
+      cursor: default;
+
+      &:before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        bottom: -1px;
+        left: 0;
+        width: ${variables.size06};
+        background: ${variables.green};
+        border-radius: 0 2px 2px 0;
+      }
+      
+      &:hover {
+        color: inherit;
+      }
+    `
+    const ListElement = styled(Link)`
+      transition: color ${variables.duration} linear;
+
+      &:hover {
+         color: ${variables.white60};
+      }
+      
+      ${props => props.active && activeListElement}
+    `
+
     return (
-      <div className={`${classes.listBlock} ${showsModels ? classes.active : ''}`}>
-        <Link
-          to={`/${this.props.params.projectName}/models`}
-          className={`${classes.head} ${modelsPageActive ? classes.active : ''}`}
-        >
-          <Icon width={19} height={19} src={require('assets/icons/model.svg')}/>
-          <span>Models</span>
-        </Link>
-        <div className={`${classes.list} ${showsModels ? classes.active : classes.inactive}`}>
+      <Section className={cx(particles.relative, particles.bgDarkerBlue, particles.pb60)}>
+        <ModelsHead to={`/${this.props.params.projectName}/models`}>
+          Models
+        </ModelsHead>
+        <div
+          className={cx(particles.flex, particles.flexColumn, particles.pt16 )}>
           {this.props.models &&
           this.props.models.map((model) => (
-            <Link
+            <ListElement
               key={model.name}
               to={`/${this.props.params.projectName}/models/${model.name}`}
-              className={`${classes.listElement} ${modelActive(model) ? classes.active : ''}`}
-            >
-              {model.name}
-              <span className={classes.itemCount}>{model.itemCount}</span>
-            </Link>
+              active={modelActive(model)}
+              className={cx(
+                particles.relative,
+                particles.pv10,
+                particles.fw6,
+                particles.white30,
+                particles.ph25,
+                particles.flex,
+                particles.justifyBetween,
+              )}>
+              <div className={cx(particles.pl6)}>{model.name}</div>
+              <div>{model.itemCount}</div>
+            </ListElement>
           ))}
         </div>
-        <div className={classnames(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
-          {this.props.models.length > 3 && !showsModels &&
-          <div
-            className={classes.listElement}
-            onClick={() => this.setState({forceShowModels: true} as State)}
-          >
-            ...
-          </div>
-          }
-          <div className={classnames(classes.newModelContainer, this.state.addingNewModel ? '' : classes.notToggled)}>
-            <input
-              ref='newModelInput'
-              disabled={!this.state.addingNewModel}
-              className={classnames(
-                this.state.newModelIsValid ? '' : classes.invalid,
-                classes.newModelBox,
-                this.state.addingNewModel ? '' : classes.notToggled
-              )}
-              value={this.state.newModelName}
-              onChange={this.handleNewModelChange}
-              onKeyDown={this.handleNewModelKeyDown}
-            />
-          </div>
-        </div>
-        <div
-          className={classnames(classes.add, this.state.addingNewModel ? classes.addActive : '')}
+
+        <AddModel
+          className={cx(
+            particles.absolute,
+            particles.top38,
+            particles.right25,
+            particles.lhSolid,
+            particles.ba,
+            particles.brPill,
+            particles.bWhite,
+            particles.pointer,
+            particles.o60
+           )}
           onClick={this.toggleAddModelInput}
         >
           <Tether
@@ -233,10 +463,35 @@ export class SideNav extends React.Component<Props, State> {
             offsetY={this.state.addingNewModel ? -75 : -5}
             width={350}
           >
-            <div>+ Add model</div>
+            <Icon width={18} height={18} stroke src={require('graphcool-styles/icons/stroke/add.svg')}/>
           </Tether>
-        </div>
-      </div>
+        </AddModel>
+        <ToggleMore className={cx(
+          particles.absolute,
+          particles.bottom0,
+          particles.left0,
+          particles.w100,
+          particles.flex,
+          particles.justifyCenter,
+          particles.itemsCenter,
+          particles.pointer,
+        )}
+                    turned={true}
+
+        >
+          <Icon
+            width={18}
+            height={18}
+            stroke
+            color={variables.white}
+            src={require('graphcool-styles/icons/stroke/arrowDown.svg')}
+            className={cx(
+              particles.brPill,
+              particles.bgDarkBlue
+            )}
+          />
+        </ToggleMore>
+      </Section>
     )
   }
 
@@ -315,6 +570,14 @@ export class SideNav extends React.Component<Props, State> {
       )
     }
   }
+
+  private showEndpoints = () => {
+    const id = cuid()
+    this.props.showPopup({
+      element: <EndpointPopup id={id}/>,
+      id,
+    })
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -368,3 +631,32 @@ export default Relay.createContainer(MappedSideNav, {
     `,
   },
 })
+
+// <div className={cx(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
+// {this.props.models.length > 3 && !showsModels &&
+// <div
+//   className={classes.listElement}
+//   onClick={() => this.setState({forceShowModels: true} as State)}
+// >
+//   <div className={cx(classes.showMore)}>
+//     <div className={cx(
+//                 classes.showMoreIcon,
+//               )}/>
+//   </div>
+// </div>
+// }
+// <div className={cx(classes.newModelContainer, this.state.addingNewModel ? '' : classes.notToggled)}>
+//   <input
+//     ref='newModelInput'
+//     disabled={!this.state.addingNewModel}
+//     className={cx(
+//                 this.state.newModelIsValid ? '' : classes.invalid,
+//                 classes.newModelBox,
+//                 this.state.addingNewModel ? '' : classes.notToggled
+//               )}
+//     value={this.state.newModelName}
+//     onChange={this.handleNewModelChange}
+//     onKeyDown={this.handleNewModelKeyDown}
+//   />
+// </div>
+// </div>

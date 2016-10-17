@@ -8,7 +8,6 @@ interface Props {
   params: any
   field: Field
   possibleRelatedPermissionPaths: Field[][]
-  availableUserRoles: string[]
   route: any
 }
 
@@ -46,7 +45,6 @@ class Permissions extends React.Component<Props, State> {
                 params={this.props.params}
                 permission={permissionEdge.node}
                 possibleRelatedPermissionPaths={this.props.possibleRelatedPermissionPaths}
-                availableUserRoles={this.props.availableUserRoles}
               />
             ))}
             {this.state.showNewPermission &&
@@ -57,7 +55,6 @@ class Permissions extends React.Component<Props, State> {
               permission={null}
               hide={() => this.setState({ showNewPermission: false })}
               possibleRelatedPermissionPaths={this.props.possibleRelatedPermissionPaths}
-              availableUserRoles={this.props.availableUserRoles}
             />
             }
           </div>
