@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux'
 import {ReduxAction} from '../../types/reducers'
 import {closePopup} from '../../actions/popup'
 import styled from 'styled-components'
-import {particles, variables} from 'graphcool-styles'
+import {particles, variables, Icon} from 'graphcool-styles'
 import * as cx from 'classnames'
 
 interface Props {
