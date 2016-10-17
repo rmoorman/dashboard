@@ -7,7 +7,7 @@ import cuid from 'cuid'
 import {bindActionCreators} from 'redux'
 import * as PureRenderMixin from 'react-addons-pure-render-mixin'
 import mapProps from '../../components/MapProps/MapProps'
-import {validateModelName} from '../../utils/nameValidator'
+// import {validateModelName} from '../../utils/nameValidator'
 import ScrollBox from '../../components/ScrollBox/ScrollBox'
 import Tether from '../../components/Tether/Tether'
 import AddModelMutation from '../../mutations/AddModelMutation'
@@ -341,8 +341,8 @@ export class SideNav extends React.Component<Props, State> {
       this.props.router.isActive(`/${this.props.params.projectName}/models/${model.name}/browser`)
     )
 
-    const modelsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/models`)
-    const showsModels = modelsPageActive || this.state.forceShowModels
+    // const modelsPageActive = this.props.router.isActive(`/${this.props.params.projectName}/models`)
+    // const showsModels = modelsPageActive || this.state.forceShowModels
 
     const ModelsHead = styled(Head)`
       &:hover {
@@ -495,18 +495,18 @@ export class SideNav extends React.Component<Props, State> {
     )
   }
 
-  private handleNewModelChange = (e) => {
-    this.setState({
-      newModelName: e.target.value,
-      newModelIsValid: e.target.value === '' ? true : validateModelName(e.target.value),
-    } as State)
-  }
-
-  private handleNewModelKeyDown = (e) => {
-    if (e.keyCode === 13) {
-      this.addModel()
-    }
-  }
+  // private handleNewModelChange = (e) => {
+  //   this.setState({
+  //     newModelName: e.target.value,
+  //     newModelIsValid: e.target.value === '' ? true : validateModelName(e.target.value),
+  //   } as State)
+  // }
+  //
+  // private handleNewModelKeyDown = (e) => {
+  //   if (e.keyCode === 13) {
+  //     this.addModel()
+  //   }
+  // }
 
   private fetch = () => {
     // the backend might cache the force fetch requests, resulting in potentially inconsistent responses

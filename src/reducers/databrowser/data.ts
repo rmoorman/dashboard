@@ -4,9 +4,13 @@ import SharedConstants from '../../constants/databrowser/shared'
 import * as Immutable from 'immutable'
 import {DataBrowserDataState} from '../../types/databrowser/data'
 
-const initialState: DataBrowserDataState = {
+export const initialState: DataBrowserDataState = {
   nodes: Immutable.List<Immutable.Map<string, any>>(),
-  oldNodes: Immutable.List<Immutable.Map<string, any>>(),
+  backup: {
+    nodes: Immutable.List<Immutable.Map<string, any>>(),
+    itemCount: 0,
+    loaded: Immutable.List<boolean>(),
+  },
   orderBy: {
     fieldName: 'id',
     order: 'DESC',
@@ -40,6 +44,7 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
       return Object.assign({}, state, {
         nodes,
         loaded,
+        itemCount: nodes.size,
       })
     case Constants.SET_NODES:
       return Object.assign({}, state, {
@@ -51,17 +56,28 @@ export function reduceData(state: DataBrowserDataState = initialState, action: R
       })
     case Constants.MUTATION_REQUEST:
       return Object.assign({}, state, {
-        oldNodes: state.nodes,
+        backup: {
+          nodes: state.nodes,
+          itemCount: state.itemCount,
+          loaded: state.loaded,
+        },
         mutationActive: true,
       })
     case Constants.MUTATION_ERROR:
       return Object.assign({}, state, {
-        nodes: state.oldNodes,
+        nodes: state.backup.nodes,
+        itemCount: state.backup.itemCount,
+        loaded: state.backup.loaded,
         mutationActive: false,
       })
     case Constants.MUTATION_SUCCESS:
       return Object.assign({}, state, {
         mutationActive: false,
+        backup: {
+          nodes: Immutable.List<Immutable.Map<string, any>>(),
+          itemCount: 0,
+          loaded: Immutable.List<boolean>(),
+        },
       })
     case Constants.ADD_NODE_REQUEST:
       return Object.assign({}, state, {

@@ -27,16 +27,6 @@ export function setOrder(orderBy: OrderBy): ReduxAction {
   }
 }
 
-export function setFilter(fieldName: string, value: TypedValue): ReduxAction {
-  return {
-    type: Constants.SET_FILTER,
-    payload: {
-      fieldName,
-      value,
-    },
-  }
-}
-
 export function setData(nodes: Immutable.List<Immutable.Map<string, any>>, loaded: Immutable.List<boolean>) {
   return {
     type: Constants.SET_DATA,
@@ -44,35 +34,6 @@ export function setData(nodes: Immutable.List<Immutable.Map<string, any>>, loade
       nodes,
       loaded,
     },
-  }
-}
-
-export function setNodes(nodes: Immutable.List<Immutable.Map<string, any>>, loaded: Immutable.List<boolean>) {
-  return {
-    type: Constants.SET_NODES,
-    payload: nodes,
-  }
-}
-
-export function setLoaded(loaded: Immutable.List<boolean>) {
-  return {
-    type: Constants.SET_LOADED,
-    payload: loaded,
-  }
-}
-
-export function setFilterAsync(fieldName: string,
-                               value: TypedValue,
-                               lokka: any,
-                               modelNamePlural: string,
-                               fields: Field[],
-                               index: number = 0): ReduxThunk {
-  return (dispatch: Dispatch, getState: () => StateTree): Promise<{}> => {
-    dispatch(setFilter(fieldName, value))
-    if (getState().databrowser.ui.selectedNodeIds.size > 0) {
-      dispatch(clearNodeSelection())
-    }
-    return dispatch(reloadDataAsync(lokka, modelNamePlural, fields, index))
   }
 }
 
@@ -122,7 +83,11 @@ export function loadDataAsync(lokka: any,
         dispatch(setData(nodes, loaded))
       })
       .catch((err) => {
-        err.rawError.forEach(error => dispatch(showNotification({ message: error.message, level: 'error' })))
+        if (err.rawError) {
+          err.rawError.forEach(error => dispatch(showNotification({ message: error.message, level: 'error' })))
+        } else {
+          dispatch(showNotification({ message: err.message, level: 'error' }))
+        }
       })
   }
 }
@@ -155,7 +120,9 @@ export function addNodeAsync(lokka: any, model: Model, fields: Field[], fieldVal
       })
       .catch((err) => {
         dispatch(mutationError())
-        err.rawError.forEach(error => dispatch(showNotification({ message: error.message, level: 'error' })))
+        if (err.rawError) {
+          err.rawError.forEach(error => dispatch(showNotification({ message: error.message, level: 'error' })))
+        }
       })
   }
 }
@@ -182,7 +149,7 @@ export function updateNodeAsync(lokka: any,
       value,
     }))
     return updateRelayNode(lokka, model.name, value, field, nodeId)
-      .then(() => {
+      .then((res) => {
         dispatch(mutationSuccess())
         callback(true)
       })
@@ -203,10 +170,10 @@ export function deleteSelectedNodes(lokka: any, projectName: string, modelName: 
     dispatch(deleteNodes(ids))
     dispatch(clearNodeSelection())
 
-    bluebird.map(ids, id => deleteNode(lokka, modelName, id), {
+    return bluebird.map(ids, id => deleteNode(lokka, modelName, id), {
       concurrency: 5,
     })
-      .then(() => {
+      .then((res) => {
         analytics.track('models/browser: deleted node', {
           project: projectName,
           model: modelName,
@@ -215,7 +182,9 @@ export function deleteSelectedNodes(lokka: any, projectName: string, modelName: 
       })
       .catch((err) => {
         dispatch(mutationError())
-        err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
+        if (err.rawError) {
+          err.rawError.forEach((error) => this.props.showNotification({message: error.message, level: 'error'}))
+        }
       })
 
   }
@@ -229,7 +198,7 @@ export function search(e: any, lokka: any, modelNamePlural: string, fields: Fiel
   }
 }
 
-function updateCell(payload: {
+export function updateCell(payload: {
   position: GridPosition,
   value: TypedValue
 }) {
@@ -239,46 +208,46 @@ function updateCell(payload: {
   }
 }
 
-function mutationSuccess() {
+export function mutationSuccess() {
   return {
     type: Constants.MUTATION_SUCCESS,
   }
 }
 
-function mutationError() {
+export function mutationError() {
   return {
     type: Constants.MUTATION_ERROR,
   }
 }
 
-function mutationRequest() {
+export function mutationRequest() {
   return {
     type: Constants.MUTATION_REQUEST,
   }
 }
 
-function addNodeRequest(payload: Immutable.Map<string,any>) {
+export function addNodeRequest(payload: Immutable.Map<string,any>) {
   return {
     type: Constants.ADD_NODE_REQUEST,
     payload,
   }
 }
 
-function addNodeSuccess(payload: Immutable.Map<string,any>) {
+export function addNodeSuccess(payload: Immutable.Map<string,any>) {
   return {
     type: Constants.ADD_NODE_SUCCESS,
     payload,
   }
 }
 
-function deleteNodes(payload: string[]) {
+export function deleteNodes(payload: string[]) {
   return {
     type: Constants.DELETE_NODES,
     payload,
   }
 }
 
-function setSearchQuery(payload: string) {
+export function setSearchQuery(payload: string) {
   return {
     type: Constants.SET_SEARCH_QUERY,
     payload,

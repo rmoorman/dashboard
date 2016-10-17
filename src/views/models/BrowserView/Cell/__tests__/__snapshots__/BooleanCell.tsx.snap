@@ -1,0 +1,8 @@
+exports[`test BooleanCell renders 1`] = `
+<ToggleButton
+  leftText="false"
+  onClickOutside={[Function]}
+  onKeyDown={[Function]}
+  rightText="true"
+  side={0} />
+`;

@@ -1,7 +1,4 @@
 /// <reference path="../../../node_modules/@types/jest/index.d.ts"/>
-jest.unmock('../utils')
-jest.unmock('../graphql')
-jest.unmock('../../types/types')
 import {isValidUrl} from '../utils'
 import '../polyfils'
 

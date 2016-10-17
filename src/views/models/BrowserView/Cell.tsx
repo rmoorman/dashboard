@@ -54,7 +54,7 @@ interface Props {
   loaded: boolean[]
 }
 
-class Cell extends React.PureComponent<Props, {}> {
+export class Cell extends React.PureComponent<Props, {}> {
 
   refs: {
     [key: string]: any
@@ -152,12 +152,14 @@ class Cell extends React.PureComponent<Props, {}> {
       return
     }
 
+    if (keepEditing) {
+      this.props.editCell(this.props.position)
+    } else {
+      this.props.stopEditCell()
+    }
+
     this.props.update(value, this.props.field, () => {
-      if (keepEditing) {
-        this.props.editCell(this.props.position)
-      } else {
-        this.props.stopEditCell()
-      }
+      //
     })
   }
 

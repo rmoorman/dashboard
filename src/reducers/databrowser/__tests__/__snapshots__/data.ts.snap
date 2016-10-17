@@ -1,0 +1,680 @@
+exports[`databrowser reducer should backup and delete the backup when mutation success after delete mutation 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 1,
+  "loaded": Array [
+    true,
+  ],
+  "mutationActive": true,
+  "nodes": Array [
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should backup and delete the backup when mutation success after delete mutation 2`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 1,
+  "loaded": Array [
+    true,
+  ],
+  "mutationActive": false,
+  "nodes": Array [
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should backup and restore nodes on create mutation request 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 3,
+  "loaded": Array [
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": false,
+  "nodes": Array [
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should backup and restore nodes on create mutation request 2`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 3,
+  "loaded": Array [
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": true,
+  "nodes": Array [
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should backup and restore nodes on create mutation request 3`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 4,
+  "loaded": Array [
+    true,
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": true,
+  "nodes": Array [
+    Object {
+      "id": "asd4",
+      "name": "a4",
+    },
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should backup and restore nodes on create mutation request 4`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 3,
+  "loaded": Array [
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": false,
+  "nodes": Array [
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should backup and restore when mutation fail after delete mutation 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 1,
+  "loaded": Array [
+    true,
+  ],
+  "mutationActive": true,
+  "nodes": Array [
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should backup and restore when mutation fail after delete mutation 2`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 3,
+  "loaded": Array [
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": false,
+  "nodes": Array [
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should be able to modify the created node after optimistic create 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 4,
+  "loaded": Array [
+    true,
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": true,
+  "nodes": Array [
+    Object {
+      "name": "a4",
+    },
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should be able to modify the created node after optimistic create 2`] = `
+Object {
+  "backup": Object {
+    "itemCount": 3,
+    "loaded": Array [
+      true,
+      true,
+      true,
+    ],
+    "nodes": Array [
+      Object {
+        "id": "asd",
+        "name": "a",
+      },
+      Object {
+        "id": "asd2",
+        "name": "a2",
+      },
+      Object {
+        "id": "asd3",
+        "name": "a3",
+      },
+    ],
+  },
+  "filter": Object {},
+  "itemCount": 4,
+  "loaded": Array [
+    true,
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": true,
+  "nodes": Array [
+    Object {
+      "id": "asd4",
+      "name": "a4",
+    },
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should execute the update cell action 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 3,
+  "loaded": Array [
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": false,
+  "nodes": Array [
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should execute the update cell action 2`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 3,
+  "loaded": Array [
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": false,
+  "nodes": Array [
+    Object {
+      "id": "asd",
+      "name": "aaa",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should render the initialState 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 0,
+  "loaded": Array [],
+  "mutationActive": false,
+  "nodes": Array [],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should set data 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 3,
+  "loaded": Array [
+    true,
+    true,
+    true,
+  ],
+  "mutationActive": false,
+  "nodes": Array [
+    Object {
+      "id": "asd",
+      "name": "a",
+    },
+    Object {
+      "id": "asd2",
+      "name": "a2",
+    },
+    Object {
+      "id": "asd3",
+      "name": "a3",
+    },
+  ],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should set the item count 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 5,
+  "loaded": Array [],
+  "mutationActive": false,
+  "nodes": Array [],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should set the order 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 0,
+  "loaded": Array [],
+  "mutationActive": false,
+  "nodes": Array [],
+  "orderBy": Object {
+    "fieldName": "name",
+    "order": "ASC",
+  },
+  "searchQuery": "",
+}
+`;
+
+exports[`databrowser reducer should set the search query 1`] = `
+Object {
+  "backup": Object {
+    "itemCount": 0,
+    "loaded": Array [],
+    "nodes": Array [],
+  },
+  "filter": Object {},
+  "itemCount": 0,
+  "loaded": Array [],
+  "mutationActive": false,
+  "nodes": Array [],
+  "orderBy": Object {
+    "fieldName": "id",
+    "order": "DESC",
+  },
+  "searchQuery": "some query",
+}
+`;
