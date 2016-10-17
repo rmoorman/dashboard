@@ -11,6 +11,8 @@ import {Model, Viewer, Project} from '../../types/types'
 import {GettingStartedState} from '../../types/gettingStarted'
 import PopupWrapper from '../../components/PopupWrapper/PopupWrapper'
 import AuthProviderPopup from './AuthProviderPopup/AuthProviderPopup'
+import {particles} from 'graphcool-styles'
+import * as cx from 'classnames'
 const classes: any = require('./ModelHeader.scss')
 
 interface Props {
@@ -100,7 +102,18 @@ class ModelHeader extends React.Component<Props, State> {
             </Link>
             {this.props.model.name === 'User' &&
             <div
-              className='pointer f-16 pa-25'
+              className={cx(
+                particles.f14,
+                particles.pa10,
+                particles.pointer,
+                particles.ttu,
+                particles.bgWhite,
+                particles.black50,
+                particles.lhSolid,
+                particles.fw6
+                particles.buttonShadow,
+                particles.tracked,
+              )}
               onClick={() => this.setState({ authProviderPopupVisible: true } as State)}
             >
               Configure Auth Provider
