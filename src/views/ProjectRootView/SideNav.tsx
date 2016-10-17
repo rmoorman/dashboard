@@ -182,6 +182,7 @@ export class SideNav extends React.Component<Props, State> {
   }
 
   render() {
+    console.log(this.state.modelsFit)
 
     return (
       <div
@@ -347,14 +348,14 @@ export class SideNav extends React.Component<Props, State> {
     const HEADER_HEIGHT = 64
     const FOOTER_HEIGHT = 70
 
-    const MODEL_MARGIN_TOP = 67
+    const MODEL_MARGIN_TOP = 68
     const MODEL_HEIGHT = 36
     const numModels = this.props.models.length
-    const MODEL_MARGIN_BOTTOM = 60
+    const MODEL_MARGIN_BOTTOM = 38
 
     const NUM_LINKS = 4
     const LINK_HEIGHT = 58
-    const LINKS_MARGIN = 20
+    const LINKS_MARGIN = 38
 
     const height = window.innerHeight
 
@@ -449,19 +450,29 @@ export class SideNav extends React.Component<Props, State> {
     `
 
     return (
-      <Section className={cx(particles.relative, particles.bgDarkerBlue, particles.pb60)}>
+      <Section className={cx(
+        particles.relative,
+        particles.bgDarkerBlue,
+      )}>
         <ModelsHead to={`/${this.props.params.projectName}/models`}>
           Models
         </ModelsHead>
-        <div
-          className={cx(particles.flex, particles.flexColumn, particles.pt16 )}>
-          {this.props.models &&
-          this.props.models.map((model) => (
-            <ListElement
-              key={model.name}
-              to={`/${this.props.params.projectName}/models/${model.name}`}
-              active={modelActive(model)}
-              className={cx(
+        <div className={cx(particles.overflowHidden)} style={{
+          height: this.state.modelsFit ? 'auto' : (this.state.modelsExpanded ? 74 + 36 * this.props.models.length : window.innerHeight - 456),
+          transition: 'height .5s ease',
+        }}>
+          <div className={cx(
+            particles.flex,
+            particles.flexColumn,
+            particles.pt16,
+            this.state.modelsFit ? particles.pb38 : particles.pb60
+          )}>
+            {this.props.models && this.props.models.map((model) => (
+              <ListElement
+                key={model.name}
+                to={`/${this.props.params.projectName}/models/${model.name}`}
+                active={modelActive(model)}
+                className={cx(
                 particles.relative,
                 particles.pv10,
                 particles.fw6,
@@ -470,10 +481,12 @@ export class SideNav extends React.Component<Props, State> {
                 particles.flex,
                 particles.justifyBetween,
               )}>
-              <div className={cx(particles.pl6)}>{model.name}</div>
-              <div>{model.itemCount}</div>
-            </ListElement>
-          ))}
+                <div className={cx(particles.pl6)}>{model.name}</div>
+                <div>{model.itemCount}</div>
+              </ListElement>
+            ))}
+          </div>
+
         </div>
 
         <AddModel
@@ -502,8 +515,9 @@ export class SideNav extends React.Component<Props, State> {
             <Icon width={18} height={18} stroke src={require('graphcool-styles/icons/stroke/add.svg')}/>
           </Tether>
         </AddModel>
-        {!this.state.modelsFit && (
+        {!this.state.modelsFit &&
           <ToggleMore
+            onClick={() => this.setState({modelsExpanded: !this.state.modelsExpanded} as State )}
             className={cx(
               particles.absolute,
               particles.bottom0,
@@ -514,7 +528,7 @@ export class SideNav extends React.Component<Props, State> {
               particles.itemsCenter,
               particles.pointer,
             )}
-            turned={true}
+            turned={this.state.modelsExpanded}
           >
             <Icon
               width={18}
@@ -529,7 +543,7 @@ export class SideNav extends React.Component<Props, State> {
               )}
             />
           </ToggleMore>
-        )}
+        }
       </Section>
     )
   }
