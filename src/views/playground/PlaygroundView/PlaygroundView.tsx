@@ -204,7 +204,7 @@ class PlaygroundView extends React.Component<Props, State> {
           params={this.props.params}
           project={this.props.viewer.project}
         >
-          <div className={particles.primary}>Playground</div>
+          {/*<div className={particles.primary}>Playground</div>*/}
         </Header>
         <div className={classes.head}>
           <div
