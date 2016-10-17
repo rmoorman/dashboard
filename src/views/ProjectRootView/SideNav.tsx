@@ -121,6 +121,7 @@ const footerSectionStyle = `
   font-weight: 600;
   letter-spacing: 1px;
   color: ${variables.white60};
+  cursor: pointer;
   transition: color ${variables.duration} linear;
   
   > div {
