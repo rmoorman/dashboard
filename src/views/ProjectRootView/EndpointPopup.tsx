@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux'
 import {ReduxAction} from '../../types/reducers'
 import {closePopup} from '../../actions/popup'
 import styled from 'styled-components'
-import {particles, variables, Icon} from 'graphcool-styles'
+import {particles, variables} from 'graphcool-styles'
 import * as cx from 'classnames'
 
 interface Props {
@@ -62,7 +62,7 @@ class EndpointPopup extends React.Component<Props, State> {
               particles.fw3,
 
             )}>
-              https://api.graph.cool/simple/v1/cim2556e300e20plm8aj7e4wo
+              {'https://api.graph.cool/simple/v1/cim2556e300e20plm8aj7e4wo'}
             </div>
 
           </div>
