@@ -110,7 +110,7 @@ class ModelHeader extends React.Component<Props, State> {
                 particles.bgWhite,
                 particles.black50,
                 particles.lhSolid,
-                particles.fw6
+                particles.fw6,
                 particles.buttonShadow,
                 particles.tracked,
               )}
