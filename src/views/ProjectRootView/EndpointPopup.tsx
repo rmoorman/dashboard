@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {ReduxAction} from '../../types/reducers'
 import {closePopup} from '../../actions/popup'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import {particles, variables, Icon} from 'graphcool-styles'
 import * as cx from 'classnames'
 
@@ -43,8 +43,8 @@ class EndpointPopup extends React.Component<Props, State> {
 
     const activeEndpointType = `
       background: ${variables.blue};
-      padding: 11px;
-      border-radius: 1px;
+      padding: 12px;
+      border-radius: 2px;
       cursor: default;
       color: ${variables.white};
       
@@ -63,13 +63,13 @@ class EndpointPopup extends React.Component<Props, State> {
       transition: color ${variables.duration} linear, background ${variables.duration} linear;
       
       &:first-child {
-        border-left-top-radius: 1px;
-        border-left-bottom-radius: 1px;
+        border-top-left-radius: 2px;
+        border-bottom-right-radius: 2px;
       }
       
       &:last-child {
-        border-right-top-radius: 1px;
-        border-right-bottom-radius: 1px;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
       }
       
       &:hover {
@@ -105,6 +105,30 @@ class EndpointPopup extends React.Component<Props, State> {
       }
     `
 
+    const movingCopyIndicator = keyframes`
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 0);
+      }
+      
+      50% {
+        opacity: 1;
+      }
+    
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50px);
+      }
+    `
+
+    const CopyIndicator = styled.div`
+      top: -20px;
+      left: 50%;
+      transform: translate(-50%,0);
+      animation: ${movingCopyIndicator} .7s linear
+      
+    `
+
     return (
       <div className={cx(
         particles.flex,
@@ -129,7 +153,14 @@ class EndpointPopup extends React.Component<Props, State> {
               )}
               onClick={() => this.props.closePopup(this.props.id)}
             >
-              <Icon width={25} height={25} stroke src={require('graphcool-styles/icons/stroke/cross.svg')} />
+              <Icon
+                width={25}
+                height={25}
+                color={variables.gray20}
+                stroke
+                strokeWidth={3}
+                src={require('graphcool-styles/icons/stroke/cross.svg')}
+              />
             </div>
           </header>
           <Separator>
@@ -158,14 +189,25 @@ class EndpointPopup extends React.Component<Props, State> {
             )}>
               {'https://api.graph.cool/simple/v1/cim2556e300e20plm8aj7e4wo'}
             </EndpointField>
-            <Copy className={cx(
-              particles.relative,
-              particles.bgWhite,
-              particles.selfCenter,
-              particles.br2,
-              particles.buttonShadow,
-              particles.pointer,
-            )}>
+            <Copy
+              className={cx(
+                particles.relative,
+                particles.bgWhite,
+                particles.selfCenter,
+                particles.br2,
+                particles.buttonShadow,
+                particles.pointer,
+              )}
+            >
+              <CopyIndicator className={cx(
+                particles.o0,
+                particles.absolute,
+                particles.f14,
+                particles.fw6,
+                particles.blue,
+              )}>
+                Copied
+              </CopyIndicator>
               <Icon
                 width={38}
                 height={38}

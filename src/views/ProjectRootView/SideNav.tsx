@@ -697,32 +697,3 @@ export default Relay.createContainer(MappedSideNav, {
     `,
   },
 })
-
-// <div className={cx(classes.separator, this.state.addingNewModel ? '' : classes.notToggled)}>
-// {this.props.models.length > 3 && !showsModels &&
-// <div
-//   className={classes.listElement}
-//   onClick={() => this.setState({forceShowModels: true} as State)}
-// >
-//   <div className={cx(classes.showMore)}>
-//     <div className={cx(
-//                 classes.showMoreIcon,
-//               )}/>
-//   </div>
-// </div>
-// }
-// <div className={cx(classes.newModelContainer, this.state.addingNewModel ? '' : classes.notToggled)}>
-//   <input
-//     ref='newModelInput'
-//     disabled={!this.state.addingNewModel}
-//     className={cx(
-//                 this.state.newModelIsValid ? '' : classes.invalid,
-//                 classes.newModelBox,
-//                 this.state.addingNewModel ? '' : classes.notToggled
-//               )}
-//     value={this.state.newModelName}
-//     onChange={this.handleNewModelChange}
-//     onKeyDown={this.handleNewModelKeyDown}
-//   />
-// </div>
-// </div>

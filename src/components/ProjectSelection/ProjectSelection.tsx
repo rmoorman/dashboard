@@ -224,6 +224,7 @@ export default class ProjectSelection extends React.Component<Props, State> {
               <Icon
                 width={18}
                 height={18}
+                stroke
                 src={require('graphcool-styles/icons/stroke/arrowDown.svg')}
               />
             </Arrow>
