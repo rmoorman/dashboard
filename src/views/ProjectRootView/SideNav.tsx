@@ -21,6 +21,7 @@ import {showNotification} from '../../actions/notification'
 import {Popup} from '../../types/popup'
 import {GettingStartedState} from '../../types/gettingStarted'
 import EndpointPopup from './EndpointPopup'
+import AddModelPopup from './AddModelPopup'
 import styled from 'styled-components'
 import * as cx from 'classnames'
 import {particles, variables, Icon} from 'graphcool-styles'
@@ -217,7 +218,7 @@ export class SideNav extends React.Component<Props, State> {
         >
           <FooterSection>
             <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/endpoints.svg')}/>
-            <div onClick={this.showEndpoints}>Endpoints</div>
+            <div onClick={this.showEndpointPopup}>Endpoints</div>
           </FooterSection>
           <FooterLink href='https://docs.graph.cool' target='_blank'>
             <Icon width={20} height={20} src={require('graphcool-styles/icons/fill/docs.svg')}/>
@@ -487,7 +488,7 @@ export class SideNav extends React.Component<Props, State> {
             particles.pointer,
             particles.o60
            )}
-          onClick={this.toggleAddModelInput}
+          onClick={this.showAddModelPopup}
         >
           <Tether
             steps={[{
@@ -614,10 +615,18 @@ export class SideNav extends React.Component<Props, State> {
     }
   }
 
-  private showEndpoints = () => {
+  private showEndpointPopup = () => {
     const id = cuid()
     this.props.showPopup({
       element: <EndpointPopup id={id}/>,
+      id,
+    })
+  }
+
+  private showAddModelPopup = () => {
+    const id = cuid()
+    this.props.showPopup({
+      element: <AddModelPopup id={id}/>,
       id,
     })
   }
