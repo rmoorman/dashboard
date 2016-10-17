@@ -46,6 +46,8 @@ interface State {
   addingNewModel: boolean
   newModelName: string
   newModelIsValid: boolean
+  modelsExpanded: boolean
+  modelsFit: boolean
 }
 
 // Section (Models, Relations, Permissions, etc.)
@@ -160,6 +162,8 @@ export class SideNav extends React.Component<Props, State> {
       addingNewModel: false,
       newModelName: '',
       newModelIsValid: true,
+      modelsExpanded: false,
+      modelsFit: true,
     }
     this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this)
   }
@@ -167,11 +171,13 @@ export class SideNav extends React.Component<Props, State> {
   componentDidMount() {
     // subscribe to sideNavSyncer - THIS IS A HACK
     sideNavSyncer.setCallback(this.fetch, this)
+    window.addEventListener('resize', this.setModelsFit)
   }
 
   componentWillUnmount() {
     // unsubscribe from sideNavSyncer - THIS IS A HACK
     sideNavSyncer.setCallback(null, null)
+    window.removeEventListener('resize', this.setModelsFit)
   }
 
   render() {
@@ -336,6 +342,34 @@ export class SideNav extends React.Component<Props, State> {
     )
   }
 
+  private setModelsFit = () => {
+    const HEADER_HEIGHT = 64
+    const FOOTER_HEIGHT = 70
+
+    const MODEL_MARGIN_TOP = 67
+    const MODEL_HEIGHT = 36
+    const numModels = this.props.models.length
+    const MODEL_MARGIN_BOTTOM = 60
+
+    const NUM_LINKS = 4
+    const LINK_HEIGHT = 58
+    const LINKS_MARGIN = 20
+
+    const height = window.innerHeight
+
+    const fit = height > (
+      HEADER_HEIGHT +
+      FOOTER_HEIGHT +
+      MODEL_MARGIN_TOP +
+      MODEL_HEIGHT * numModels +
+      MODEL_MARGIN_BOTTOM +
+      NUM_LINKS * LINK_HEIGHT +
+      LINKS_MARGIN
+    )
+
+    this.setState({modelsFit: fit} as State)
+  }
+
   private renderModels = () => {
     const modelActive = (model) => (
       this.props.router.isActive(`/${this.props.params.projectName}/models/${model.name}/structure`) ||
@@ -467,31 +501,34 @@ export class SideNav extends React.Component<Props, State> {
             <Icon width={18} height={18} stroke src={require('graphcool-styles/icons/stroke/add.svg')}/>
           </Tether>
         </AddModel>
-        <ToggleMore className={cx(
-          particles.absolute,
-          particles.bottom0,
-          particles.left0,
-          particles.w100,
-          particles.flex,
-          particles.justifyCenter,
-          particles.itemsCenter,
-          particles.pointer,
-        )}
-                    turned={true}
-
-        >
-          <Icon
-            width={18}
-            height={18}
-            stroke
-            color={variables.white}
-            src={require('graphcool-styles/icons/stroke/arrowDown.svg')}
+        {!this.state.modelsFit && (
+          <ToggleMore
             className={cx(
-              particles.brPill,
-              particles.bgDarkBlue
+              particles.absolute,
+              particles.bottom0,
+              particles.left0,
+              particles.w100,
+              particles.flex,
+              particles.justifyCenter,
+              particles.itemsCenter,
+              particles.pointer,
             )}
-          />
-        </ToggleMore>
+            turned={true}
+          >
+            <Icon
+              width={18}
+              height={18}
+              stroke
+              color={variables.white}
+              src={require('graphcool-styles/icons/stroke/arrowDown.svg')}
+              onClick={this.toggleModels}
+              className={cx(
+                particles.brPill,
+                particles.bgDarkBlue
+              )}
+            />
+          </ToggleMore>
+        )}
       </Section>
     )
   }
@@ -508,6 +545,11 @@ export class SideNav extends React.Component<Props, State> {
   //     this.addModel()
   //   }
   // }
+
+  private toggleModels = () => {
+    const { modelsExpanded } = this.state
+    this.setState({modelsExpanded: !modelsExpanded} as State)
+  }
 
   private fetch = () => {
     // the backend might cache the force fetch requests, resulting in potentially inconsistent responses
